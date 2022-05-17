@@ -1,0 +1,12 @@
+html, body{
+    margin: 0;
+    padding: 0;
+}
+
+button{
+    background: none;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 3rem;
+}
