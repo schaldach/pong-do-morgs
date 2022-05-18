@@ -91,7 +91,7 @@ gameMode = selectMode.value() === '1 Player'?true:false
             player2.y = (player2.y+75<ball.y&&player2.y+150<screen.height)?player2.y+7:player2.y
             fill('blue')
             player1.y = mouseY
-            playermoved = true
+            p1move = true
         }
         rect(player1.x, player1.y, -10, 150)
         fill(255)
