@@ -90,22 +90,22 @@ gameMode = selectMode.value() === '1 Player'?true:false
             player2.y = (player2.y+75>ball.y&&player2.y>0)?player2.y-7:player2.y
             player2.y = (player2.y+75<ball.y&&player2.y+150<screen.height)?player2.y+7:player2.y
             fill('blue')
-            player1.y = mouseY
+            player1.y = (mouseY-75>=0&&mouseY+75<=screen.height)?mouseY-75:player1.y
             p1move = true
         }
         rect(player1.x, player1.y, -10, 150)
         fill(255)
         rect(player2.x, player2.y, 10, 150)
         ellipse(ball.x, ball.y, 20)
-        if(keyIsDown(SHIFT)){
-            player1.y = player1.y<=0?player1.y:player1.y-15
-            p1move = true
-        }
-        if(keyIsDown(CONTROL)){
-            player1.y = player1.y+150>=screen.height?player1.y:player1.y+15
-            p1move = true
-        }
         if(!gameMode){
+            if(keyIsDown(SHIFT)){
+                player1.y = player1.y<=0?player1.y:player1.y-15
+                p1move = true
+            }
+            if(keyIsDown(CONTROL)){
+                player1.y = player1.y+150>=screen.height?player1.y:player1.y+15
+                p1move = true
+            }
             if(keyIsDown(UP_ARROW)){
                 player2.y = player2.y<=0?player2.y:player2.y-15
                 p2move = true
