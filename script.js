@@ -59,7 +59,7 @@ function setup(){
     fill(255)
 }
 
-function touchMoved(){
+function touchStarted(){
     if(gameplaying&&!gameMode&&!timeout){
         player1.y = mouseY
         playermoved = true
