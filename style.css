@@ -1,6 +1,8 @@
 html, body{
     margin: 0;
     padding: 0;
+    -moz-user-select: none;
+    -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none; 
 }
 
 button{
@@ -9,4 +11,11 @@ button{
     outline: none;
     color: #ffffff;
     font-size: 3rem;
+}
+
+select{
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    font-size: 2rem;
 }

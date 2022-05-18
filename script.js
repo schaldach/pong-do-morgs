@@ -24,24 +24,78 @@ let myCanvas
 let startButton
 let p1Score = 0
 let p2Score = 0
+let selectMode
+let fullScreen
+let page
+let imgdiv
+let gameMode
+let isFull = false
 
 function setup(){
     myCanvas = createCanvas(screen.width,screen.height)
+    myCanvas.parent('page')
     background("#000000")
     myCanvas.position(0,0,"fixed")
     startButton = createButton("Start")
     startButton.position(screen.width/2-60, screen.height/2-30)
     startButton.mousePressed(start)
+    startButton.parent('page')
+    selectMode = createSelect();
+    selectMode.option('1 Player')
+    selectMode.option('2 Players')
+    selectMode.position(screen.width/2-60, screen.height/2+50)
+    selectMode.parent('page')
+    fullScreen = createImg('screen.png')
+    fullScreen.position(screen.width-60, 10)
+    fullScreen.mousePressed(activateFullscreen)
+    fullScreen.size(50,50)
+    fullScreen.parent('page')
+    imgdiv = createDiv()
+    imgdiv.position(screen.width-60, 10)
+    imgdiv.size(50,50)
+    imgdiv.mousePressed(activateFullscreen)
+    imgdiv.parent('page')
+    page = document.getElementById('page')
     fill(255)
 }
 
+function touchMoved(){
+    if(gameplaying&&!gameMode&&!timeout){
+        player1.y = mouseY
+        playermoved = true
+    }
+}
+
+function activateFullscreen(){
+    if (page.requestFullscreen && !isFull) {
+        page.requestFullscreen()
+        isFull = true
+    }
+    else if(document.exitFullscreen && isFull){
+        document.exitFullscreen()
+        isFull = false
+    }
+}
+
 function draw(){
+gameMode = selectMode.value() === '1 Player'?true:false    
     if(gameplaying&&!timeout){
-        myCanvas = createCanvas(screen.width,screen.height)
+        clear()
         background("#000000")
         myCanvas.position(0,0,"fixed")
+        selectMode.hide()
         textSize(45)
         text(p1Score+" - "+p2Score, screen.width/2-50, 60)
+        if(gameMode){
+            player2.y = (player2.y+75>ball.y&&player2.y>0)?player2.y-7:player2.y
+            player2.y = (player2.y+75<ball.y&&player2.y+150<screen.height)?player2.y+7:player2.y
+            fill('blue')
+        }
+        rect(player1.x, player1.y, -10, 150)
+        fill(255)
+        rect(player2.x, player2.y, 10, 150)
+        ellipse(ball.x, ball.y, 20)
+        calculateball()
         if(keyIsDown(SHIFT)){
             player1.y = player1.y<=0?player1.y:player1.y-15
             p1move = true
@@ -50,18 +104,16 @@ function draw(){
             player1.y = player1.y+150>=screen.height?player1.y:player1.y+15
             p1move = true
         }
-        if(keyIsDown(UP_ARROW)){
-            player2.y = player2.y<=0?player2.y:player2.y-15
-            p2move = true
+        if(!gameMode){
+            if(keyIsDown(UP_ARROW)){
+                player2.y = player2.y<=0?player2.y:player2.y-15
+                p2move = true
+            }
+            if(keyIsDown(DOWN_ARROW)){
+                player2.y = player2.y+150>=screen.height?player2.y:player2.y+15
+                p2move = true
+            }
         }
-        if(keyIsDown(DOWN_ARROW)){
-            player2.y = player2.y+150>=screen.height?player2.y:player2.y+15
-            p2move = true
-        }
-        rect(player1.x, player1.y, -10, 150)
-        rect(player2.x, player2.y, 10, 150)
-        ellipse(ball.x, ball.y, 20)
-        calculateball()
     }
 }
 
@@ -132,7 +184,7 @@ function start(){
     }
     else if(!timeout){
         distance = screen.width/90
-        myCanvas = createCanvas(screen.width,screen.height)
+        clear()
         background("#000000")
         myCanvas.position(0,0,"fixed")
         gameplaying = false
@@ -147,5 +199,6 @@ function start(){
         player2.y = screen.height/2-75
         startButton.position(screen.width/2-60, screen.height/2-30)
         startButton.html("Start")
+        selectMode.show()
     }
 }
