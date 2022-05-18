@@ -59,7 +59,7 @@ function setup(){
     fill(255)
 }
 
-function touchStarted(){
+function touchMoved(){
     if(gameplaying&&!gameMode&&!timeout){
         player1.y = mouseY
         playermoved = true
@@ -90,12 +90,13 @@ gameMode = selectMode.value() === '1 Player'?true:false
             player2.y = (player2.y+75>ball.y&&player2.y>0)?player2.y-7:player2.y
             player2.y = (player2.y+75<ball.y&&player2.y+150<screen.height)?player2.y+7:player2.y
             fill('blue')
+            player1.y = mouseY
+            playermoved = true
         }
         rect(player1.x, player1.y, -10, 150)
         fill(255)
         rect(player2.x, player2.y, 10, 150)
         ellipse(ball.x, ball.y, 20)
-        calculateball()
         if(keyIsDown(SHIFT)){
             player1.y = player1.y<=0?player1.y:player1.y-15
             p1move = true
@@ -114,6 +115,7 @@ gameMode = selectMode.value() === '1 Player'?true:false
                 p2move = true
             }
         }
+        calculateball()
     }
 }
 
