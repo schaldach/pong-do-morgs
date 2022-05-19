@@ -1,4 +1,4 @@
-let distance = screen.width/90
+let ballDistance = screen.width/90
 let angle = 0
 let ball = {
     x: screen.width/2,
@@ -6,11 +6,11 @@ let ball = {
 }
 let player1 = {
     x: 10,
-    y: screen.height/2-75
+    y: screen.height/2
 }
 let player2 = {
     x: screen.width-10,
-    y: screen.height/2-75
+    y: screen.height/2
 }
 let horizontalControl = 1
 let verticalControl = 1
@@ -18,13 +18,16 @@ let gameplaying = false
 let timeout = false
 let p1move = false
 let p2move = false
-let playermoved = false
+let playerMoved = false
+let playerHeight = screen.height/5
 let timeinterval
 let myCanvas
 let startButton
 let p1Score = 0
 let p2Score = 0
 let selectMode
+let selectDifficulty
+let AISpeed
 let fullScreen
 let page
 let imgdiv
@@ -37,17 +40,24 @@ function setup(){
     background("#000000")
     myCanvas.position(0,0,"fixed")
     fill(255)
-    textSize(14)
-    text('patch 1.2', 5, 15)
     startButton = createButton("Start")
     startButton.position(screen.width/2-60, screen.height/2-30)
     startButton.mousePressed(start)
     startButton.parent('page')
+    textSize(14)
+    text('patch 1.2', 5, 15)
     selectMode = createSelect();
     selectMode.option('1 Player')
-    selectMode.option('2 Players')
-    selectMode.position(screen.width/2-60, screen.height/2+50)
+    selectMode.option('2 Players (PC)')
+    selectMode.position(screen.width/2-120, screen.height/2+50)
     selectMode.parent('page')
+    selectDifficulty = createSelect()
+    selectDifficulty.option('Fácil')
+    selectDifficulty.option('Médio')
+    selectDifficulty.option('Difícil')
+    selectDifficulty.option('INSANO')
+    selectDifficulty.position(screen.width/2-60, screen.height/2+120)
+    selectDifficulty.parent('page')
     fullScreen = createImg('screen.png')
     fullScreen.position(screen.width-60, 10)
     fullScreen.mousePressed(activateFullscreen)
@@ -65,7 +75,7 @@ function setup(){
 function touchMoved(){
     if(gameplaying&&!gameMode&&!timeout){
         player1.y = mouseY
-        playermoved = true
+        playerMoved = true
     }
 }
 
@@ -81,24 +91,25 @@ function activateFullscreen(){
 }
 
 function draw(){
-gameMode = selectMode.value() === '1 Player'?true:false    
     if(gameplaying&&!timeout){
         clear()
         background("#000000")
         myCanvas.position(0,0,"fixed")
         selectMode.hide()
+        selectDifficulty.hide()
         textSize(45)
         text(p1Score+" - "+p2Score, screen.width/2-50, 60)
         if(gameMode){
-            player2.y = (player2.y+75>ball.y&&player2.y>0)?player2.y-7:player2.y
-            player2.y = (player2.y+75<ball.y&&player2.y+150<screen.height)?player2.y+7:player2.y
+            let target = AISpeed>10?ball.y+AISpeed*1.7:ball.y
+            player2.y = (player2.y+(playerHeight/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
+            player2.y = (player2.y+(playerHeight/2)<target&&player2.y+playerHeight<screen.height)?player2.y+AISpeed:player2.y
             fill('blue')
-            player1.y = (mouseY-75>=0&&mouseY+75<=screen.height)?mouseY-75:player1.y
+            player1.y = (mouseY-(playerHeight/2)>=0&&mouseY+(playerHeight/2)<=screen.height)?mouseY-(playerHeight/2):player1.y
             p1move = true
         }
-        rect(player1.x, player1.y, -10, 150)
+        rect(player1.x, player1.y, -10, playerHeight)
         fill(255)
-        rect(player2.x, player2.y, 10, 150)
+        rect(player2.x, player2.y, 10, playerHeight)
         ellipse(ball.x, ball.y, 20)
         if(!gameMode){
             if(keyIsDown(SHIFT)){
@@ -106,7 +117,7 @@ gameMode = selectMode.value() === '1 Player'?true:false
                 p1move = true
             }
             if(keyIsDown(CONTROL)){
-                player1.y = player1.y+150>=screen.height?player1.y:player1.y+15
+                player1.y = player1.y+playerHeight>=screen.height?player1.y:player1.y+15
                 p1move = true
             }
             if(keyIsDown(UP_ARROW)){
@@ -114,7 +125,7 @@ gameMode = selectMode.value() === '1 Player'?true:false
                 p2move = true
             }
             if(keyIsDown(DOWN_ARROW)){
-                player2.y = player2.y+150>=screen.height?player2.y:player2.y+15
+                player2.y = player2.y+playerHeight>=screen.height?player2.y:player2.y+15
                 p2move = true
             }
         }
@@ -123,14 +134,14 @@ gameMode = selectMode.value() === '1 Player'?true:false
 }
 
 function calculateball(){
-    let horizontalDistance = Math.cos(angle)*distance
-    let verticalDistance = Math.sin(angle)*distance
+    let horizontalballDistance = Math.cos(angle)*ballDistance
+    let verticalballDistance = Math.sin(angle)*ballDistance
     if(ball.x+10>=player2.x){
         horizontalControl = -1
-        playermoved = p2move
+        playerMoved = p2move
         changeAngle()
-        distance += screen.width/1450
-        if((ball.y-10>player2.y+150)||(ball.y+10<player2.y)){
+        ballDistance += screen.width/1300
+        if((ball.y-10>player2.y+playerHeight)||(ball.y+10<player2.y)){
             p1Score++
             timeout = true
             timeinterval = setTimeout(winner, 250)
@@ -139,32 +150,35 @@ function calculateball(){
     }
     if(ball.x-10<=player1.x){
         horizontalControl = 1
-        playermoved = p1move
+        playerMoved = p1move
         changeAngle()
-        distance += screen.width/1450
-        if((ball.y-10>player1.y+150)||(ball.y+10<player1.y)){
+        ballDistance += screen.width/1300
+        if((ball.y-10>player1.y+playerHeight)||(ball.y+10<player1.y)){
             p2Score++
             timeout = true
             timeinterval = setTimeout(winner, 250)
             return
         }
     }
-    if((ball.y+10>screen.height)||(ball.y-10<0)){
-        verticalControl = verticalControl*-1
+    if(ball.y+10>screen.height){
+        verticalControl = -1
     }
-    ball.x += horizontalDistance*horizontalControl
-    ball.y += verticalDistance*verticalControl
+    if(ball.y-10<0){
+        verticalControl = 1
+    }
+    ball.x += horizontalballDistance*horizontalControl
+    ball.y += verticalballDistance*verticalControl
     p1move = false
     p2move = false
-    playermoved = false
+    playerMoved = false
 }
 
 function changeAngle(){
     let variation = 0
-    variation = ball.x>screen.width/2?player2.y+75-ball.y:variation
-    variation = ball.x<screen.width/2?player1.y+75-ball.y:variation
-    angle = Math.abs(variation)/85*(Math.PI/3)
-    if(playermoved){
+    variation = ball.x>screen.width/2?player2.y+(playerHeight/2)-ball.y:variation
+    variation = ball.x<screen.width/2?player1.y+(playerHeight/2)-ball.y:variation
+    angle = Math.abs(variation)*(Math.PI/3)/(playerHeight/2+5)
+    if(playerMoved){
         verticalControl = variation>0?-1:1
     }
 }
@@ -176,19 +190,34 @@ function winner(){
     firstplay = true
     ball.x = screen.width/2,
     ball.y = screen.height/2
-    player1.y = screen.height/2-75
-    player2.y = screen.height/2-75
-    distance = screen.width/90
+    player1.y = screen.height*2/5
+    player2.y = screen.height*2/5
+    ballDistance = screen.width/90
 }
 
 function start(){
     if(!gameplaying){
+        gameMode = selectMode.value() === '1 Player'?true:false
+        switch(selectDifficulty.value()){
+            case 'Fácil':
+                AISpeed = screen.height/150
+                break
+            case 'Médio':
+                AISpeed = screen.height/82
+                break
+            case 'Difícil':
+                AISpeed = screen.height/50
+                break
+            case 'INSANO':
+                AISpeed = screen.height/30
+                break
+        }
         gameplaying = true
         startButton.html("Resetar")
         startButton.position(20,20)
     }
     else if(!timeout){
-        distance = screen.width/90
+        ballDistance = screen.width/90
         clear()
         background("#000000")
         myCanvas.position(0,0,"fixed")
@@ -200,10 +229,13 @@ function start(){
         p2Score = 0
         ball.x = screen.width/2,
         ball.y = screen.height/2
-        player1.y = screen.height/2-75
-        player2.y = screen.height/2-75
+        player1.y = screen.height*2/5
+        player2.y = screen.height*2/5
         startButton.position(screen.width/2-60, screen.height/2-30)
         startButton.html("Start")
+        textSize(14)
+        text('patch 1.2', 5, 15)
         selectMode.show()
+        selectDifficulty.show()
     }
 }
