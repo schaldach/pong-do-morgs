@@ -48,7 +48,7 @@ function setup(){
     textSize(14)
     text('patch 1.4', 5, 15)
     title = createDiv('Pong do Morgs')
-    title.position(screen.width*5/32, 50)
+    title.position(screen.width*5/32, 20)
     title.addClass('titulo')
     selectMode = createSelect();
     selectMode.option('1 Player')
