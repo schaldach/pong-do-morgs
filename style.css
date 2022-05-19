@@ -12,14 +12,14 @@ button{
     border: none;
     outline: none;
     color: #ffffff;
-    font-size: 3rem;
+    font-size: 2rem;
 }
 
 select{
     background: #ffffff;
     color: #000000;
     border: none;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 
 .titulo{
@@ -28,5 +28,5 @@ select{
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    font-size: 10rem;
+    font-size: 12vw;
 }
