@@ -32,6 +32,7 @@ let fullScreen
 let page
 let imgdiv
 let gameMode
+let title
 let isFull = false
 
 function setup(){
@@ -45,7 +46,10 @@ function setup(){
     startButton.mousePressed(start)
     startButton.parent('page')
     textSize(14)
-    text('patch 1.2', 5, 15)
+    text('patch 1.4', 5, 15)
+    title = createDiv('Pong do Morgs')
+    title.position(screen.width*3/16, 50)
+    title.addClass('titulo')
     selectMode = createSelect();
     selectMode.option('1 Player')
     selectMode.option('2 Players (PC)')

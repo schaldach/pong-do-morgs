@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Koulen&display=swap');
+
 html, body{
     margin: 0;
     padding: 0;
     -moz-user-select: none;
-    -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none; 
+    -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;
 }
 
 button{
@@ -18,4 +20,13 @@ select{
     color: #000000;
     border: none;
     font-size: 2rem;
+}
+
+.titulo{
+    font-family: 'Koulen', cursive;
+    background-image: linear-gradient(to right, #c2fbff, #2c54ac);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-size: 10rem;
 }
