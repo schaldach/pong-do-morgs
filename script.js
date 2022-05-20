@@ -26,6 +26,7 @@ let p1Score = 0
 let p2Score = 0
 let isPowers
 let timeinterval
+let powerColor
 let myCanvas
 let startButton
 let selectMode
@@ -113,9 +114,14 @@ function activateFullscreen(){
 }
 
 function spawnPower(){
-    xPos = Math.floor(Math.random())*(screen.width-60)
-    yPos = Math.floor(Math.random())*(screen.height)
+    xPos = Math.floor(Math.random()*screen.width-60)
+    yPos = Math.floor(Math.random()*screen.height)
     currentPower = allPowers[Math.floor(1)]
+    powerColor = color(255,255,255)
+    powerColor.setAlpha(80)
+    fill(powerColor)
+    ellipse(xPos, yPos, screen.height/5)
+    fill(255)
     isPower = true
 }
 
@@ -126,6 +132,7 @@ function powerCatch(p){
             stopPowerInterval = setTimeout(stopPower, 8000, p)
             break
         case'hot':
+            activatedFire = true
             break
         case'multiball':
             break
@@ -167,9 +174,7 @@ function draw(){
         rect(player1.x, player1.y, -10, playerHeight)
         fill(255)
         if(isPower){
-            fill(10)
             ellipse(xPos, yPos, screen.height/10)
-            fill(255)
         }
         rect(player2.x, player2.y, 10, playerHeight)
         ballTrack.forEach(past => {
@@ -225,9 +230,9 @@ function calculateball(){
         horizontalControl = 1
         playerMoved = p1move
         changeAngle()
-        if(currentPower === 'hot'){
-            ballDistance += screen.width/100
-            activatedFire = true
+        if(activatedFire){
+            ballDistance += screen.width/90
+            activatedFire = false
         }
         ballDistance += screen.width/1500
         if((ball.y-10>player1.y+playerHeight)||(ball.y+10<player1.y)){
@@ -291,7 +296,7 @@ function start(){
         }
         isPowers = powersSelect.value() === 'Com poderes (1P)'?true:false
         if(isPowers){
-            powerInterval = setTimeout(spawnPower, 8000)
+            powerInterval = setInterval(spawnPower, 1000)
         }
         gameplaying = true
         startButton.html("Resetar")
