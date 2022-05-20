@@ -8,7 +8,8 @@ html, body{
 }
 
 button{
-    background: none;
+    background: #2c54ac;
+    border-radius: 10px;
     border: none;
     outline: none;
     color: #ffffff;
@@ -17,6 +18,7 @@ button{
 
 select{
     background: #ffffff;
+    border-radius: 10px;
     color: #000000;
     border: none;
     font-size: 1.5rem;

@@ -1,9 +1,10 @@
-let ballDistance = screen.width/90
+let ballDistance = screen.width/100
 let angle = 0
 let ball = {
     x: screen.width/2,
     y: screen.height/2
 }
+let extraBalls = {}
 let player1 = {
     x: 10,
     y: screen.height/2
@@ -19,12 +20,14 @@ let timeout = false
 let p1move = false
 let p2move = false
 let playerMoved = false
+let isFull = false
 let playerHeight = screen.height/5
+let p1Score = 0
+let p2Score = 0
+let isPowers
 let timeinterval
 let myCanvas
 let startButton
-let p1Score = 0
-let p2Score = 0
 let selectMode
 let selectDifficulty
 let AISpeed
@@ -32,8 +35,18 @@ let fullScreen
 let page
 let imgdiv
 let gameMode
+let powersSelect
 let title
-let isFull = false
+let powerInterval
+let ballColor
+let stopPowerInterval
+let xPos
+let yPos
+let activatedFire
+let isPower
+let ballTrack = []
+let allPowers = ['large', 'hot', 'multiball']
+let currentPower
 
 function setup(){
     myCanvas = createCanvas(screen.width,screen.height)
@@ -53,7 +66,7 @@ function setup(){
     selectMode = createSelect();
     selectMode.option('1 Player')
     selectMode.option('2 Players (PC)')
-    selectMode.position(screen.width/2-100, screen.height/2+50)
+    selectMode.position(screen.width/2-100, screen.height/2+80)
     selectMode.parent('page')
     selectDifficulty = createSelect()
     selectDifficulty.option('Fácil')
@@ -62,6 +75,11 @@ function setup(){
     selectDifficulty.option('INSANO')
     selectDifficulty.position(screen.width/2-70, screen.height/2+120)
     selectDifficulty.parent('page')
+    powersSelect = createSelect()
+    powersSelect.option('Com poderes (1P)')
+    powersSelect.option('Sem poderes')
+    powersSelect.position(screen.width/2-120, screen.height/2+160)
+    powersSelect.parent('page')
     fullScreen = createImg('screen.png')
     fullScreen.position(screen.width-60, 10)
     fullScreen.mousePressed(activateFullscreen)
@@ -94,6 +112,34 @@ function activateFullscreen(){
     }
 }
 
+function spawnPower(){
+    xPos = Math.floor(Math.random())*(screen.width-60)
+    yPos = Math.floor(Math.random())*(screen.height)
+    currentPower = allPowers[Math.floor(1)]
+    isPower = true
+}
+
+function powerCatch(p){
+    switch(p){
+        case'large':
+            playerHeight = screen.height*2/5
+            stopPowerInterval = setTimeout(stopPower, 8000, p)
+            break
+        case'hot':
+            break
+        case'multiball':
+            break
+    }
+}
+
+function stopPower(p){
+    switch(p){
+        case'large':
+            playerHeight = screen.height/5
+            break
+    }
+}
+
 function draw(){
     if(gameplaying&&!timeout){
         clear()
@@ -101,6 +147,7 @@ function draw(){
         myCanvas.position(0,0,"fixed")
         selectMode.hide()
         selectDifficulty.hide()
+        powersSelect.hide()
         title.hide()
         textSize(45)
         text(p1Score+" - "+p2Score, screen.width/2-50, 60)
@@ -112,10 +159,31 @@ function draw(){
             player1.y = (mouseY-(playerHeight/2)>=0&&mouseY+(playerHeight/2)<=screen.height)?mouseY-(playerHeight/2):player1.y
             p1move = true
         }
+        if(isPowers){
+            if((dist(ball.x, ball.y, xPos, yPos)<10+screen.height/20)&&horizontalControl===1){
+                powerCatch(currentPower)
+            }
+        }
         rect(player1.x, player1.y, -10, playerHeight)
         fill(255)
+        if(isPower){
+            fill(10)
+            ellipse(xPos, yPos, screen.height/10)
+            fill(255)
+        }
         rect(player2.x, player2.y, 10, playerHeight)
+        ballTrack.forEach(past => {
+            ballColor = activatedFire?color(255,0,0):color(255,255,255)
+            ballColor.setAlpha(50)
+            fill(ballColor)
+            ellipse(past.x, past.y, 20)
+        })
+        fill(255)
+        if(activatedFire){fill('red')}
+        if(ballTrack.length>5){ballTrack.shift()}
         ellipse(ball.x, ball.y, 20)
+        fill(255)
+        ballTrack.push({x: ball.x, y:ball.y})
         if(!gameMode){
             if(keyIsDown(SHIFT)){
                 player1.y = player1.y<=0?player1.y:player1.y-15
@@ -145,7 +213,7 @@ function calculateball(){
         horizontalControl = -1
         playerMoved = p2move
         changeAngle()
-        ballDistance += screen.width/1300
+        ballDistance += screen.width/1500
         if((ball.y-10>player2.y+playerHeight)||(ball.y+10<player2.y)){
             p1Score++
             timeout = true
@@ -157,7 +225,11 @@ function calculateball(){
         horizontalControl = 1
         playerMoved = p1move
         changeAngle()
-        ballDistance += screen.width/1300
+        if(currentPower === 'hot'){
+            ballDistance += screen.width/100
+            activatedFire = true
+        }
+        ballDistance += screen.width/1500
         if((ball.y-10>player1.y+playerHeight)||(ball.y+10<player1.y)){
             p2Score++
             timeout = true
@@ -217,6 +289,10 @@ function start(){
                 AISpeed = screen.height/30
                 break
         }
+        isPowers = powersSelect.value() === 'Com poderes (1P)'?true:false
+        if(isPowers){
+            powerInterval = setTimeout(spawnPower, 8000)
+        }
         gameplaying = true
         startButton.html("Resetar")
         startButton.position(20,20)
@@ -243,5 +319,6 @@ function start(){
         selectMode.show()
         selectDifficulty.show()
         title.show()
+        powersSelect.show()
     }
 }
