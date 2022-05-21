@@ -47,46 +47,56 @@ let gameMode
 let powersSelect
 let title
 let powerInterval
-let stopPowerInterval
+let stopPowerInterval1
+let stopPowerInterval2
 let activatedFire = [{p: 'player1', state:false},{p:'player2', state:false}]
+let activatedIce = [{p: 'player1', state:false},{p:'player2', state:false}]
 let isPower = false
 let spawnedPower
 let ballTrack = []
 let allPowers = [{p:'large', side:'good'}, {p:'hot', side:'good'}, {p:'multiball', side:'neutral'},
 {p:'freeze', side:'good'}, {p:'blind', side:'bad'}, {p:'inverted', side:'bad'}, {p:'small', side:'bad'}]
 let currentPower
+let font
 
+function preload(){
+    font = loadFont('koulen.ttf')
+}
 function setup(){
     myCanvas = createCanvas(screen.width,screen.height)
     myCanvas.parent('page')
     background("#000000")
     myCanvas.position(0,0,"fixed")
+    textFont(font)
     fill(255)
     startButton = createButton("Start")
     startButton.position(screen.width/2-50, screen.height/2-30)
     startButton.mousePressed(start)
     startButton.parent('page')
     textSize(14)
-    text('patch 1.4', 5, 15)
+    text('patch 1.5', 5, 15)
+    textAlign(CENTER)
+    textSize(20)
+    text('Jogue em tela cheia e horizontal!\n(botao no canto superior direito)', screen.width/2, screen.height*2/5-25)
     title = createDiv('Pong do Morgs')
-    title.position(screen.width*5/32, 20)
+    title.position(screen.width*7/32, -5)
     title.addClass('titulo')
     selectMode = createSelect();
     selectMode.option('1 Player')
     selectMode.option('2 Players (PC)')
-    selectMode.position(screen.width/2-100, screen.height/2+80)
+    selectMode.position(screen.width/2-85, screen.height/2+50)
     selectMode.parent('page')
     selectDifficulty = createSelect()
-    selectDifficulty.option('Fácil')
-    selectDifficulty.option('Médio')
-    selectDifficulty.option('Difícil')
+    selectDifficulty.option('Facil')
+    selectDifficulty.option('Medio')
+    selectDifficulty.option('Dificil')
     selectDifficulty.option('INSANO')
-    selectDifficulty.position(screen.width/2-70, screen.height/2+120)
+    selectDifficulty.position(screen.width/2-50, screen.height/2+100)
     selectDifficulty.parent('page')
     powersSelect = createSelect()
-    powersSelect.option('Com poderes (1P)')
+    powersSelect.option('Com poderes')
     powersSelect.option('Sem poderes')
-    powersSelect.position(screen.width/2-120, screen.height/2+160)
+    powersSelect.position(screen.width/2-80, screen.height/2+150)
     powersSelect.parent('page')
     fullScreen = createImg('screen.png')
     fullScreen.position(screen.width-60, 10)
@@ -104,14 +114,12 @@ function setup(){
     powerColor
     noStroke()
 }
-
 function touchMoved(){
     if(gameplaying&&!gameMode&&!timeout){
         player1.y = mouseY
         playerMoved = true
     }
 }
-
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) {
         page.requestFullscreen()
@@ -127,13 +135,12 @@ function spawnPower(){
     canSpawnPower = true
 }
 
-function powerCatch(power, player){
-    clearInterval(stopPowerInterval)
-    stopPowerInterval = setTimeout(stopPower, 5000, power, player)
+function powerCatch(power, player, interval){
+    clearTimeout(interval)
+    interval = setTimeout(stopPower, 5000, power, player)
     switch(allPowers[power].p){
         case'large':
-            player1.height = player==1?screen.height*2/5:screen.height/5
-            player2.height = player==2?screen.height*2/5:screen.height/5
+            player.height = screen.height*2/5
             break
         case 'hot':
             activatedFire[activatedFire.findIndex(e => e==player.p)].state = true
@@ -157,7 +164,6 @@ function stopPower(power, player){
             player.height = screen.height/5
             break
         case 'hot':
-            activatedFire = true
             break
         case 'multiball':
             break
@@ -198,33 +204,9 @@ function draw(){
             player2.y = (player2.y+(player2.height/2)<target&&player2.y+player2.height<screen.height)?player2.y+AISpeed:player2.y
             player1.y = (mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=screen.height)?mouseY-(player1.height/2):player1.y
             p1move = true
+            p2move = true
         }
-        if(isPower){
-            let thisColor = powerColor[1]
-            thisColor.setAlpha(50)
-            fill(thisColor)
-            ellipse(spawnedPower.x, spawnedPower.y, screen.height/5)
-            if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/20){
-                powerCatch(currentPower, horizontalControl)
-                spawnedPower = {}
-                isPower = false
-            }
-        }
-        fill(player1.color)
-        rect(player1.x, player1.y, -10, player1.height)
-        fill(player2.color)
-        rect(player2.x, player2.y, 10, player1.height)
-        if(ballTrack.length>5){ballTrack.shift()}
-        ballTrack.push({x: ball.x, y:ball.y})
-        ballTrack.forEach(past => {
-            ballColor[ballColorIndex].setAlpha(50)
-            fill(ballColor[ballColorIndex])
-            ellipse(past.x, past.y, 20)
-            ballColor[ballColorIndex].setAlpha(255)
-        })
-        fill(ballColor[ballColorIndex])
-        ellipse(ball.x, ball.y, 20)
-        if(!gameMode){
+        else{
             if(keyIsDown(SHIFT)){
                 player1.y = player1.y<=0?player1.y:player1.y-15
                 p1move = true
@@ -242,6 +224,33 @@ function draw(){
                 p2move = true
             }
         }
+        if(isPower){
+            let thisColor = powerColor[1]
+            thisColor.setAlpha(75)
+            fill(thisColor)
+            ellipse(spawnedPower.x, spawnedPower.y, screen.height/4)
+            if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/8){
+                let rightPlayer = horizontalControl==1?player1:player2
+                let rightInterval = horizontalControl==1?stopPowerInterval1:stopPowerInterval2
+                powerCatch(currentPower, rightPlayer, rightInterval)
+                spawnedPower = {}
+                isPower = false
+            }
+        }
+        fill(player1.color)
+        rect(player1.x, player1.y, -10, player1.height)
+        fill(player2.color)
+        rect(player2.x, player2.y, 10, player2.height)
+        if(ballTrack.length>5){ballTrack.shift()}
+        ballTrack.push({x: ball.x, y:ball.y})
+        ballTrack.forEach(past => {
+            ballColor[ballColorIndex].setAlpha(50)
+            fill(ballColor[ballColorIndex])
+            ellipse(past.x, past.y, 20)
+            ballColor[ballColorIndex].setAlpha(255)
+        })
+        fill(ballColor[ballColorIndex])
+        ellipse(ball.x, ball.y, 20)
         calculateball()
     }
 }
@@ -252,7 +261,7 @@ function calculateball(){
     if(ball.x+10>=player2.x){
         horizontalControl = -1
         playerMoved = p2move
-        changeAngle()
+        changeAngle(player2)
         if(activatedFire[1].state){
             ballColorIndex = 1
             ballDistance += screen.width/75
@@ -268,7 +277,7 @@ function calculateball(){
     if(ball.x-10<=player1.x){
         horizontalControl = 1
         playerMoved = p1move
-        changeAngle()
+        changeAngle(player1)
         ballDistance += screen.width/1500
         if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
             p2Score++
@@ -287,16 +296,11 @@ function calculateball(){
     ball.y += verticalballDistance*verticalControl
     p1move = false
     p2move = false
-    playerMoved = false
 }
 
-function changeAngle(){
-    let variation = 0
-    variation = ball.x>screen.width/2?player2.y+(player2.height/2)-ball.y:variation
-    variation = ball.x<screen.width/2?player1.y+(player1.height/2)-ball.y:variation
-    angle = 0
-    angle = ball.x>screen.width/2?Math.abs(variation)*(Math.PI/3)/(player2.height/2+5):angle
-    angle = ball.x<screen.width/2?Math.abs(variation)*(Math.PI/3)/(player1.height/2+5):angle
+function changeAngle(player){
+    let variation = player.y+(player.height/2)-ball.y
+    angle = Math.abs(variation)*(Math.PI/3)/(player.height/2+5)
     if(playerMoved){
         verticalControl = variation>0?-1:1
     }
@@ -318,13 +322,13 @@ function start(){
     if(!gameplaying){
         gameMode = selectMode.value() === '1 Player'?true:false
         switch(selectDifficulty.value()){
-            case 'Fácil':
+            case 'Facil':
                 AISpeed = screen.height/150
                 break
-            case 'Médio':
+            case 'Medio':
                 AISpeed = screen.height/82
                 break
-            case 'Difícil':
+            case 'Dificil':
                 AISpeed = screen.height/57
                 break
             case 'INSANO':
@@ -333,7 +337,7 @@ function start(){
         }
         isPowers = powersSelect.value() === 'Com poderes (1P)'?true:false
         if(isPowers){
-            powerInterval = setInterval(spawnPower, 10000)
+            powerInterval = setInterval(spawnPower, 8000)
         }
         gameplaying = true
         startButton.html("Resetar")
@@ -358,7 +362,7 @@ function start(){
         startButton.html("Start")
         textSize(14)
         fill(255)
-        text('patch 1.4', 5, 15)
+        text('patch 1.5', 5, 15)
         selectMode.show()
         selectDifficulty.show()
         title.show()
