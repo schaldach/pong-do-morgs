@@ -128,10 +128,12 @@ function spawnPower(){
 }
 
 function powerCatch(power, player){
+    clearInterval(stopPowerInterval)
     stopPowerInterval = setTimeout(stopPower, 5000, power, player)
-    switch(power){
+    switch(allPowers[power].p){
         case'large':
-            player.height = screen.height*2/5
+            player1.height = player==1?screen.height*2/5:screen.height/5
+            player2.height = player==2?screen.height*2/5:screen.height/5
             break
         case 'hot':
             activatedFire[activatedFire.findIndex(e => e==player.p)].state = true
@@ -150,7 +152,7 @@ function powerCatch(power, player){
 }
 
 function stopPower(power, player){
-    switch(power){
+    switch(allPowers[power].p){
         case'large':
             player.height = screen.height/5
             break
@@ -183,9 +185,9 @@ function draw(){
         fill(255)
         text(p1Score+" - "+p2Score, screen.width/2-50, 60)
         if(canSpawnPower){
-            let xPos = Math.floor(Math.random()*screen.width-80)
+            let xPos = Math.floor(Math.random()*screen.width*19/20)+screen.width/40
             let yPos = Math.floor(Math.random()*screen.height)
-            currentPower = allPowers[Math.floor(1)]
+            currentPower = 0
             spawnedPower = {x: xPos, y: yPos}
             canSpawnPower = false
             isPower = true
@@ -201,10 +203,9 @@ function draw(){
             let thisColor = powerColor[1]
             thisColor.setAlpha(50)
             fill(thisColor)
-            ellipse(spawnedPower.x+40, spawnedPower.y, screen.height/5)
+            ellipse(spawnedPower.x, spawnedPower.y, screen.height/5)
             if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/20){
-                let rightPlayer = horizontalControl==1?player1:player2
-                powerCatch(currentPower, rightPlayer)
+                powerCatch(currentPower, horizontalControl)
                 spawnedPower = {}
                 isPower = false
             }
@@ -332,7 +333,7 @@ function start(){
         }
         isPowers = powersSelect.value() === 'Com poderes (1P)'?true:false
         if(isPowers){
-            powerInterval = setInterval(spawnPower, 1000)
+            powerInterval = setInterval(spawnPower, 10000)
         }
         gameplaying = true
         startButton.html("Resetar")
