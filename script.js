@@ -6,12 +6,18 @@ let ball = {
 }
 let extraBalls = {}
 let player1 = {
+    p: 'player1',
     x: 10,
-    y: screen.height/2
+    y: screen.height/2,
+    height: screen.height/5,
+    color: 255,
 }
 let player2 = {
+    p: 'player2',
     x: screen.width-10,
-    y: screen.height/2
+    y: screen.height/2,
+    height: screen.height/5,
+    color: 255,
 }
 let horizontalControl = 1
 let verticalControl = 1
@@ -21,12 +27,14 @@ let p1move = false
 let p2move = false
 let playerMoved = false
 let isFull = false
-let playerHeight = screen.height/5
 let p1Score = 0
 let p2Score = 0
 let isPowers
+let ballColor = []
+let ballColorIndex = 0
 let timeinterval
-let powerColor
+let canSpawnPower = false
+let powerColor = []
 let myCanvas
 let startButton
 let selectMode
@@ -39,14 +47,13 @@ let gameMode
 let powersSelect
 let title
 let powerInterval
-let ballColor
 let stopPowerInterval
-let xPos
-let yPos
-let activatedFire
-let isPower
+let activatedFire = [{p: 'player1', state:false},{p:'player2', state:false}]
+let isPower = false
+let spawnedPower
 let ballTrack = []
-let allPowers = ['large', 'hot', 'multiball']
+let allPowers = [{p:'large', side:'good'}, {p:'hot', side:'good'}, {p:'multiball', side:'neutral'},
+{p:'freeze', side:'good'}, {p:'blind', side:'bad'}, {p:'inverted', side:'bad'}, {p:'small', side:'bad'}]
 let currentPower
 
 function setup(){
@@ -92,7 +99,10 @@ function setup(){
     imgdiv.mousePressed(activateFullscreen)
     imgdiv.parent('page')
     page = document.getElementById('page')
-    fill(255)
+    ballColor.push(color(255,255,255), color(255,0,0))
+    powerColor.push(color(255,0,0),color(0,255,0),color(255,255,255))
+    powerColor
+    noStroke()
 }
 
 function touchMoved(){
@@ -114,35 +124,48 @@ function activateFullscreen(){
 }
 
 function spawnPower(){
-    xPos = Math.floor(Math.random()*screen.width-60)
-    yPos = Math.floor(Math.random()*screen.height)
-    currentPower = allPowers[Math.floor(1)]
-    powerColor = color(255,255,255)
-    powerColor.setAlpha(80)
-    fill(powerColor)
-    ellipse(xPos, yPos, screen.height/5)
-    fill(255)
-    isPower = true
+    canSpawnPower = true
 }
 
-function powerCatch(p){
-    switch(p){
+function powerCatch(power, player){
+    stopPowerInterval = setTimeout(stopPower, 5000, power, player)
+    switch(power){
         case'large':
-            playerHeight = screen.height*2/5
-            stopPowerInterval = setTimeout(stopPower, 8000, p)
+            player.height = screen.height*2/5
             break
-        case'hot':
-            activatedFire = true
+        case 'hot':
+            activatedFire[activatedFire.findIndex(e => e==player.p)].state = true
             break
-        case'multiball':
+        case 'multiball':
+            break
+        case 'multiball':
+            break
+        case 'multiball':
+            break
+        case 'multiball':
+            break
+        case 'multiball':
             break
     }
 }
 
-function stopPower(p){
-    switch(p){
+function stopPower(power, player){
+    switch(power){
         case'large':
-            playerHeight = screen.height/5
+            player.height = screen.height/5
+            break
+        case 'hot':
+            activatedFire = true
+            break
+        case 'multiball':
+            break
+        case 'multiball':
+            break
+        case 'multiball':
+            break
+        case 'multiball':
+            break
+        case 'multiball':
             break
     }
 }
@@ -157,45 +180,56 @@ function draw(){
         powersSelect.hide()
         title.hide()
         textSize(45)
+        fill(255)
         text(p1Score+" - "+p2Score, screen.width/2-50, 60)
+        if(canSpawnPower){
+            let xPos = Math.floor(Math.random()*screen.width-80)
+            let yPos = Math.floor(Math.random()*screen.height)
+            currentPower = allPowers[Math.floor(1)]
+            spawnedPower = {x: xPos, y: yPos}
+            canSpawnPower = false
+            isPower = true
+        }
         if(gameMode){
-            let target = AISpeed>10?ball.y+AISpeed*1.7:ball.y
-            player2.y = (player2.y+(playerHeight/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
-            player2.y = (player2.y+(playerHeight/2)<target&&player2.y+playerHeight<screen.height)?player2.y+AISpeed:player2.y
-            fill('blue')
-            player1.y = (mouseY-(playerHeight/2)>=0&&mouseY+(playerHeight/2)<=screen.height)?mouseY-(playerHeight/2):player1.y
+            let target = ball.y+(AISpeed*1.75)
+            player2.y = (player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
+            player2.y = (player2.y+(player2.height/2)<target&&player2.y+player2.height<screen.height)?player2.y+AISpeed:player2.y
+            player1.y = (mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=screen.height)?mouseY-(player1.height/2):player1.y
             p1move = true
         }
-        if(isPowers){
-            if((dist(ball.x, ball.y, xPos, yPos)<10+screen.height/20)&&horizontalControl===1){
-                powerCatch(currentPower)
+        if(isPower){
+            let thisColor = powerColor[1]
+            thisColor.setAlpha(50)
+            fill(thisColor)
+            ellipse(spawnedPower.x+40, spawnedPower.y, screen.height/5)
+            if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/20){
+                let rightPlayer = horizontalControl==1?player1:player2
+                powerCatch(currentPower, rightPlayer)
+                spawnedPower = {}
+                isPower = false
             }
         }
-        rect(player1.x, player1.y, -10, playerHeight)
-        fill(255)
-        if(isPower){
-            ellipse(xPos, yPos, screen.height/10)
-        }
-        rect(player2.x, player2.y, 10, playerHeight)
-        ballTrack.forEach(past => {
-            ballColor = activatedFire?color(255,0,0):color(255,255,255)
-            ballColor.setAlpha(50)
-            fill(ballColor)
-            ellipse(past.x, past.y, 20)
-        })
-        fill(255)
-        if(activatedFire){fill('red')}
+        fill(player1.color)
+        rect(player1.x, player1.y, -10, player1.height)
+        fill(player2.color)
+        rect(player2.x, player2.y, 10, player1.height)
         if(ballTrack.length>5){ballTrack.shift()}
-        ellipse(ball.x, ball.y, 20)
-        fill(255)
         ballTrack.push({x: ball.x, y:ball.y})
+        ballTrack.forEach(past => {
+            ballColor[ballColorIndex].setAlpha(50)
+            fill(ballColor[ballColorIndex])
+            ellipse(past.x, past.y, 20)
+            ballColor[ballColorIndex].setAlpha(255)
+        })
+        fill(ballColor[ballColorIndex])
+        ellipse(ball.x, ball.y, 20)
         if(!gameMode){
             if(keyIsDown(SHIFT)){
                 player1.y = player1.y<=0?player1.y:player1.y-15
                 p1move = true
             }
             if(keyIsDown(CONTROL)){
-                player1.y = player1.y+playerHeight>=screen.height?player1.y:player1.y+15
+                player1.y = player1.y+player1.height>=screen.height?player1.y:player1.y+15
                 p1move = true
             }
             if(keyIsDown(UP_ARROW)){
@@ -203,7 +237,7 @@ function draw(){
                 p2move = true
             }
             if(keyIsDown(DOWN_ARROW)){
-                player2.y = player2.y+playerHeight>=screen.height?player2.y:player2.y+15
+                player2.y = player2.y+player2.height>=screen.height?player2.y:player2.y+15
                 p2move = true
             }
         }
@@ -218,8 +252,12 @@ function calculateball(){
         horizontalControl = -1
         playerMoved = p2move
         changeAngle()
+        if(activatedFire[1].state){
+            ballColorIndex = 1
+            ballDistance += screen.width/75
+        }
         ballDistance += screen.width/1500
-        if((ball.y-10>player2.y+playerHeight)||(ball.y+10<player2.y)){
+        if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
             p1Score++
             timeout = true
             timeinterval = setTimeout(winner, 250)
@@ -230,12 +268,8 @@ function calculateball(){
         horizontalControl = 1
         playerMoved = p1move
         changeAngle()
-        if(activatedFire){
-            ballDistance += screen.width/90
-            activatedFire = false
-        }
         ballDistance += screen.width/1500
-        if((ball.y-10>player1.y+playerHeight)||(ball.y+10<player1.y)){
+        if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
             p2Score++
             timeout = true
             timeinterval = setTimeout(winner, 250)
@@ -257,9 +291,11 @@ function calculateball(){
 
 function changeAngle(){
     let variation = 0
-    variation = ball.x>screen.width/2?player2.y+(playerHeight/2)-ball.y:variation
-    variation = ball.x<screen.width/2?player1.y+(playerHeight/2)-ball.y:variation
-    angle = Math.abs(variation)*(Math.PI/3)/(playerHeight/2+5)
+    variation = ball.x>screen.width/2?player2.y+(player2.height/2)-ball.y:variation
+    variation = ball.x<screen.width/2?player1.y+(player1.height/2)-ball.y:variation
+    angle = 0
+    angle = ball.x>screen.width/2?Math.abs(variation)*(Math.PI/3)/(player2.height/2+5):angle
+    angle = ball.x<screen.width/2?Math.abs(variation)*(Math.PI/3)/(player1.height/2+5):angle
     if(playerMoved){
         verticalControl = variation>0?-1:1
     }
@@ -288,10 +324,10 @@ function start(){
                 AISpeed = screen.height/82
                 break
             case 'Difícil':
-                AISpeed = screen.height/50
+                AISpeed = screen.height/57
                 break
             case 'INSANO':
-                AISpeed = screen.height/30
+                AISpeed = screen.height/34
                 break
         }
         isPowers = powersSelect.value() === 'Com poderes (1P)'?true:false
@@ -320,7 +356,8 @@ function start(){
         startButton.position(screen.width/2-60, screen.height/2-30)
         startButton.html("Start")
         textSize(14)
-        text('patch 1.2', 5, 15)
+        fill(255)
+        text('patch 1.4', 5, 15)
         selectMode.show()
         selectDifficulty.show()
         title.show()
