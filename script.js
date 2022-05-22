@@ -262,7 +262,7 @@ function draw(){
         text('patch 1.5', 5, 15)
         textAlign(CENTER)
         textSize(45)
-        text(player1.score+" - "+player2.score, (screen.width*14/15)/2, screen.height/12)
+        text(player1.score+" - "+player2.score, (screen.width*14/15)/2, screen.height/10)
         if(canSpawnPower){
             let xPos = Math.floor(Math.random()*(screen.width*14/15)*2/3)+(screen.width*14/15)/6
             let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
