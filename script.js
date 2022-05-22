@@ -173,12 +173,12 @@ function powerCatch(power, player, ball){
                     ballTrack: [],
                     horizontalControl: ball.horizontalControl*-1,
                     verticalControl: ball.verticalControl*-1,
-                    distance: screen.width/120,
+                    distance: 0,
                     angle: 0,
                     lastPlayerHit: 1
                 })
             balls.forEach(ball => {
-                ball.distance = ball.distance/2
+                ball.distance = screen.width/200
             })
             balls[balls.length-1]['ballColor'].push(color(255,255,255), color(255,0,0))
             break
@@ -229,7 +229,7 @@ function draw(){
         if(canSpawnPower){
             let xPos = Math.floor(Math.random()*screen.width*19/20)+screen.width/40
             let yPos = Math.floor(Math.random()*screen.height)
-            currentPower = 4
+            currentPower = Math.floor(Math.random()*6)
             spawnedPower = {x: xPos, y: yPos}
             canSpawnPower = false
             isPower = true
@@ -311,7 +311,7 @@ function calculateball(){
         let verticalballDistance = Math.sin(ball.angle)*ball.distance
         if(ball.x+10>=player2.x){
             ball.lastPlayerHit = 2
-            ball.distance += screen.width/1350
+            ball.distance += screen.width/1500
             ball.horizontalControl = -1
             playerMoved = p2move
             changeAngle(player2, index)
@@ -330,7 +330,7 @@ function calculateball(){
         }
         if(ball.x-10<=player1.x){
             ball.lastPlayerHit = 1
-            ball.distance += screen.width/1350
+            ball.distance += screen.width/1500
             ball.horizontalControl = 1
             playerMoved = p1move
             changeAngle(player1, index)
