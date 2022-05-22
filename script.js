@@ -58,14 +58,14 @@ let stopPowerInterval1
 let stopPowerInterval2
 let scoreDisplay
 let scoreLimitSelect
-let scoreLimit
+let scoreLimit = 5
 let mainmenu
 let activatedFire = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedIce = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedInverted = [{p: 'player1', state:false},{p:'player2', state:false}]
 let isPower = false
 let spawnedPower
-let subtitle = 'Deixe o dispositivo na horizontal\n(recarregue a pagina) e jogue em tela cheia!\n (botao no canto superior direito)'
+let subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
 let allPowers = [{p:'Fogo', t:7500, c:'green'}, {p:'Invertido', t:7500, c:'red'}, {p:'Multibola', t:7500, c:'white'},
 {p:'Gol de ouro', t:7500, c:'white'}, {p:'Grande', t:7500, c:'green'}, {p:'Pequeno', t:7500, c:'red'}, {p:'Congelado', t:2000, c:'red'},]
 let currentPower
@@ -496,7 +496,7 @@ function start(){
         }
         canSpawnPower = true
         gameplaying = true
-        subtitle = 'Deixe o dispositivo na horizontal\n(recarregue a pagina) e jogue em tela cheia!\n (botao no canto superior direito)'
+        subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
         startButton.html("Resetar")
         mainmenu.style('transform', 'none')
         mainmenu.style('margin-top', '1.5rem')
