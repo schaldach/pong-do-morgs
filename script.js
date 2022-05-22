@@ -262,7 +262,7 @@ function draw(){
             player2.y = !activatedIce[1].state&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
             player2.y = !activatedIce[1].state&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<screen.height)?player2.y+AISpeed:player2.y
             player1.y = !activatedIce[0].state&&!activatedInverted[0].state&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=screen.height)?mouseY-(player1.height/2):player1.y
-            player1.y = activatedInverted[0].state&&(screen.height-mouseY-(player1.height/2)>=0&&screen.height-mouseY-(player1.height/2)<=screen.height)?screen.height-mouseY-(player1.height/2):player1.y
+            player1.y = activatedInverted[0].state&&(screen.height-mouseY+(player1.height/2)<=screen.height&&screen.height-mouseY-(player1.height/2)>=0)?screen.height-mouseY-(player1.height/2):player1.y
             p1move = true
             p2move = true
         }
