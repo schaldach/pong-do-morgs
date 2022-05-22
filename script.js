@@ -122,7 +122,7 @@ function setup(){
     scoreDisplay = createDiv('Pontos para vencer')
     scoreDisplay.id('lim')
     scoreDisplay.parent('mainmenu')
-    scoreLimitSelect = createInput('10')
+    scoreLimitSelect = createInput(10, 'number')
     scoreLimitSelect.parent('lim')
     scoreLimitSelect.input(setInput)
     fullScreen = createImg('screen.png')
@@ -425,12 +425,12 @@ function changeAngle(player, index){
 
 function winner(){
     timeout = false
-    if(player1.score==scoreLimit){
+    if(player1.score==scoreLimit&&scoreLimit!=0){
         subtitle = 'Jogador 1 venceu!'
         start()
         return
     }
-    if(player2.score==scoreLimit){
+    if(player2.score==scoreLimit&&scoreLimit!=0){
         subtitle = 'Jogador 2 venceu!'
         start()
         return
