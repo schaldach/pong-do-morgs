@@ -158,7 +158,7 @@ function touchMoved(){
 }
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) {
-        page.requestFullscreen()
+        page.requestFullscreen({navigationUI:'hide'})
         isFull = true
     }
     else if(document.exitFullscreen && isFull){
