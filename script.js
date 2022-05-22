@@ -143,7 +143,7 @@ function setup(){
     text('patch 1.5', 5, 15)
     textAlign(CENTER)
     textSize(20)
-    text(subtitle, (screen.width*14/15)/2, screen.height/4)
+    text(subtitle, (screen.width*14/15)/2, screen.height*2/7)
     noStroke()
 }
 function setInput(){
@@ -474,7 +474,7 @@ function start(){
             powerInterval = setInterval(spawnPower, 6000)
         }
         gameplaying = true
-        subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e na horizontal!'
+        subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal! (recarregue a pagina)'
         startButton.html("Resetar")
         mainmenu.style('transform', 'none')
         mainmenu.style('margin-top', '1.5rem')
@@ -528,7 +528,7 @@ function start(){
         text('patch 1.5', 5, 15)
         textAlign(CENTER)
         textSize(20)
-        text(subtitle, (screen.width*14/15)/2, screen.height/4)
+        text(subtitle, (screen.width*14/15)/2, screen.height*2/7)
         selectMode.show()
         selectDifficulty.show()
         powersSelect.show()
