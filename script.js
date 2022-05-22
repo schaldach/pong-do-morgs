@@ -9,24 +9,27 @@ let balls = [
         verticalControl: 1,
         distance: screen.width/120,
         angle: 0,
-        lastPlayerHit: 1 
+        lastPlayerHit: 1,
+        scoreValue: 1
     }
 ]
 let player1 = {
     p: 'player1',
     x: 10,
-    y: screen.height/2,
+    y: screen.height*3/8,
     height: screen.height/4,
     color: 'white',
-    lastPower: 0
+    lastPower: 0,
+    score: 0
 }
 let player2 = {
     p: 'player2',
     x: screen.width-10,
-    y: screen.height/2,
+    y: screen.height*3/8,
     height: screen.height/4,
     color: 'white',
-    lastPower: 0
+    lastPower: 0,
+    score: 0
 }
 let gameplaying = false
 let timeout = false
@@ -34,8 +37,6 @@ let p1move = false
 let p2move = false
 let playerMoved = false
 let isFull = false
-let p1Score = 0
-let p2Score = 0
 let isPowers
 let timeinterval
 let canSpawnPower = false
@@ -54,16 +55,21 @@ let title
 let powerInterval
 let stopPowerInterval1
 let stopPowerInterval2
+let scoreDisplay
+let scoreLimitSelect
+let scoreLimit
+let mainmenu
 let lastPlayerHit = ''
 let activatedFire = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedIce = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedInverted = [{p: 'player1', state:false},{p:'player2', state:false}]
 let isPower = false
 let spawnedPower
-let allPowers = [{p:'large', side:'good', t:7000}, {p:'hot', side:'good', t:7000}, 
-{p:'freeze', side:'bad', t:2000}, {p:'multiball', side:'neutral', t:7000}, 
-{p:'inverted', side:'bad', t:7000}, {p:'small', side:'bad', t:7000}]
+let subtitle = 'Jogue em tela cheia e horizontal!\n(botao no canto superior direito)'
+let allPowers = [{p:'hot', t:7000}, {p:'inverted', t:7000}, {p:'multiball', t:7000}, 
+{p:'gold', t:7000}, {p:'large', t:7000}, {p:'small', t:7000}, {p:'freeze', t:2000},]
 let currentPower
+let AIrandomizer = 1
 let font
 
 function preload(){
@@ -76,36 +82,50 @@ function setup(){
     myCanvas.position(0,0,"fixed")
     textFont(font)
     fill(255)
+    mainmenu = createDiv()
+    mainmenu.parent('page')
+    mainmenu.id('mainmenu')
+    mainmenu.style('display', 'flex')
+    mainmenu.style('flex-direction', 'column')
+    mainmenu.style('gap', '10px')
+    mainmenu.style('top', 0)
+    mainmenu.style('bottom', 0)
+    mainmenu.style('left', 0)
+    mainmenu.style('right', 0)
+    mainmenu.style('width', 'fit-content')
+    mainmenu.style('margin', 'auto')
+    mainmenu.style('top', '65%')
+    mainmenu.style('transform', 'translateY(-50%)')
+    mainmenu.style('position', 'absolute')
+    mainmenu.style('margin', 'auto')
+    mainmenu.style('text-align', 'center')
     startButton = createButton("Start")
-    startButton.position(screen.width/2-50, screen.height/2-30)
     startButton.mousePressed(start)
-    startButton.parent('page')
-    textSize(14)
-    text('patch 1.5', 5, 15)
-    textAlign(CENTER)
-    textSize(20)
-    text('Jogue em tela cheia e horizontal!\n(botao no canto superior direito)', screen.width/2, screen.height*2/5-25)
+    startButton.parent('mainmenu')
     title = createDiv('Pong do Morgs')
-    title.position(screen.width*7/32, -5)
+    title.position(screen.width/4, -10)
     title.addClass('titulo')
     selectMode = createSelect();
     selectMode.option('1 Player')
     selectMode.option('2 Players (PC)')
-    selectMode.position(screen.width/2-85, screen.height/2+50)
-    selectMode.parent('page')
+    selectMode.parent('mainmenu')
     selectDifficulty = createSelect()
     selectDifficulty.option('Facil')
     selectDifficulty.option('Medio')
     selectDifficulty.option('Dificil')
     selectDifficulty.option('PESADELO')
     selectDifficulty.selected('Medio')
-    selectDifficulty.position(screen.width/2-60, screen.height/2+100)
-    selectDifficulty.parent('page')
+    selectDifficulty.parent('mainmenu')
     powersSelect = createSelect()
     powersSelect.option('Com poderes')
     powersSelect.option('Sem poderes')
-    powersSelect.position(screen.width/2-80, screen.height/2+150)
-    powersSelect.parent('page')
+    powersSelect.parent('mainmenu')
+    scoreDisplay = createDiv('Pontos para vencer')
+    scoreDisplay.id('lim')
+    scoreDisplay.parent('mainmenu')
+    scoreLimitSelect = createInput('10')
+    scoreLimitSelect.parent('lim')
+    scoreLimitSelect.input(setInput)
     fullScreen = createImg('screen.png')
     fullScreen.position(screen.width-60, 10)
     fullScreen.mousePressed(activateFullscreen)
@@ -117,9 +137,18 @@ function setup(){
     imgdiv.mousePressed(activateFullscreen)
     imgdiv.parent('page')
     page = document.getElementById('page')
-    balls[0]['ballColor'].push(color(255,255,255), color(255,0,0))
+    balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
     powerColor.push(color(255,0,0),color(0,255,0),color(255,255,255))
+    textAlign(LEFT)
+    textSize(14)
+    text('patch 1.5', 5, 15)
+    textAlign(CENTER)
+    textSize(20)
+    text(subtitle, screen.width/2, screen.height*2/7)
     noStroke()
+}
+function setInput(){
+    scoreLimit = parseInt(this.value())
 }
 function touchMoved(){
     if(gameplaying&&!gameMode&&!timeout){
@@ -137,6 +166,12 @@ function activateFullscreen(){
         isFull = false
     }
 }
+function isTouchDevice() {
+    return(('ontouchstart' in window)||
+    (navigator.maxTouchPoints > 0)||
+    (navigator.msMaxTouchPoints > 0))
+}
+let device = isTouchDevice()
 
 function spawnPower(){
     canSpawnPower = true
@@ -144,11 +179,11 @@ function spawnPower(){
 
 function powerCatch(power, player, ball){
     if(ball.horizontalControl===1){
-        clearInterval(stopPowerInterval1)
+        clearTimeout(stopPowerInterval1)
         stopPowerInterval1 = setTimeout(stopPower, allPowers[power].t, power, player)
     }
     else{
-        clearInterval(stopPowerInterval2)
+        clearTimeout(stopPowerInterval2)
         stopPowerInterval2 = setTimeout(stopPower, allPowers[power].t, power, player)
     }
     player.lastPower = power
@@ -169,24 +204,30 @@ function powerCatch(power, player, ball){
                     x: ball.x,
                     y: ball.y,
                     ballColor: [],
-                    ballColorIndex: ball.ballColorIndex,
+                    ballColorIndex: 0,
                     ballTrack: [],
                     horizontalControl: ball.horizontalControl*-1,
                     verticalControl: ball.verticalControl*-1,
                     distance: 0,
-                    angle: 0,
-                    lastPlayerHit: 1
+                    angle: ball.angle,
+                    lastPlayerHit: 1,
+                    scoreValue: 1
                 })
             balls.forEach(ball => {
                 ball.distance = screen.width/200
+                ball.ballColorIndex = ball.ballColorIndex==1?0:ball.ballColorIndex
             })
-            balls[balls.length-1]['ballColor'].push(color(255,255,255), color(255,0,0))
+            balls[balls.length-1]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
             break
         case 'inverted':
             activatedInverted[activatedInverted.findIndex(e => e.p==player.p)].state = true
             break
         case 'small':
             player.height = screen.height/8
+            break
+        case 'gold':
+            ball.scoreValue = 2
+            ball.ballColorIndex = 2
             break
     }
 }
@@ -221,15 +262,19 @@ function draw(){
         selectMode.hide()
         selectDifficulty.hide()
         powersSelect.hide()
+        scoreDisplay.hide()
         title.hide()
-        textSize(45)
         fill(255)
+        textAlign(LEFT)
+        textSize(14)
+        text('patch 1.5', 5, 15)
         textAlign(CENTER)
-        text(p1Score+" - "+p2Score, screen.width/2, 60)
+        textSize(45)
+        text(player1.score+" - "+player2.score, screen.width/2, screen.height/14)
         if(canSpawnPower){
-            let xPos = Math.floor(Math.random()*screen.width*19/20)+screen.width/40
-            let yPos = Math.floor(Math.random()*screen.height)
-            currentPower = Math.floor(Math.random()*6)
+            let xPos = Math.floor(Math.random()*screen.width*2/3)+screen.width/6
+            let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
+            currentPower = Math.floor(Math.random()*7)
             spawnedPower = {x: xPos, y: yPos}
             canSpawnPower = false
             isPower = true
@@ -238,9 +283,9 @@ function draw(){
             let thisColor = powerColor[1]
             thisColor.setAlpha(75)
             fill(thisColor)
-            ellipse(spawnedPower.x, spawnedPower.y, screen.height/4)
+            ellipse(spawnedPower.x, spawnedPower.y, screen.height/3)
             balls.forEach(ball => {
-                if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/8){
+                if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/6){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
                     stopPower(rightPlayer.lastPower, rightPlayer)
                     powerCatch(currentPower, rightPlayer, ball)
@@ -258,7 +303,7 @@ function draw(){
                     closestBall = index
                 }
             })
-            let target = balls[closestBall].y+(AISpeed*1.75)
+            let target = balls[closestBall].y+(AISpeed*1.75*AIrandomizer)
             player2.y = !activatedIce[1].state&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
             player2.y = !activatedIce[1].state&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<screen.height)?player2.y+AISpeed:player2.y
             player1.y = !activatedIce[0].state&&!activatedInverted[0].state&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=screen.height)?mouseY-(player1.height/2):player1.y
@@ -267,21 +312,35 @@ function draw(){
             p2move = true
         }
         else{
-            if(keyIsDown(SHIFT)&&!activatedIce[0].state){
-                player1.y = player1.y<=0?player1.y:player1.y-15
-                p1move = true
+            if(device){
+                touches.forEach(touch => {
+                    if(touch.x < screen.width/2){
+                        player1.y = !activatedIce[0].state&&!activatedInverted[0].state&&(touch.y-(player1.height/2)>=0&&touch.y+(player1.height/2)<=screen.height)?touch.y-(player1.height/2):player1.y
+                        player1.y = activatedInverted[0].state&&(screen.height-touch.y+(player1.height/2)<=screen.height&&screen.height-touch.y-(player1.height/2)>=0)?screen.height-touch.y-(player1.height/2):player1.y
+                    }
+                    else{
+                        player2.y = !activatedIce[1].state&&!activatedInverted[1].state&&(touch.y-(player2.height/2)>=0&&touch.y+(player2.height/2)<=screen.height)?touch.y-(player2.height/2):player2.y
+                        player2.y = activatedInverted[1].state&&(screen.height-touch.y+(player2.height/2)<=screen.height&&screen.height-touch.y-(player2.height/2)>=0)?screen.height-touch.y-(player2.height/2):player2.y
+                    }
+                })
             }
-            if(keyIsDown(CONTROL)&&!activatedIce[0].state){
-                player1.y = player1.y+player1.height>=screen.height?player1.y:player1.y+15
-                p1move = true
-            }
-            if(keyIsDown(UP_ARROW)&&!activatedIce[1].state){
-                player2.y = player2.y<=0?player2.y:player2.y-15
-                p2move = true
-            }
-            if(keyIsDown(DOWN_ARROW)&&!activatedIce[1].state){
-                player2.y = player2.y+player2.height>=screen.height?player2.y:player2.y+15
-                p2move = true
+            else{
+                if(!activatedIce[0].state&&(keyIsDown(SHIFT)&&!activatedInverted[0].state)||(keyIsDown(CONTROL)&&activatedInverted[0].state)){
+                    player1.y = player1.y<=0?player1.y:player1.y-15
+                    p1move = true
+                }
+                if(!activatedIce[0].state&&(keyIsDown(CONTROL)&&!activatedInverted[0].state)||(keyIsDown(SHIFT)&&activatedInverted[0].state)){
+                    player1.y = player1.y+player1.height>=screen.height?player1.y:player1.y+15
+                    p1move = true
+                }
+                if(!activatedIce[1].state&&(keyIsDown(UP_ARROW)&&!activatedInverted[1].state)||(keyIsDown(DOWN_ARROW)&&activatedInverted[1].state)){
+                    player2.y = player2.y<=0?player2.y:player2.y-15
+                    p2move = true
+                }
+                if(!activatedIce[1].state&&(keyIsDown(DOWN_ARROW)&&!activatedInverted[1].state)||(keyIsDown(UP_ARROW)&&activatedInverted[1].state)){
+                    player2.y = player2.y+player2.height>=screen.height?player2.y:player2.y+15
+                    p2move = true
+                }
             }
         }
         fill(player1.color)
@@ -310,6 +369,9 @@ function calculateball(){
         let horizontalballDistance = Math.cos(ball.angle)*ball.distance
         let verticalballDistance = Math.sin(ball.angle)*ball.distance
         if(ball.x+10>=player2.x){
+            if(gameMode){
+                AIrandomizer = Math.random()>0.5?1:-1
+            }
             ball.lastPlayerHit = 2
             ball.distance += screen.width/1500
             ball.horizontalControl = -1
@@ -317,12 +379,12 @@ function calculateball(){
             changeAngle(player2, index)
             if(activatedFire[1].state){
                 ball.ballColorIndex = 1
-                clearInterval(stopPowerInterval2)
-                stopPower(1, player2)
-                ball.distance += screen.width/90
+                clearTimeout(stopPowerInterval2)
+                stopPower(0, player2)
+                ball.distance += screen.width/80
             }
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
-                p1Score++
+                player1.score+=ball.scoreValue
                 timeout = true
                 timeinterval = setTimeout(winner, 250)
                 return
@@ -336,12 +398,12 @@ function calculateball(){
             changeAngle(player1, index)
             if(activatedFire[0].state){
                 ball.ballColorIndex = 1
-                clearInterval(stopPowerInterval1)
-                stopPower(1, player1)
-                ball.distance += screen.width/90
+                clearTimeout(stopPowerInterval1)
+                stopPower(0, player1)
+                ball.distance += screen.width/80
             }
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
-                p2Score++
+                player2.score+=ball.scoreValue
                 timeout = true
                 timeinterval = setTimeout(winner, 250)
                 return
@@ -370,6 +432,16 @@ function changeAngle(player, index){
 
 function winner(){
     timeout = false
+    if(player1.score==scoreLimit){
+        subtitle = 'Jogador 1 venceu!'
+        start()
+        return
+    }
+    if(player2.score==scoreLimit){
+        subtitle = 'Jogador 2 venceu!'
+        start()
+        return
+    }
     balls = [{
             x: screen.width/2,
             y: screen.height/2,
@@ -379,11 +451,13 @@ function winner(){
             horizontalControl: 1,
             verticalControl: 1,
             distance: screen.width/120,
-            angle: 0
+            angle: 0,
+            lastPlayerHit: 1,
+            scoreValue: 1
         }]
-    balls[0]['ballColor'].push(color(255,255,255), color(255,0,0))
-    player1.y = screen.height/2
-    player2.y = screen.height/2
+    balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
+    player1.y = screen.height*3/8
+    player2.y = screen.height*3/8
 }
 
 function start(){
@@ -400,7 +474,7 @@ function start(){
                 AISpeed = screen.height/57
                 break
             case 'PESADELO':
-                AISpeed = screen.height/34
+                AISpeed = screen.height/31
                 break
         }
         isPowers = powersSelect.value() === 'Com poderes'?true:false
@@ -408,8 +482,15 @@ function start(){
             powerInterval = setInterval(spawnPower, 6000)
         }
         gameplaying = true
+        subtitle = 'Jogue em tela cheia e horizontal!\n(botao no canto superior direito)'
         startButton.html("Resetar")
-        startButton.position(20,20)
+        mainmenu.style('transform', 'none')
+        mainmenu.style('margin-top', '1.5rem')
+        mainmenu.style('margin-left', '2rem')
+        mainmenu.style('top', 'auto')
+        mainmenu.style('bottom', 'auto')
+        mainmenu.style('left', 'auto')
+        mainmenu.style('right', 'auto')
     }
     else if(!timeout){
         clearInterval(powerInterval)
@@ -426,14 +507,29 @@ function start(){
             horizontalControl: 1,
             verticalControl: 1,
             distance: screen.width/100,
-            angle: 0
+            angle: 0,
+            lastPlayerHit: 1,
+            scoreValue: 1
         }]
-        balls[0]['ballColor'].push(color(255,255,255), color(255,0,0))
-        p1Score = 0
-        p2Score = 0
+        balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
+        player1.score = 0
+        player2.score = 0
         player1.y = screen.height*2/5
         player2.y = screen.height*2/5
-        startButton.position(screen.width/2-50, screen.height/2-30)
+        mainmenu.style('display', 'flex')
+        mainmenu.style('flex-direction', 'column')
+        mainmenu.style('gap', '10px')
+        mainmenu.style('top', '0')
+        mainmenu.style('bottom', '0')
+        mainmenu.style('left', '0')
+        mainmenu.style('right', '0')
+        mainmenu.style('width', 'fit-content')
+        mainmenu.style('margin', 'auto')
+        mainmenu.style('top', '65%')
+        mainmenu.style('transform', 'translateY(-50%)')
+        mainmenu.style('position', 'absolute')
+        mainmenu.style('margin', 'auto')
+        mainmenu.style('text-align', 'center')
         startButton.html("Start")
         fill(255)
         textSize(14)
@@ -441,10 +537,11 @@ function start(){
         text('patch 1.5', 5, 15)
         textAlign(CENTER)
         textSize(20)
-        text('Jogue em tela cheia e horizontal!\n(botao no canto superior direito)', screen.width/2, screen.height*2/5-25)
+        text(subtitle, screen.width/2, screen.height*2/7)
         selectMode.show()
         selectDifficulty.show()
-        title.show()
         powersSelect.show()
+        title.show()
+        scoreDisplay.show()
     }
 }

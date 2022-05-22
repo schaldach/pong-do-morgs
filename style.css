@@ -13,7 +13,20 @@ button{
     border: none;
     outline: none;
     color: #ffffff;
-    font-size: 2rem;
+    font-size: 2vw;
+}
+
+input{
+    padding-left: 10px;
+    margin-left: 1rem;
+    width: 40px;
+    background: #ffffff;
+    font-family: 'Koulen', cursive;
+    border-radius: 10px;
+    color: #000000;
+    border: none;
+    outline: none;
+    font-size: 1.5vw;
 }
 
 select{
@@ -22,7 +35,8 @@ select{
     border-radius: 10px;
     color: #000000;
     border: none;
-    font-size: 1.5rem;
+    outline: none;
+    font-size: 1.5vw;
 }
 
 .titulo{
@@ -31,5 +45,11 @@ select{
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    font-size: 10vw;
+    font-size: 9vw !important;
+}
+
+div{
+    color: #ffffff;
+    font-family: 'Koulen', cursive;
+    font-size: 1.5vw;
 }
