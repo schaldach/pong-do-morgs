@@ -66,8 +66,8 @@ let activatedInverted = [{p: 'player1', state:false},{p:'player2', state:false}]
 let isPower = false
 let spawnedPower
 let subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal! (recarregue a pagina)'
-let allPowers = [{p:'Fogo', t:7000, c:'green'}, {p:'Invertido', t:7000, c:'red'}, {p:'Multibola', t:7000, c:'white'},
-{p:'Gol de ouro', t:7000, c:'white'}, {p:'Grande', t:7000, c:'green'}, {p:'Pequeno', t:7000, c:'red'}, {p:'Congelado', t:2000, c:'red'},]
+let allPowers = [{p:'Fogo', t:7500, c:'green'}, {p:'Invertido', t:7500, c:'red'}, {p:'Multibola', t:7500, c:'white'},
+{p:'Gol de ouro', t:7500, c:'white'}, {p:'Grande', t:7500, c:'green'}, {p:'Pequeno', t:7500, c:'red'}, {p:'Congelado', t:2000, c:'red'},]
 let currentPower
 let AIrandomizer = 1
 let font
@@ -335,6 +335,8 @@ function draw(){
                         player2.y = activatedInverted[1].state&&(screen.height-touch.y+(player2.height/2)<=screen.height&&screen.height-touch.y-(player2.height/2)>=0)?screen.height-touch.y-(player2.height/2):player2.y
                     }
                 })
+                p1move = true
+                p2move = true
             }
             else{
                 if(!activatedIce[0].state&&(keyIsDown(SHIFT)&&!activatedInverted[0].state)||(keyIsDown(CONTROL)&&activatedInverted[0].state)){
@@ -493,6 +495,7 @@ function start(){
         if(isPowers){
             powerInterval = setInterval(spawnPower, 6000)
         }
+        canSpawnPower = true
         gameplaying = true
         subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal! (recarregue a pagina)'
         startButton.html("Resetar")
