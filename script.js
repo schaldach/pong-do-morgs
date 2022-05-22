@@ -64,7 +64,7 @@ let activatedIce = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedInverted = [{p: 'player1', state:false},{p:'player2', state:false}]
 let isPower = false
 let spawnedPower
-let subtitle = 'Jogue em tela cheia e horizontal!\n(botao no canto superior direito)'
+let subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal!'
 let allPowers = [{p:'hot', t:7000}, {p:'inverted', t:7000}, {p:'multiball', t:7000}, 
 {p:'gold', t:7000}, {p:'large', t:7000}, {p:'small', t:7000}, {p:'freeze', t:2000},]
 let currentPower
@@ -143,7 +143,7 @@ function setup(){
     text('patch 1.5', 5, 15)
     textAlign(CENTER)
     textSize(20)
-    text(subtitle, screen.width/2, screen.height*2/7)
+    text(subtitle, screen.width/2, screen.height/4)
     noStroke()
 }
 function setInput(){
@@ -475,7 +475,7 @@ function start(){
             powerInterval = setInterval(spawnPower, 6000)
         }
         gameplaying = true
-        subtitle = 'Jogue em tela cheia e horizontal!\n(botao no canto superior direito)'
+        subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e na horizontal!'
         startButton.html("Resetar")
         mainmenu.style('transform', 'none')
         mainmenu.style('margin-top', '1.5rem')
@@ -530,7 +530,7 @@ function start(){
         text('patch 1.5', 5, 15)
         textAlign(CENTER)
         textSize(20)
-        text(subtitle, screen.width/2, screen.height*2/7)
+        text(subtitle, screen.width/2, screen.height/4)
         selectMode.show()
         selectDifficulty.show()
         powersSelect.show()
