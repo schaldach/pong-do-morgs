@@ -65,7 +65,7 @@ let activatedIce = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedInverted = [{p: 'player1', state:false},{p:'player2', state:false}]
 let isPower = false
 let spawnedPower
-let subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal! (recarregue a pagina)'
+let subtitle = 'Deixe o dispositivo na horizontal\n(recarregue a pagina) e jogue em tela cheia!\n (botao no canto superior direito)'
 let allPowers = [{p:'Fogo', t:7500, c:'green'}, {p:'Invertido', t:7500, c:'red'}, {p:'Multibola', t:7500, c:'white'},
 {p:'Gol de ouro', t:7500, c:'white'}, {p:'Grande', t:7500, c:'green'}, {p:'Pequeno', t:7500, c:'red'}, {p:'Congelado', t:2000, c:'red'},]
 let currentPower
@@ -496,7 +496,7 @@ function start(){
         }
         canSpawnPower = true
         gameplaying = true
-        subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal! (recarregue a pagina)'
+        subtitle = 'Deixe o dispositivo na horizontal\n(recarregue a pagina) e jogue em tela cheia!\n (botao no canto superior direito)'
         startButton.html("Resetar")
         mainmenu.style('transform', 'none')
         mainmenu.style('margin-top', '1.5rem')
