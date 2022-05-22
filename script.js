@@ -149,12 +149,6 @@ function setup(){
 function setInput(){
     scoreLimit = parseInt(this.value())
 }
-function touchMoved(){
-    if(gameplaying&&!gameMode&&!timeout){
-        player1.y = mouseY
-        playerMoved = true
-    }
-}
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) {
         page.requestFullscreen({navigationUI:'hide'})
