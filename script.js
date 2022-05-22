@@ -107,7 +107,7 @@ function setup(){
     title.addClass('titulo')
     selectMode = createSelect();
     selectMode.option('1 Player')
-    selectMode.option('2 Players (PC)')
+    selectMode.option('2 Players')
     selectMode.parent('mainmenu')
     selectDifficulty = createSelect()
     selectDifficulty.option('Facil')
