@@ -1,13 +1,13 @@
 let balls = [
     {
-        x: screen.width/2,
+        x: (screen.width*14/15)/2,
         y: screen.height/2,
         ballColor: [],
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: 1,
         verticalControl: 1,
-        distance: screen.width/120,
+        distance: (screen.width*14/15)/120,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1
@@ -24,7 +24,7 @@ let player1 = {
 }
 let player2 = {
     p: 'player2',
-    x: screen.width-10,
+    x: (screen.width*14/15)-10,
     y: screen.height*3/8,
     height: screen.height/4,
     color: 'white',
@@ -64,7 +64,7 @@ let activatedIce = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedInverted = [{p: 'player1', state:false},{p:'player2', state:false}]
 let isPower = false
 let spawnedPower
-let subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal!'
+let subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal! (recarregue a pagina)'
 let allPowers = [{p:'hot', t:7000}, {p:'inverted', t:7000}, {p:'multiball', t:7000}, 
 {p:'gold', t:7000}, {p:'large', t:7000}, {p:'small', t:7000}, {p:'freeze', t:2000},]
 let currentPower
@@ -75,10 +75,10 @@ function preload(){
     font = loadFont('koulen.ttf')
 }
 function setup(){
-    myCanvas = createCanvas(screen.width,screen.height)
+    myCanvas = createCanvas((screen.width*14/15),screen.height)
     myCanvas.parent('page')
     background("#000000")
-    myCanvas.position(0,0,"fixed")
+    myCanvas.position(screen.width/30,0,"fixed")
     textFont(font)
     fill(255)
     mainmenu = createDiv()
@@ -102,7 +102,7 @@ function setup(){
     startButton.mousePressed(start)
     startButton.parent('mainmenu')
     title = createDiv('Pong do Morgs')
-    title.position(screen.width/4, -10)
+    title.position((screen.width*14/15)/4, -10)
     title.addClass('titulo')
     selectMode = createSelect();
     selectMode.option('1 Player')
@@ -126,12 +126,12 @@ function setup(){
     scoreLimitSelect.parent('lim')
     scoreLimitSelect.input(setInput)
     fullScreen = createImg('screen.png')
-    fullScreen.position(screen.width-60, 10)
+    fullScreen.position((screen.width*14/15)-60, 10)
     fullScreen.mousePressed(activateFullscreen)
     fullScreen.size(50,50)
     fullScreen.parent('page')
     imgdiv = createDiv()
-    imgdiv.position(screen.width-60, 10)
+    imgdiv.position((screen.width*14/15)-60, 10)
     imgdiv.size(50,50)
     imgdiv.mousePressed(activateFullscreen)
     imgdiv.parent('page')
@@ -143,7 +143,7 @@ function setup(){
     text('patch 1.5', 5, 15)
     textAlign(CENTER)
     textSize(20)
-    text(subtitle, screen.width/2, screen.height/4)
+    text(subtitle, (screen.width*14/15)/2, screen.height/4)
     noStroke()
 }
 function setInput(){
@@ -207,7 +207,7 @@ function powerCatch(power, player, ball){
                     scoreValue: 1
                 })
             balls.forEach(ball => {
-                ball.distance = screen.width/200
+                ball.distance = (screen.width*14/15)/200
                 ball.ballColorIndex = ball.ballColorIndex==1?0:ball.ballColorIndex
             })
             balls[balls.length-1]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
@@ -251,7 +251,6 @@ function draw(){
     if(gameplaying&&!timeout){
         clear()
         background("#000000")
-        myCanvas.position(0,0,"fixed")
         selectMode.hide()
         selectDifficulty.hide()
         powersSelect.hide()
@@ -263,9 +262,9 @@ function draw(){
         text('patch 1.5', 5, 15)
         textAlign(CENTER)
         textSize(45)
-        text(player1.score+" - "+player2.score, screen.width/2, screen.height/14)
+        text(player1.score+" - "+player2.score, (screen.width*14/15)/2, screen.height/12)
         if(canSpawnPower){
-            let xPos = Math.floor(Math.random()*screen.width*2/3)+screen.width/6
+            let xPos = Math.floor(Math.random()*(screen.width*14/15)*2/3)+(screen.width*14/15)/6
             let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
             currentPower = Math.floor(Math.random()*7)
             spawnedPower = {x: xPos, y: yPos}
@@ -288,11 +287,11 @@ function draw(){
             })
         }
         if(gameMode){
-            let xDist = screen.width
+            let xDist = (screen.width*14/15)
             balls.forEach(ball => {
                 let index = balls.indexOf(ball)
-                if(screen.width-ball.x<xDist){
-                    xDist = screen.width-ball.x
+                if((screen.width*14/15)-ball.x<xDist){
+                    xDist = (screen.width*14/15)-ball.x
                     closestBall = index
                 }
             })
@@ -307,7 +306,7 @@ function draw(){
         else{
             if(device){
                 touches.forEach(touch => {
-                    if(touch.x < screen.width/2){
+                    if(touch.x < (screen.width*14/15)/2){
                         player1.y = !activatedIce[0].state&&!activatedInverted[0].state&&(touch.y-(player1.height/2)>=0&&touch.y+(player1.height/2)<=screen.height)?touch.y-(player1.height/2):player1.y
                         player1.y = activatedInverted[0].state&&(screen.height-touch.y+(player1.height/2)<=screen.height&&screen.height-touch.y-(player1.height/2)>=0)?screen.height-touch.y-(player1.height/2):player1.y
                     }
@@ -366,7 +365,7 @@ function calculateball(){
                 AIrandomizer = Math.random()>0.5?1:-1
             }
             ball.lastPlayerHit = 2
-            ball.distance += screen.width/1500
+            ball.distance += (screen.width*14/15)/1500
             ball.horizontalControl = -1
             playerMoved = p2move
             changeAngle(player2, index)
@@ -374,7 +373,7 @@ function calculateball(){
                 ball.ballColorIndex = 1
                 clearTimeout(stopPowerInterval2)
                 stopPower(0, player2)
-                ball.distance += screen.width/80
+                ball.distance += (screen.width*14/15)/80
             }
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
                 player1.score+=ball.scoreValue
@@ -385,7 +384,7 @@ function calculateball(){
         }
         if(ball.x-10<=player1.x){
             ball.lastPlayerHit = 1
-            ball.distance += screen.width/1500
+            ball.distance += (screen.width*14/15)/1500
             ball.horizontalControl = 1
             playerMoved = p1move
             changeAngle(player1, index)
@@ -393,7 +392,7 @@ function calculateball(){
                 ball.ballColorIndex = 1
                 clearTimeout(stopPowerInterval1)
                 stopPower(0, player1)
-                ball.distance += screen.width/80
+                ball.distance += (screen.width*14/15)/80
             }
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
                 player2.score+=ball.scoreValue
@@ -436,14 +435,14 @@ function winner(){
         return
     }
     balls = [{
-            x: screen.width/2,
+            x: (screen.width*14/15)/2,
             y: screen.height/2,
             ballColor: [],
             ballColorIndex: 0,
             ballTrack: [],
             horizontalControl: 1,
             verticalControl: 1,
-            distance: screen.width/120,
+            distance: (screen.width*14/15)/120,
             angle: 0,
             lastPlayerHit: 1,
             scoreValue: 1
@@ -489,17 +488,16 @@ function start(){
         clearInterval(powerInterval)
         clear()
         background("#000000")
-        myCanvas.position(0,0,"fixed")
         gameplaying = false
         balls = [{
-            x: screen.width/2,
+            x: (screen.width*14/15)/2,
             y: screen.height/2,
             ballColor: [],
             ballColorIndex: 0,
             ballTrack: [],
             horizontalControl: 1,
             verticalControl: 1,
-            distance: screen.width/100,
+            distance: (screen.width*14/15)/100,
             angle: 0,
             lastPlayerHit: 1,
             scoreValue: 1
@@ -530,7 +528,7 @@ function start(){
         text('patch 1.5', 5, 15)
         textAlign(CENTER)
         textSize(20)
-        text(subtitle, screen.width/2, screen.height/4)
+        text(subtitle, (screen.width*14/15)/2, screen.height/4)
         selectMode.show()
         selectDifficulty.show()
         powersSelect.show()
