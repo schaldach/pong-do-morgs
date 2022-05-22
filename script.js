@@ -59,7 +59,6 @@ let scoreDisplay
 let scoreLimitSelect
 let scoreLimit
 let mainmenu
-let lastPlayerHit = ''
 let activatedFire = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedIce = [{p: 'player1', state:false},{p:'player2', state:false}]
 let activatedInverted = [{p: 'player1', state:false},{p:'player2', state:false}]
