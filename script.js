@@ -1,13 +1,13 @@
 let balls = [
     {
-        x: (screen.width*14/15)/2,
+        x: (screen.width*13/15)/2,
         y: screen.height/2,
         ballColor: [],
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: 1,
         verticalControl: 1,
-        distance: (screen.width*14/15)/120,
+        distance: (screen.width*13/15)/120,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1
@@ -20,15 +20,17 @@ let player1 = {
     height: screen.height/4,
     color: 'white',
     lastPower: 0,
-    score: 0
+    powerGot: false,
+    score: 0,
 }
 let player2 = {
     p: 'player2',
-    x: (screen.width*14/15)-10,
+    x: (screen.width*13/15)-10,
     y: screen.height*3/8,
     height: screen.height/4,
     color: 'white',
     lastPower: 0,
+    powerGot: false,
     score: 0
 }
 let gameplaying = false
@@ -40,7 +42,6 @@ let isFull = false
 let isPowers
 let timeinterval
 let canSpawnPower = false
-let powerColor = []
 let myCanvas
 let startButton
 let selectMode
@@ -65,8 +66,8 @@ let activatedInverted = [{p: 'player1', state:false},{p:'player2', state:false}]
 let isPower = false
 let spawnedPower
 let subtitle = 'Jogue em tela cheia (botao no canto\nsuperior direito) e deixe o dispositivo\nna horizontal! (recarregue a pagina)'
-let allPowers = [{p:'hot', t:7000}, {p:'inverted', t:7000}, {p:'multiball', t:7000}, 
-{p:'gold', t:7000}, {p:'large', t:7000}, {p:'small', t:7000}, {p:'freeze', t:2000},]
+let allPowers = [{p:'Fogo', t:7000, c:'green'}, {p:'Invertido', t:7000, c:'red'}, {p:'Multibola', t:7000, c:'white'},
+{p:'Gol de ouro', t:7000, c:'white'}, {p:'Grande', t:7000, c:'green'}, {p:'Pequeno', t:7000, c:'red'}, {p:'Congelado', t:2000, c:'red'},]
 let currentPower
 let AIrandomizer = 1
 let font
@@ -75,10 +76,10 @@ function preload(){
     font = loadFont('koulen.ttf')
 }
 function setup(){
-    myCanvas = createCanvas((screen.width*14/15),screen.height)
+    myCanvas = createCanvas((screen.width*13/15),screen.height)
     myCanvas.parent('page')
     background("#000000")
-    myCanvas.position(screen.width/30,0,"fixed")
+    myCanvas.position(screen.width*2/30,0,"fixed")
     textFont(font)
     fill(255)
     mainmenu = createDiv()
@@ -102,7 +103,7 @@ function setup(){
     startButton.mousePressed(start)
     startButton.parent('mainmenu')
     title = createDiv('Pong do Morgs')
-    title.position((screen.width*14/15)/4, -10)
+    title.position(screen.width/4, -10)
     title.addClass('titulo')
     selectMode = createSelect();
     selectMode.option('1 Player')
@@ -122,28 +123,27 @@ function setup(){
     scoreDisplay = createDiv('Pontos para vencer')
     scoreDisplay.id('lim')
     scoreDisplay.parent('mainmenu')
-    scoreLimitSelect = createInput(10, 'number')
+    scoreLimitSelect = createInput(5, 'number')
     scoreLimitSelect.parent('lim')
     scoreLimitSelect.input(setInput)
     fullScreen = createImg('screen.png')
-    fullScreen.position((screen.width*14/15)-60, 10)
+    fullScreen.position((screen.width*13/15)-60, 10)
     fullScreen.mousePressed(activateFullscreen)
     fullScreen.size(50,50)
     fullScreen.parent('page')
     imgdiv = createDiv()
-    imgdiv.position((screen.width*14/15)-60, 10)
+    imgdiv.position((screen.width*13/15)-60, 10)
     imgdiv.size(50,50)
     imgdiv.mousePressed(activateFullscreen)
     imgdiv.parent('page')
     page = document.getElementById('page')
     balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
-    powerColor.push(color(255,0,0),color(0,255,0),color(255,255,255))
     textAlign(LEFT)
     textSize(14)
     text('patch 1.5', 5, 15)
     textAlign(CENTER)
     textSize(20)
-    text(subtitle, (screen.width*14/15)/2, screen.height*2/7)
+    text(subtitle, (screen.width*13/15)/2, screen.height*2/7)
     noStroke()
 }
 function setInput(){
@@ -181,18 +181,18 @@ function powerCatch(power, player, ball){
     }
     player.lastPower = power
     switch(allPowers[power].p){
-        case 'large':
+        case 'Grande':
             player.height = screen.height/2
             break
-        case 'hot':
+        case 'Fogo':
             activatedFire[activatedFire.findIndex(e => e.p==player.p)].state = true
             player.color = 'red'
             break
-        case 'freeze':
+        case 'Congelado':
             activatedIce[activatedIce.findIndex(e => e.p==player.p)].state = true
-            player.color = color(26,230,238)
+            player.color = 'blue'
             break
-        case 'multiball':
+        case 'Multibola':
             balls.push({
                     x: ball.x,
                     y: ball.y,
@@ -207,18 +207,19 @@ function powerCatch(power, player, ball){
                     scoreValue: 1
                 })
             balls.forEach(ball => {
-                ball.distance = (screen.width*14/15)/200
+                ball.distance = (screen.width*13/15)/200
                 ball.ballColorIndex = ball.ballColorIndex==1?0:ball.ballColorIndex
             })
             balls[balls.length-1]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
             break
-        case 'inverted':
+        case 'Invertido':
+            player.y = 0
             activatedInverted[activatedInverted.findIndex(e => e.p==player.p)].state = true
             break
-        case 'small':
+        case 'Pequeno':
             player.height = screen.height/8
             break
-        case 'gold':
+        case 'Gol de ouro':
             ball.scoreValue = 2
             ball.ballColorIndex = 2
             break
@@ -226,20 +227,21 @@ function powerCatch(power, player, ball){
 }
 
 function stopPower(power, player){
+    player.powerGot = false
     switch(allPowers[power].p){
-        case 'small':
-        case 'large':
+        case 'Pequeno':
+        case 'Grande':
             player.height = screen.height/4
             break
-        case 'hot':
+        case 'Fogo':
             activatedFire[activatedFire.findIndex(e => e.p==player.p)].state = false
             player.color = 'white'
             break
-        case 'freeze':
+        case 'Congelado':
             activatedIce[activatedIce.findIndex(e => e.p==player.p)].state = false
             player.color = 'white'
             break
-        case 'inverted':
+        case 'Invertido':
             activatedInverted[activatedInverted.findIndex(e => e.p==player.p)].state = false
             break
         default:
@@ -262,9 +264,9 @@ function draw(){
         text('patch 1.5', 5, 15)
         textAlign(CENTER)
         textSize(45)
-        text(player1.score+" - "+player2.score, (screen.width*14/15)/2, screen.height/10)
+        text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/10)
         if(canSpawnPower){
-            let xPos = Math.floor(Math.random()*(screen.width*14/15)*2/3)+(screen.width*14/15)/6
+            let xPos = Math.floor(Math.random()*(screen.width*13/15)*2/3)+(screen.width*13/15)/6
             let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
             currentPower = Math.floor(Math.random()*7)
             spawnedPower = {x: xPos, y: yPos}
@@ -272,32 +274,50 @@ function draw(){
             isPower = true
         }
         if(isPower){
-            let thisColor = powerColor[1]
-            thisColor.setAlpha(75)
+            let thisColor = color(170,0,255)
+            thisColor.setAlpha(70)
             fill(thisColor)
             ellipse(spawnedPower.x, spawnedPower.y, screen.height/3)
+            thisColor.setAlpha(255)
+            textSize(40)
+            textAlign(CENTER)
+            text('?',spawnedPower.x, spawnedPower.y+10)
             balls.forEach(ball => {
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/6){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
                     stopPower(rightPlayer.lastPower, rightPlayer)
                     powerCatch(currentPower, rightPlayer, ball)
+                    if(ball.lastPlayerHit==1){player1.powerGot=true}
+                    else{player2.powerGot=true}
                     spawnedPower = {}
                     isPower = false
                 }
             })
         }
+        textSize(25)
+        if(player1.powerGot){
+            fill(allPowers[player1.lastPower].c)
+            textAlign(LEFT)
+            text(allPowers[player1.lastPower].p, 5, screen.height-15)
+        }
+        if(player2.powerGot){
+            fill(allPowers[player2.lastPower].c)
+            textAlign(RIGHT)
+            text(allPowers[player2.lastPower].p, (screen.width*13/15)-5, screen.height-15)
+        }
         if(gameMode){
-            let xDist = (screen.width*14/15)
+            let xDist = (screen.width*13/15)
             balls.forEach(ball => {
                 let index = balls.indexOf(ball)
-                if((screen.width*14/15)-ball.x<xDist){
-                    xDist = (screen.width*14/15)-ball.x
+                if((screen.width*13/15)-ball.x<xDist){
+                    xDist = (screen.width*13/15)-ball.x
                     closestBall = index
                 }
             })
             let target = balls[closestBall].y+(AISpeed*1.75*AIrandomizer)
             player2.y = !activatedIce[1].state&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
             player2.y = !activatedIce[1].state&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<screen.height)?player2.y+AISpeed:player2.y
+
             player1.y = !activatedIce[0].state&&!activatedInverted[0].state&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=screen.height)?mouseY-(player1.height/2):player1.y
             player1.y = activatedInverted[0].state&&(screen.height-mouseY+(player1.height/2)<=screen.height&&screen.height-mouseY-(player1.height/2)>=0)?screen.height-mouseY-(player1.height/2):player1.y
             p1move = true
@@ -306,7 +326,7 @@ function draw(){
         else{
             if(device){
                 touches.forEach(touch => {
-                    if(touch.x < (screen.width*14/15)/2){
+                    if(touch.x < (screen.width*13/15)/2){
                         player1.y = !activatedIce[0].state&&!activatedInverted[0].state&&(touch.y-(player1.height/2)>=0&&touch.y+(player1.height/2)<=screen.height)?touch.y-(player1.height/2):player1.y
                         player1.y = activatedInverted[0].state&&(screen.height-touch.y+(player1.height/2)<=screen.height&&screen.height-touch.y-(player1.height/2)>=0)?screen.height-touch.y-(player1.height/2):player1.y
                     }
@@ -365,7 +385,7 @@ function calculateball(){
                 AIrandomizer = Math.random()>0.5?1:-1
             }
             ball.lastPlayerHit = 2
-            ball.distance += (screen.width*14/15)/1500
+            ball.distance += (screen.width*13/15)/1500
             ball.horizontalControl = -1
             playerMoved = p2move
             changeAngle(player2, index)
@@ -373,7 +393,7 @@ function calculateball(){
                 ball.ballColorIndex = 1
                 clearTimeout(stopPowerInterval2)
                 stopPower(0, player2)
-                ball.distance += (screen.width*14/15)/80
+                ball.distance += (screen.width*13/15)/80
             }
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
                 player1.score+=ball.scoreValue
@@ -384,7 +404,7 @@ function calculateball(){
         }
         if(ball.x-10<=player1.x){
             ball.lastPlayerHit = 1
-            ball.distance += (screen.width*14/15)/1500
+            ball.distance += (screen.width*13/15)/1500
             ball.horizontalControl = 1
             playerMoved = p1move
             changeAngle(player1, index)
@@ -392,7 +412,7 @@ function calculateball(){
                 ball.ballColorIndex = 1
                 clearTimeout(stopPowerInterval1)
                 stopPower(0, player1)
-                ball.distance += (screen.width*14/15)/80
+                ball.distance += (screen.width*13/15)/80
             }
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
                 player2.score+=ball.scoreValue
@@ -424,25 +444,25 @@ function changeAngle(player, index){
 
 function winner(){
     timeout = false
-    if(player1.score==scoreLimit&&scoreLimit!=0){
+    if(player1.score>=scoreLimit&&scoreLimit!=0){
         subtitle = 'Jogador 1 venceu!'
         start()
         return
     }
-    if(player2.score==scoreLimit&&scoreLimit!=0){
+    if(player2.score>=scoreLimit&&scoreLimit!=0){
         subtitle = 'Jogador 2 venceu!'
         start()
         return
     }
     balls = [{
-            x: (screen.width*14/15)/2,
+            x: (screen.width*13/15)/2,
             y: screen.height/2,
             ballColor: [],
             ballColorIndex: 0,
             ballTrack: [],
             horizontalControl: 1,
             verticalControl: 1,
-            distance: (screen.width*14/15)/120,
+            distance: (screen.width*13/15)/120,
             angle: 0,
             lastPlayerHit: 1,
             scoreValue: 1
@@ -490,23 +510,25 @@ function start(){
         background("#000000")
         gameplaying = false
         balls = [{
-            x: (screen.width*14/15)/2,
+            x: (screen.width*13/15)/2,
             y: screen.height/2,
             ballColor: [],
             ballColorIndex: 0,
             ballTrack: [],
             horizontalControl: 1,
             verticalControl: 1,
-            distance: (screen.width*14/15)/100,
+            distance: (screen.width*13/15)/100,
             angle: 0,
             lastPlayerHit: 1,
             scoreValue: 1
         }]
         balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
         player1.score = 0
-        player2.score = 0
         player1.y = screen.height*2/5
+        player1.powerGot = false
+        player2.score = 0
         player2.y = screen.height*2/5
+        player2.powerGot = false
         mainmenu.style('display', 'flex')
         mainmenu.style('flex-direction', 'column')
         mainmenu.style('gap', '10px')
@@ -528,7 +550,7 @@ function start(){
         text('patch 1.5', 5, 15)
         textAlign(CENTER)
         textSize(20)
-        text(subtitle, (screen.width*14/15)/2, screen.height*2/7)
+        text(subtitle, (screen.width*13/15)/2, screen.height*2/7)
         selectMode.show()
         selectDifficulty.show()
         powersSelect.show()
