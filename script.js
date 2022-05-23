@@ -493,8 +493,8 @@ function start(){
         isPowers = powersSelect.value() === 'Com poderes'?true:false
         if(isPowers){
             powerInterval = setInterval(spawnPower, 6000)
+            canSpawnPower = true
         }
-        canSpawnPower = true
         gameplaying = true
         subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
         startButton.html("Resetar")
