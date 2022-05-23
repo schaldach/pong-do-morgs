@@ -478,7 +478,7 @@ function start(){
     if(!gameplaying){
         gameMode = selectMode.value() === '1 Player'?true:false
         if(!gameMode&&firstWarning){
-            alert("MOBILE: cada um controla a barra no seu lado da tela\nPC: use as teclas Shift/Control e as setas cima/baixo \n(clique novamente na tela cheia)")
+            alert("MOBILE: cada um controla a barra no seu lado da tela\nPC: use as teclas Shift/Control e as setas cima/baixo \n(clique novamente na tela cheia 2 vezes)")
             firstWarning = false
         }
         switch(selectDifficulty.value()){
