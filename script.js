@@ -315,7 +315,7 @@ function draw(){
                     closestBall = index
                 }
             })
-            let target = balls[closestBall].y+(AISpeed*1.75*AIrandomizer)
+            let target = balls[closestBall].y+(AISpeed*2.75*AIrandomizer)
             player2.y = !activatedIce[1].state&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
             player2.y = !activatedIce[1].state&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<screen.height)?player2.y+AISpeed:player2.y
             player1.y = !activatedIce[0].state&&!activatedInverted[0].state&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=screen.height)?mouseY-(player1.height/2):player1.y
@@ -498,7 +498,7 @@ function start(){
         isPowers = powersSelect.value() === 'Com poderes'?true:false
         if(isPowers){
             powerInterval = setInterval(spawnPower, 6000)
-            canSpawnPower = true
+            setTimeout(spawnPower, 1000)
         }
         gameplaying = true
         subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
