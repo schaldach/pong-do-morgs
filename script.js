@@ -16,7 +16,7 @@ let balls = [
 let player1 = {
     p: 'player1',
     x: 10,
-    y: screen.height*3/8,
+    y: screen.height*7/16,
     height: screen.height/4,
     color: 'white',
     lastPower: 0,
@@ -26,7 +26,7 @@ let player1 = {
 let player2 = {
     p: 'player2',
     x: (screen.width*13/15)-10,
-    y: screen.height*3/8,
+    y: screen.height*7/16,
     height: screen.height/4,
     color: 'white',
     lastPower: 0,
@@ -39,6 +39,7 @@ let p1move = false
 let p2move = false
 let playerMoved = false
 let isFull = false
+let firstWarning = true
 let isPowers
 let timeinterval
 let canSpawnPower = false
@@ -469,13 +470,17 @@ function winner(){
             scoreValue: 1
         }]
     balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
-    player1.y = screen.height*3/8
-    player2.y = screen.height*3/8
+    player1.y = screen.height*7/16
+    player2.y = screen.height*7/16
 }
 
 function start(){
     if(!gameplaying){
         gameMode = selectMode.value() === '1 Player'?true:false
+        if(!gameMode&&firstWarning){
+            alert("MOBILE: cada um controla a barra no seu lado da tela\nPC: use as teclas Shift/Control e as setas cima/baixo \n(clique novamente na tela cheia)")
+            firstWarning = false
+        }
         switch(selectDifficulty.value()){
             case 'Facil':
                 AISpeed = screen.height/150
@@ -526,10 +531,10 @@ function start(){
         }]
         balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0))
         player1.score = 0
-        player1.y = screen.height*2/5
+        player1.y = screen.height*7/16
         player1.powerGot = false
         player2.score = 0
-        player2.y = screen.height*2/5
+        player2.y = screen.height*7/16
         player2.powerGot = false
         mainmenu.style('display', 'flex')
         mainmenu.style('flex-direction', 'column')
