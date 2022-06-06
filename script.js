@@ -17,7 +17,7 @@ let player1 = {
     p: 'player1',
     x: 10,
     y: screen.height*7/16,
-    height: screen.height/4,
+    height: screen.height/3,
     color: 'white',
     lastPower: 0,
     powerGot: false,
@@ -31,7 +31,7 @@ let player2 = {
     p: 'player2',
     x: (screen.width*13/15)-10,
     y: screen.height*7/16,
-    height: screen.height/4,
+    height: screen.height/3,
     color: 'white',
     lastPower: 0,
     powerGot: false,
@@ -54,8 +54,8 @@ let allPowers = [{p:'Fogo', t:7500, c:'green'}, {p:'Invertido', t:7500, c:'red'}
 {p:'Gol de ouro', t:7500, c:'white'}, {p:'Grande', t:7500, c:'green'}, {p:'Pequeno', t:7500, c:'red'}, {p:'Congelado', t:2000, c:'red'},]
 let AIrandomizer = 1
 let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
-powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay,
-scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall
+powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect
+scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -98,6 +98,11 @@ function setup(){
     scoreLimitSelect = createInput(5, 'number')
     scoreLimitSelect.parent('lim')
     scoreLimitSelect.input(setInput)
+    powerSpeedSelect = createSelect()
+    powerSpeedSelect.option('Devagar')
+    powerSpeedSelect.option('Normal')
+    powerSpeedSelect.option('Loucura')
+    powerSpeedSelect.parent('mainmenu')
     fullScreen = createImg('screen.png')
     fullScreen.position((screen.width*13/15)-60, 10)
     fullScreen.mousePressed(activateFullscreen)
@@ -112,7 +117,7 @@ function setup(){
     balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.51', 5, 15)
+    text('patch 1.52', 5, 15)
     textAlign(CENTER)
     textSize(20)
     text(subtitle, (screen.width*13/15)/2, screen.height*2/7)
@@ -154,7 +159,7 @@ function powerCatch(power, player, ball){
     player.lastPower = power
     switch(allPowers[power].p){
         case 'Grande':
-            player.height = screen.height/2
+            player.height = screen.height*2/3
             break
         case 'Fogo':
             player.activatedFire = true
@@ -190,7 +195,7 @@ function powerCatch(power, player, ball){
             player.activatedInverted = true
             break
         case 'Pequeno':
-            player.height = screen.height/8
+            player.height = screen.height/6
             break
         case 'Gol de ouro':
             ball.scoreValue = 2
@@ -204,7 +209,7 @@ function stopPower(power, player){
     switch(allPowers[power].p){
         case 'Pequeno':
         case 'Grande':
-            player.height = screen.height/4
+            player.height = screen.height/3
             break
         case 'Fogo':
             player.activatedFire = false
@@ -234,7 +239,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.51', 5, 15)
+        text('patch 1.52', 5, 15)
         textAlign(CENTER)
         textSize(45)
         text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/10)
@@ -288,7 +293,7 @@ function draw(){
                     closestBall = index
                 }
             })
-            let target = balls[closestBall].y+(AISpeed*2.5*AIrandomizer*player2.height/(screen.height/4))
+            let target = balls[closestBall].y+(AISpeed*4*AIrandomizer*player2.height/(screen.height/3))
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<screen.height)?player2.y+AISpeed:player2.y
             player1.y = !player1.activatedIce&&!player1.activatedInverted&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=screen.height)?mouseY-(player1.height/2):player1.y
@@ -458,16 +463,27 @@ function start(){
         }
         switch(selectDifficulty.value()){
             case 'Facil':
-                AISpeed = screen.height/150
+                AISpeed = screen.height/160
                 break
             case 'Medio':
-                AISpeed = screen.height/82
+                AISpeed = screen.height/125
                 break
             case 'Dificil':
-                AISpeed = screen.height/57
+                AISpeed = screen.height/80
                 break
             case 'PESADELO':
-                AISpeed = screen.height/28
+                AISpeed = screen.height/40
+                break
+        }
+        switch(powerSpeedSelect.value()){
+            case 'Devagar':
+                powerSpeed = 8000
+                break
+            case 'Normal':
+                powerSpeed = 6000
+                break
+            case 'Loucura':
+                powerSpeed = 4000
                 break
         }
         isPowers = powersSelect.value() === 'Com poderes'?true:false
@@ -520,7 +536,7 @@ function start(){
         fill(255)
         textSize(14)
         textAlign(LEFT)
-        text('patch 1.51', 5, 15)
+        text('patch 1.52', 5, 15)
         textAlign(CENTER)
         textSize(20)
         text(subtitle, (screen.width*13/15)/2, screen.height*2/7)
