@@ -235,6 +235,7 @@ function draw(){
         selectDifficulty.hide()
         powersSelect.hide()
         scoreDisplay.hide()
+        powerSpeedSelect.hide()
         title.hide()
         fill(255)
         textAlign(LEFT)
@@ -255,13 +256,13 @@ function draw(){
             let thisColor = color(170,0,255)
             thisColor.setAlpha(70)
             fill(thisColor)
-            ellipse(spawnedPower.x, spawnedPower.y, screen.height/3)
+            ellipse(spawnedPower.x, spawnedPower.y, screen.height*2/5)
             thisColor.setAlpha(255)
             textSize(40)
             textAlign(CENTER)
             text('?',spawnedPower.x, spawnedPower.y+10)
             balls.forEach(ball => {
-                if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/6){
+                if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/5){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
                     stopPower(rightPlayer.lastPower, rightPlayer)
                     powerCatch(currentPower, rightPlayer, ball)
@@ -488,7 +489,7 @@ function start(){
         }
         isPowers = powersSelect.value() === 'Com poderes'?true:false
         if(isPowers){
-            powerInterval = setInterval(spawnPower, 6000)
+            powerInterval = setInterval(spawnPower, powerSpeed)
             setTimeout(spawnPower, 1000)
         }
         gameplaying = true
@@ -540,6 +541,7 @@ function start(){
         textAlign(CENTER)
         textSize(20)
         text(subtitle, (screen.width*13/15)/2, screen.height*2/7)
+        powerSpeedSelect.show()
         selectMode.show()
         selectDifficulty.show()
         powersSelect.show()
