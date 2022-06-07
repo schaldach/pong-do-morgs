@@ -45,7 +45,6 @@ let gameplaying = false
 let timeout = false
 let playerMoved = false
 let isFull = false
-let firstWarning = true
 let canSpawnPower = false
 let scoreLimit = 5
 let isPower = false
@@ -54,7 +53,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green'}, {p:'Invertido', t:7500, c:'red'}
 {p:'Gol de ouro', t:7500, c:'white'}, {p:'Grande', t:7500, c:'green'}, {p:'Pequeno', t:7500, c:'red'}, {p:'Congelado', t:2000, c:'red'},]
 let AIrandomizer = 1
 let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
-powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect
+powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect,
 scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed
 
 function preload(){
@@ -458,10 +457,6 @@ function winner(){
 function start(){
     if(!gameplaying){
         gameMode = selectMode.value() === '1 Player'?true:false
-        if(!gameMode&&firstWarning){
-            alert("MOBILE: cada um controla a barra no seu lado da tela\nPC: use as teclas Shift/Control e as setas cima/baixo \n(clique novamente na tela cheia 2 vezes)")
-            firstWarning = false
-        }
         switch(selectDifficulty.value()){
             case 'Facil':
                 AISpeed = screen.height/160
