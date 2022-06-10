@@ -158,7 +158,7 @@ function powerCatch(power, player, ball){
     player.lastPower = power
     switch(allPowers[power].p){
         case 'Grande':
-            player.height = screen.height*2/3
+            player.height = screen.height*11/20
             break
         case 'Fogo':
             player.activatedFire = true
@@ -473,13 +473,13 @@ function start(){
         }
         switch(powerSpeedSelect.value()){
             case 'Devagar':
-                powerSpeed = 8000
+                powerSpeed = 9000
                 break
             case 'Normal':
                 powerSpeed = 6000
                 break
             case 'Loucura':
-                powerSpeed = 4000
+                powerSpeed = 3000
                 break
         }
         isPowers = powersSelect.value() === 'Com poderes'?true:false
