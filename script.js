@@ -25,6 +25,7 @@ let player1 = {
     activatedFire: false,
     activatedIce: false,
     activatedInverted: false,
+    activatedSneak: false,
     moved: false
 }
 let player2 = {
@@ -39,6 +40,7 @@ let player2 = {
     activatedFire: false,
     activatedIce: false,
     activatedInverted: false,
+    activatedSneak: false,
     moved: false
 }
 let gameplaying = false
@@ -49,15 +51,16 @@ let canSpawnPower = false
 let scoreLimit = 5
 let isPower = false
 let subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
-let allPowers = [{p:'Fogo', t:7500, c:'green'}, {p:'Invertido', t:7500, c:'red'}, {p:'Multibola', t:7500, c:'white'},
-{p:'Gol de ouro', t:7500, c:'white'}, {p:'Grande', t:7500, c:'green'}, {p:'Pequeno', t:7500, c:'red'}, {p:'Congelado', t:2000, c:'red'},
-{p:'Invisivel', t:3250, c:'red'}, {p:'Sorrateiro', t:7500, c:'green'}, {p:'Temporizador', t:7500, c:'white'}]
+let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7500, c:'red', active:true}, {p:'Multibola', t:7500, c:'white', active:true},
+{p:'Gol de ouro', t:7500, c:'white', active:true}, {p:'Grande', t:7500, c:'green', active:true}, {p:'Pequeno', t:7500, c:'red', active:true}, {p:'Congelado', t:2000, c:'red', active:true},
+{p:'Invisivel', t:3750, c:'red', active:true}, {p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:7500, c:'white', active:true}]
 let currentAllPowers = []
+
 let AIrandomizer = 1
 let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
 powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect,
 scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed,
-Fireb,Iceb,Bigb,Smallb,Invertedb,Goldb,Multib,Configs,Timeb,Sneakb,Invisibleb
+Fireb,Iceb,Bigb,Smallb,Invertedb,Goldb,Multib,Timeb,Sneakb,Invisibleb,Configs
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -144,6 +147,19 @@ function isTouchDevice() {
     (navigator.msMaxTouchPoints > 0))
 }
 let device = isTouchDevice()
+function loadPowersActive(){
+    allPowers.forEach(power => {
+        if(power.active){
+            currentAllPowers.push(power)
+        }
+    })
+}
+function changePowerActive(power){
+    let index = allPowers.findIndex(powers => {
+        return powers.p === power
+    })
+    allPowers[index].active = !allPowers[index].active
+}
 
 function spawnPower(){
     canSpawnPower = true
@@ -152,14 +168,14 @@ function spawnPower(){
 function powerCatch(power, player, ball){
     if(ball.horizontalControl===1){
         clearTimeout(stopPowerInterval1)
-        stopPowerInterval1 = setTimeout(stopPower, allPowers[power].t, power, player)
+        stopPowerInterval1 = setTimeout(stopPower, currentAllPowers[power].t, power, player)
     }
     else{
         clearTimeout(stopPowerInterval2)
-        stopPowerInterval2 = setTimeout(stopPower, allPowers[power].t, power, player)
+        stopPowerInterval2 = setTimeout(stopPower, currentAllPowers[power].t, power, player)
     }
     player.lastPower = power
-    switch(allPowers[power].p){
+    switch(currentAllPowers[power].p){
         case 'Grande':
             player.height = screen.height*11/20
             break
@@ -203,12 +219,23 @@ function powerCatch(power, player, ball){
             ball.scoreValue = 2
             ball.ballColorIndex = 2
             break
+        case 'Invisivel':
+            player.color = 'black'
+            break
+        case 'Sorrateiro':
+            player.activatedSneak = true
+            player.color = 'green'
+            break
+        case 'Temporizador':
+            break
+        default:
+            break
     }
 }
 
 function stopPower(power, player){
     player.powerGot = false
-    switch(allPowers[power].p){
+    switch(currentAllPowers[power].p){
         case 'Pequeno':
         case 'Grande':
             player.height = screen.height/3
@@ -224,6 +251,14 @@ function stopPower(power, player){
         case 'Invertido':
             player.activatedInverted = false
             break
+        case 'Invisivel':
+            player.color = 'white'
+        case 'Sorrateiro':
+            player.activatedSneak = false
+            player.color = 'white'
+            break
+        case 'Temporizador':
+            break
         default:
             break
     }
@@ -232,7 +267,7 @@ function stopPower(power, player){
 function spawnNewPower(){
     let xPos = Math.floor(Math.random()*(screen.width*13/15)*2/3)+(screen.width*13/15)/6
     let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
-    currentPower = Math.floor(Math.random()*7)
+    currentPower = Math.floor(Math.random()*9)
     spawnedPower = {x: xPos, y: yPos}
     canSpawnPower = false
     isPower = true
@@ -285,14 +320,14 @@ function draw(){
         }
         textSize(25)
         if(player1.powerGot){
-            fill(allPowers[player1.lastPower].c)
+            fill(currentAllPowers[player1.lastPower].c)
             textAlign(LEFT)
-            text(allPowers[player1.lastPower].p, 5, screen.height-15)
+            text(currentAllPowers[player1.lastPower].p, 5, screen.height-15)
         }
         if(player2.powerGot){
-            fill(allPowers[player2.lastPower].c)
+            fill(currentAllPowers[player2.lastPower].c)
             textAlign(RIGHT)
-            text(allPowers[player2.lastPower].p, (screen.width*13/15)-5, screen.height-15)
+            text(currentAllPowers[player2.lastPower].p, (screen.width*13/15)-5, screen.height-15)
         }
         if(gameMode){
             let xDist = (screen.width*13/15)
@@ -381,9 +416,19 @@ function calculateball(){
             playerMoved = player2.moved
             changeAngle(player2, index)
             if(player2.activatedFire){
+                const fireIndex = currentAllPowers.findIndex(power => {
+                    return power.p === 'Fogo';
+                })
                 clearTimeout(stopPowerInterval2)
-                stopPower(0, player2)
+                stopPower(fireIndex, player2)
                 ball.distance += (screen.width*13/15)/70
+            }
+            if(player2.activatedSneak){
+                const sneakIndex = currentAllPowers.findIndex(power => {
+                    return power.p === 'Sorrateiro';
+                })
+                clearTimeout(stopPowerInterval2)
+                stopPower(sneakIndex, player2)
             }
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
                 player1.score+=ball.scoreValue
@@ -399,9 +444,19 @@ function calculateball(){
             playerMoved = player1.moved
             changeAngle(player1, index)
             if(player1.activatedFire){
+                const fireIndex = currentAllPowers.findIndex(power => {
+                    return power.p === 'Fogo';
+                })
                 clearTimeout(stopPowerInterval1)
-                stopPower(0, player1)
+                stopPower(fireIndex, player1)
                 ball.distance += (screen.width*13/15)/70
+            }
+            if(player1.activatedSneak){
+                const sneakIndex = currentAllPowers.findIndex(power => {
+                    return power.p === 'Sorrateiro';
+                })
+                clearTimeout(stopPowerInterval1)
+                stopPower(sneakIndex, player1)
             }
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
                 player2.score+=ball.scoreValue
@@ -502,6 +557,7 @@ function start(){
         subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
         startButton.html("Resetar")
         mainmenu.addClass('topbutton')
+        loadPowersActive()
     }
     else if(!timeout){
         clearInterval(powerInterval)
