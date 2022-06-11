@@ -50,11 +50,14 @@ let scoreLimit = 5
 let isPower = false
 let subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
 let allPowers = [{p:'Fogo', t:7500, c:'green'}, {p:'Invertido', t:7500, c:'red'}, {p:'Multibola', t:7500, c:'white'},
-{p:'Gol de ouro', t:7500, c:'white'}, {p:'Grande', t:7500, c:'green'}, {p:'Pequeno', t:7500, c:'red'}, {p:'Congelado', t:2000, c:'red'},]
+{p:'Gol de ouro', t:7500, c:'white'}, {p:'Grande', t:7500, c:'green'}, {p:'Pequeno', t:7500, c:'red'}, {p:'Congelado', t:2000, c:'red'},
+{p:'Invisivel', t:3250, c:'red'}, {p:'Sorrateiro', t:7500, c:'green'}, {p:'Temporizador', t:7500, c:'white'}]
+let currentAllPowers = []
 let AIrandomizer = 1
 let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
 powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect,
-scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed
+scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed,
+Fireb,Iceb,Bigb,Smallb,Invertedb,Goldb,Multib,Configs,Timeb,Sneakb,Invisibleb
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -69,7 +72,7 @@ function setup(){
     mainmenu = createDiv()
     mainmenu.parent('page')
     mainmenu.id('mainmenu')
-    stylemenu()
+    mainmenu.addClass('mainmenu')
     startButton = createButton("Start")
     startButton.mousePressed(start)
     startButton.parent('mainmenu')
@@ -226,6 +229,26 @@ function stopPower(power, player){
     }
 }
 
+function spawnNewPower(){
+    let xPos = Math.floor(Math.random()*(screen.width*13/15)*2/3)+(screen.width*13/15)/6
+    let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
+    currentPower = Math.floor(Math.random()*7)
+    spawnedPower = {x: xPos, y: yPos}
+    canSpawnPower = false
+    isPower = true
+}
+
+function drawPowerCircle(){
+    let thisColor = color(170,0,255)
+    thisColor.setAlpha(70)
+    fill(thisColor)
+    ellipse(spawnedPower.x, spawnedPower.y, screen.height*2/5)
+    thisColor.setAlpha(255)
+    textSize(40)
+    textAlign(CENTER)
+    text('?',spawnedPower.x, spawnedPower.y+10)
+}
+
 function draw(){
     if(gameplaying&&!timeout){
         clear()
@@ -244,22 +267,10 @@ function draw(){
         textSize(45)
         text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/10)
         if(canSpawnPower){
-            let xPos = Math.floor(Math.random()*(screen.width*13/15)*2/3)+(screen.width*13/15)/6
-            let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
-            currentPower = Math.floor(Math.random()*7)
-            spawnedPower = {x: xPos, y: yPos}
-            canSpawnPower = false
-            isPower = true
+            spawnNewPower()
         }
         if(isPower){
-            let thisColor = color(170,0,255)
-            thisColor.setAlpha(70)
-            fill(thisColor)
-            ellipse(spawnedPower.x, spawnedPower.y, screen.height*2/5)
-            thisColor.setAlpha(255)
-            textSize(40)
-            textAlign(CENTER)
-            text('?',spawnedPower.x, spawnedPower.y+10)
+            drawPowerCircle()
             balls.forEach(ball => {
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/5){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
@@ -490,13 +501,7 @@ function start(){
         gameplaying = true
         subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
         startButton.html("Resetar")
-        mainmenu.style('transform', 'none')
-        mainmenu.style('margin-top', '1.5rem')
-        mainmenu.style('margin-left', '2rem')
-        mainmenu.style('top', 'auto')
-        mainmenu.style('bottom', 'auto')
-        mainmenu.style('left', 'auto')
-        mainmenu.style('right', 'auto')
+        mainmenu.addClass('topbutton')
     }
     else if(!timeout){
         clearInterval(powerInterval)
@@ -527,7 +532,7 @@ function start(){
         player2.y = screen.height*7/16
         player2.powerGot = false
         stopPower(player2.lastPower, player2)
-        stylemenu()
+        mainmenu.removeClass('topbutton')
         startButton.html("Start")
         fill(255)
         textSize(14)
@@ -543,21 +548,4 @@ function start(){
         title.show()
         scoreDisplay.show()
     }
-}
-
-function stylemenu(){
-    mainmenu.style('display', 'flex')
-    mainmenu.style('flex-direction', 'column')
-    mainmenu.style('gap', '10px')
-    mainmenu.style('top', '0')
-    mainmenu.style('bottom', '0')
-    mainmenu.style('left', '0')
-    mainmenu.style('right', '0')
-    mainmenu.style('width', 'fit-content')
-    mainmenu.style('margin', 'auto')
-    mainmenu.style('top', '65%')
-    mainmenu.style('transform', 'translateY(-50%)')
-    mainmenu.style('position', 'absolute')
-    mainmenu.style('margin', 'auto')
-    mainmenu.style('text-align', 'center')
 }

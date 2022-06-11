@@ -56,3 +56,30 @@ div{
     font-family: 'Koulen', cursive;
     font-size: 1.5vw;
 }
+
+.mainmenu{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: fit-content;
+    margin: auto;
+    top: 65%;
+    transform: translateY(-50%);
+    position: absolute;
+    margin: auto;
+    text-align: center;
+}
+
+.topbutton{
+    transform: none;
+    margin-top: 1.5rem;
+    margin-left: 2rem;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+}
