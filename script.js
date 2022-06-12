@@ -186,11 +186,13 @@ function isTouchDevice() {
 }
 let device = isTouchDevice()
 function loadPowersActive(){
-    allPowers.forEach(power => {
-        if(power.active){
-            currentAllPowers.push(power)
+    allPowers.forEach(anypower => {
+        if(anypower.active){
+            console.log('opa')
+            currentAllPowers.push(anypower)
         }
     })
+    console.log(currentAllPowers)
 }
 function changePowerActive(power){
     let index = allPowers.findIndex(powers => {
@@ -274,7 +276,7 @@ function powerCatch(power, player, ball){
 
 function stopPower(power, player){
     player.powerGot = false
-    switch(allPowers[power].p){
+    switch(currentAllPowers[power].p){
         case 'Pequeno':
         case 'Grande':
             player.height = screen.height/3
@@ -645,10 +647,12 @@ function start(){
         player1.score = 0
         player1.y = screen.height*7/16
         player1.powerGot = false
+        clearTimeout(stopPowerInterval1)
         stopPower(player1.lastPower, player1)
         player2.score = 0
         player2.y = screen.height*7/16
         player2.powerGot = false
+        clearTimeout(stopPowerInterval2)
         stopPower(player2.lastPower, player2)
         startButton.html("Start")
         fill(255)
