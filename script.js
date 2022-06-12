@@ -55,7 +55,6 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7
 {p:'Gol de ouro', t:7500, c:'white', active:true}, {p:'Grande', t:7500, c:'green', active:true}, {p:'Pequeno', t:7500, c:'red', active:true}, {p:'Congelado', t:2000, c:'red', active:true},
 {p:'Invisivel', t:3750, c:'red', active:true}, {p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:7500, c:'white', active:true}]
 let currentAllPowers = []
-
 let AIrandomizer = 1
 let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
 powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect,
@@ -439,6 +438,10 @@ function draw(){
             })
             fill(ball['ballColor'][ball.ballColorIndex])
             ellipse(ball.x, ball.y, 20)
+            if(ball.sneak){
+                fill('green')
+                rect(ball.x-15,0,30,screen.height)
+            }
         })
         calculateball()
     }
@@ -472,6 +475,7 @@ function calculateball(){
                 })
                 clearTimeout(stopPowerInterval2)
                 stopPower(sneakIndex, player2)
+                ball.sneak = true
             }
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
                 player1.score+=ball.scoreValue
@@ -500,6 +504,7 @@ function calculateball(){
                 })
                 clearTimeout(stopPowerInterval1)
                 stopPower(sneakIndex, player1)
+                ball.sneak = true
             }
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
                 player2.score+=ball.scoreValue
@@ -507,6 +512,12 @@ function calculateball(){
                 timeinterval = setTimeout(winner, 250)
                 return
             }
+        }
+        if(ball.horizontalControl===1){
+            if(ball.x>screen.width/2){ball.sneak=false}
+        }
+        if(ball.horizontalControl===-1){
+            if(ball.x<screen.width/2){ball.sneak=false}
         }
         if(ball.y+10>screen.height){
             ball.verticalControl = -1
@@ -634,10 +645,12 @@ function start(){
         player1.score = 0
         player1.y = screen.height*7/16
         player1.powerGot = false
+        clearTimeout(stopPowerInterval1)
         stopPower(player1.lastPower, player1)
         player2.score = 0
         player2.y = screen.height*7/16
         player2.powerGot = false
+        clearTimeout(stopPowerInterval2)
         stopPower(player2.lastPower, player2)
         startButton.html("Start")
         fill(255)
