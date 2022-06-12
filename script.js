@@ -561,7 +561,7 @@ function calculateball(){
             }
         }
         else{
-            if(ball.distance>=((screen.width*13/15)/70)+((screen.width*13/15)/120)){
+            if(ball.distance>=((screen.width*13/15)/70)+((screen.width*13/15)/120)&&!ball.timetravel){
                 if(ball.scoreValue==1){ball.ballColorIndex = 1}
                 else{ball.ballColorIndex = 3}
             }
@@ -589,12 +589,12 @@ function changeAngle(player, index){
 
 function winner(){
     timeout = false
-    if(player1.score>=scoreLimit&&scoreLimit!=0){
+    if(player1.score>=scoreLimit&&scoreLimit>0){
         subtitle.html(`Jogador 1 venceu!<br/>${player1.score} - ${player2.score}`)
         start()
         return
     }
-    else if(player2.score>=scoreLimit&&scoreLimit!=0){
+    else if(player2.score>=scoreLimit&&scoreLimit>0){
         subtitle.html(`Jogador 2 venceu!<br/>${player1.score} - ${player2.score}`)
         start()
         return
