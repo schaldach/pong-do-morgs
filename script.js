@@ -425,10 +425,6 @@ function draw(){
                 }
             }
         }
-        fill(player1.color)
-        rect(player1.x, player1.y, -10, player1.height)
-        fill(player2.color)
-        rect(player2.x, player2.y, 10, player2.height)
         balls.forEach(ball => {
             if(ball['ballTrack'].length>5){ball['ballTrack'].shift()}
             ball['ballTrack'].push({x: ball.x, y:ball.y})
@@ -441,10 +437,15 @@ function draw(){
             fill(ball['ballColor'][ball.ballColorIndex])
             ellipse(ball.x, ball.y, 20)
             if(ball.sneak){
+                let horizontalballDistance = Math.cos(ball.angle)*ball.distance*6*ball.horizontalControl
                 fill('green')
-                rect(ball.x-25,0,50,screen.height)
+                rect(ball.x-(horizontalballDistance),0,(horizontalballDistance+(20*ball.horizontalControl)),screen.height)
             }
         })
+        fill(player1.color)
+        rect(player1.x, player1.y, -10, player1.height)
+        fill(player2.color)
+        rect(player2.x, player2.y, 10, player2.height)
         calculateball()
     }
 }
@@ -459,7 +460,7 @@ function calculateball(){
                 AIrandomizer = Math.random()>0.5?1:-1
             }
             ball.lastPlayerHit = 2
-            ball.distance += (screen.width*13/15)/1350
+            ball.distance += (screen.width*13/15)/1500
             ball.horizontalControl = -1
             playerMoved = player2.moved
             changeAngle(player2, index)
@@ -488,7 +489,7 @@ function calculateball(){
         }
         if(ball.x-10<=player1.x){
             ball.lastPlayerHit = 1
-            ball.distance += (screen.width*13/15)/1350
+            ball.distance += (screen.width*13/15)/1500
             ball.horizontalControl = 1
             playerMoved = player1.moved
             changeAngle(player1, index)
@@ -516,10 +517,10 @@ function calculateball(){
             }
         }
         if(ball.sneak&&ball.horizontalControl===1){
-            if(ball.x>(screen.width*13/15)/2){ball.sneak=false}
+            if(ball.x>(screen.width*13/15)*3/7){ball.sneak=false}
         }
         if(ball.sneak&&ball.horizontalControl===-1){
-            if(ball.x<(screen.width*13/15)/2){ball.sneak=false}
+            if(ball.x<(screen.width*13/15)*4/7){ball.sneak=false}
         }
         if(ball.y+10>screen.height){
             ball.verticalControl = -1
