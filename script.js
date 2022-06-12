@@ -10,7 +10,8 @@ let balls = [
         distance: (screen.width*13/15)/120,
         angle: 0,
         lastPlayerHit: 1,
-        scoreValue: 1
+        scoreValue: 1,
+        sneak: false
     }
 ]
 let player1 = {
@@ -50,7 +51,6 @@ let isFull = false
 let canSpawnPower = false
 let scoreLimit = 5
 let isPower = false
-let subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7500, c:'red', active:true}, {p:'Multibola', t:7500, c:'white', active:true},
 {p:'Gol de ouro', t:7500, c:'white', active:true}, {p:'Grande', t:7500, c:'green', active:true}, {p:'Pequeno', t:7500, c:'red', active:true}, {p:'Congelado', t:2000, c:'red', active:true},
 {p:'Invisivel', t:3750, c:'red', active:true}, {p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:7500, c:'white', active:true}]
@@ -60,7 +60,7 @@ let AIrandomizer = 1
 let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
 powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect,
 scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed,
-Fireb,Iceb,Bigb,Smallb,Invertedb,Goldb,Multib,Timeb,Sneakb,Invisibleb,Configs
+Fireb,Iceb,Bigb,Smallb,Invertedb,Goldb,Multib,Timeb,Sneakb,Invisibleb,Configs, subtitle, buttonMenu
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -69,37 +69,44 @@ function setup(){
     myCanvas = createCanvas((screen.width*13/15),screen.height)
     myCanvas.parent('page')
     background("#000000")
-    myCanvas.position(screen.width*2/30,0,"fixed")
+    myCanvas.position(screen.width/15,0,"fixed")
     textFont(font)
     fill(255)
     mainmenu = createDiv()
     mainmenu.parent('page')
     mainmenu.id('mainmenu')
     mainmenu.addClass('mainmenu')
+    title = createDiv('Pong do Morgs')
+    title.addClass('titulo')
+    title.parent('mainmenu')
+    subtitle = createDiv('Deixe o dispositivo na horizontal, recarregue a pagina e deixe em tela cheia (botao em cima na direita), nessa ordem!')
+    subtitle.addClass('subtitle')
+    subtitle.parent('mainmenu')
+    buttonMenu = createDiv('')
+    buttonMenu.addClass('buttonmenu')
+    buttonMenu.parent('mainmenu')
+    buttonMenu.id('buttonmenu')
     startButton = createButton("Start")
     startButton.mousePressed(start)
-    startButton.parent('mainmenu')
-    title = createDiv('Pong do Morgs')
-    title.position(screen.width/4, -10)
-    title.addClass('titulo')
+    startButton.parent('buttonmenu')
     selectMode = createSelect();
     selectMode.option('1 Player')
     selectMode.option('2 Players')
-    selectMode.parent('mainmenu')
+    selectMode.parent('buttonmenu')
     selectDifficulty = createSelect()
     selectDifficulty.option('Facil')
     selectDifficulty.option('Medio')
     selectDifficulty.option('Dificil')
     selectDifficulty.option('PESADELO')
     selectDifficulty.selected('Medio')
-    selectDifficulty.parent('mainmenu')
+    selectDifficulty.parent('buttonmenu')
     powersSelect = createSelect()
     powersSelect.option('Com poderes')
     powersSelect.option('Sem poderes')
-    powersSelect.parent('mainmenu')
+    powersSelect.parent('buttonmenu')
     scoreDisplay = createDiv('Pontos para vencer')
     scoreDisplay.id('lim')
-    scoreDisplay.parent('mainmenu')
+    scoreDisplay.parent('buttonmenu')
     scoreLimitSelect = createInput(5, 'number')
     scoreLimitSelect.parent('lim')
     scoreLimitSelect.input(setInput)
@@ -107,25 +114,57 @@ function setup(){
     powerSpeedSelect.option('Devagar')
     powerSpeedSelect.option('Normal')
     powerSpeedSelect.option('Loucura')
-    powerSpeedSelect.parent('mainmenu')
+    powerSpeedSelect.parent('buttonmenu')
     fullScreen = createImg('screen.png')
     fullScreen.position((screen.width*13/15)-60, 10)
     fullScreen.mousePressed(activateFullscreen)
-    fullScreen.size(50,50)
+    fullScreen.size(40,40)
     fullScreen.parent('page')
     imgdiv = createDiv()
     imgdiv.position((screen.width*13/15)-60, 10)
-    imgdiv.size(50,50)
+    imgdiv.size(40,40)
     imgdiv.mousePressed(activateFullscreen)
     imgdiv.parent('page')
+    configsmenu = createDiv()
+    configsmenu.parent('page')
+    configsmenu.id('configsmenu')
+    configsmenu.addClass('configs')
+    configsmenu.hide()
+    Fireb = createButton()
+    Fireb.mousePressed(changePowerActive('Fogo'))
+    Fireb.parent('configsmenu')
+    Iceb = createButton()
+    Iceb.mousePressed(changePowerActive('Congelado'))
+    Iceb.parent('configsmenu')
+    Bigb = createButton()
+    Bigb.mousePressed(changePowerActive('Grande'))
+    Bigb.parent('configsmenu')
+    Smallb = createButton()
+    Smallb.mousePressed(changePowerActive('Pequeno'))
+    Smallb.parent('configsmenu')
+    Invertedb = createButton()
+    Invertedb.mousePressed(changePowerActive('Invertido'))
+    Invertedb.parent('configsmenu')
+    Goldb = createButton()
+    Goldb.mousePressed(changePowerActive('Gol de ouro'))
+    Goldb.parent('configsmenu')
+    Multib = createButton()
+    Multib.mousePressed(changePowerActive('Multibola'))
+    Multib.parent('configsmenu')
+    Invisibleb = createButton()
+    Invisibleb.mousePressed(changePowerActive('Invisivel'))
+    Invisibleb.parent('configsmenu')
+    Sneakb = createButton()
+    Sneakb.mousePressed(changePowerActive('Sorrateiro'))
+    Sneakb.parent('configsmenu')
+    Timeb = createButton()
+    Timeb.mousePressed(changePowerActive('Temporizador'))
+    Timeb.parent('configsmenu')
     page = document.getElementById('page')
     balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
     textAlign(LEFT)
-    textSize(14)
+    textSize(12)
     text('patch 1.52', 5, 15)
-    textAlign(CENTER)
-    textSize(20)
-    text(subtitle, (screen.width*13/15)/2, screen.height*2/7)
     noStroke()
 }
 function setInput(){
@@ -199,7 +238,8 @@ function powerCatch(power, player, ball){
                     distance: 0,
                     angle: ball.angle,
                     lastPlayerHit: 1,
-                    scoreValue: 1
+                    scoreValue: 1,
+                    sneak: false
                 })
             balls.forEach(ball => {
                 ball.distance = (screen.width*13/15)/120
@@ -284,23 +324,26 @@ function drawPowerCircle(){
     text('?',spawnedPower.x, spawnedPower.y+10)
 }
 
+function goToConfigs(){
+    mainmenu.hide()
+    configsmenu.show()
+}
+function goToMain(){
+    mainmenu.show()
+    configsmenu.hide()
+}
+
 function draw(){
     if(gameplaying&&!timeout){
         clear()
         background("#000000")
-        selectMode.hide()
-        selectDifficulty.hide()
-        powersSelect.hide()
-        scoreDisplay.hide()
-        powerSpeedSelect.hide()
-        title.hide()
         fill(255)
         textAlign(LEFT)
-        textSize(14)
+        textSize(12)
         text('patch 1.52', 5, 15)
         textAlign(CENTER)
-        textSize(45)
-        text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/10)
+        textSize(37)
+        text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/9)
         if(canSpawnPower){
             spawnNewPower()
         }
@@ -318,16 +361,16 @@ function draw(){
                 }
             })
         }
-        textSize(25)
+        textSize(26)
         if(player1.powerGot){
             fill(currentAllPowers[player1.lastPower].c)
             textAlign(LEFT)
-            text(currentAllPowers[player1.lastPower].p, 5, screen.height-15)
+            text(currentAllPowers[player1.lastPower].p, 5, screen.height-16)
         }
         if(player2.powerGot){
             fill(currentAllPowers[player2.lastPower].c)
             textAlign(RIGHT)
-            text(currentAllPowers[player2.lastPower].p, (screen.width*13/15)-5, screen.height-15)
+            text(currentAllPowers[player2.lastPower].p, (screen.width*13/15)-5, screen.height-16)
         }
         if(gameMode){
             let xDist = (screen.width*13/15)
@@ -513,7 +556,8 @@ function winner(){
             distance: (screen.width*13/15)/120,
             angle: 0,
             lastPlayerHit: 1,
-            scoreValue: 1
+            scoreValue: 1,
+            sneak: false
         }]
     balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
     player1.y = screen.height*7/16
@@ -554,9 +598,15 @@ function start(){
             setTimeout(spawnPower, 1000)
         }
         gameplaying = true
-        subtitle = 'Deixe o dispositivo na horizontal,\nrecarregue a pagina e deixe em tela cheia\n(botao em cima na direita), nessa ordem!'
         startButton.html("Resetar")
-        mainmenu.addClass('topbutton')
+        goToMain()
+        selectMode.hide()
+        selectDifficulty.hide()
+        powersSelect.hide()
+        scoreDisplay.hide()
+        powerSpeedSelect.hide()
+        title.hide()
+        subtitle.hide()
         loadPowersActive()
     }
     else if(!timeout){
@@ -577,7 +627,8 @@ function start(){
             distance: (screen.width*13/15)/100,
             angle: 0,
             lastPlayerHit: 1,
-            scoreValue: 1
+            scoreValue: 1,
+            sneak: false
         }]
         balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
         player1.score = 0
@@ -588,20 +639,17 @@ function start(){
         player2.y = screen.height*7/16
         player2.powerGot = false
         stopPower(player2.lastPower, player2)
-        mainmenu.removeClass('topbutton')
         startButton.html("Start")
         fill(255)
         textSize(14)
         textAlign(LEFT)
         text('patch 1.52', 5, 15)
-        textAlign(CENTER)
-        textSize(20)
-        text(subtitle, (screen.width*13/15)/2, screen.height*2/7)
         powerSpeedSelect.show()
         selectMode.show()
         selectDifficulty.show()
         powersSelect.show()
         title.show()
         scoreDisplay.show()
+        subtitle.show()
     }
 }
