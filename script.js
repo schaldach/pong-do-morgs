@@ -2,7 +2,6 @@ let balls = [
     {
         x: (screen.width*13/15)/2,
         y: screen.height/2,
-        ballColor: [],
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: 1,
@@ -11,7 +10,12 @@ let balls = [
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1,
-        sneak: false
+        sneak: false,
+        timeangle: 0,
+        horizontaltime: 1,
+        verticaltime: 1,
+        timetravel: false,
+        timereturn: false
     }
 ]
 let player1 = {
@@ -44,6 +48,7 @@ let player2 = {
     activatedSneak: false,
     moved: false
 }
+let ballColors = []
 let gameplaying = false
 let timeout = false
 let playerMoved = false
@@ -53,7 +58,7 @@ let scoreLimit = 5
 let isPower = false
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:false}, {p:'Invertido', t:7500, c:'red', active:false}, {p:'Multibola', t:7500, c:'white', active:false},
 {p:'Gol de ouro', t:7500, c:'white', active:false}, {p:'Grande', t:7500, c:'green', active:false}, {p:'Pequeno', t:7500, c:'red', active:false}, {p:'Congelado', t:2000, c:'red', active:false},
-{p:'Invisivel', t:3750, c:'red', active:false}, {p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:7500, c:'white', active:false}]
+{p:'Invisivel', t:3500, c:'red', active:false}, {p:'Sorrateiro', t:7500, c:'green', active:false}, {p:'Temporizador', t:3000, c:'white', active:true}]
 let currentAllPowers = []
 let AIrandomizer = 1
 let numberOfPowers = 10
@@ -115,6 +120,7 @@ function setup(){
     powerSpeedSelect.option('Normal')
     powerSpeedSelect.option('Loucura')
     powerSpeedSelect.parent('buttonmenu')
+    powerSpeedSelect.selected('Normal')
     fullScreen = createImg('screen.png')
     fullScreen.position((screen.width*13/15)-60, 10)
     fullScreen.mousePressed(activateFullscreen)
@@ -161,10 +167,10 @@ function setup(){
     Timeb.mousePressed(() => changePowerActive('Temporizador'))
     Timeb.parent('configsmenu')
     page = document.getElementById('page')
-    balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
+    ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     textAlign(LEFT)
     textSize(12)
-    text('patch 1.52', 5, 15)
+    text('patch 1.53', 5, 15)
     noStroke()
 }
 function setInput(){
@@ -200,19 +206,21 @@ function changePowerActive(power){
     })
     allPowers[index].active = !allPowers[index].active
 }
-
 function spawnPower(){
     canSpawnPower = true
 }
 
 function powerCatch(power, player, ball){
+    if((ball.timetravel||ball.timereturn)&&currentAllPowers[power].p === 'Temporizador'){
+        return
+    }
     if(ball.horizontalControl===1){
         clearTimeout(stopPowerInterval1)
-        stopPowerInterval1 = setTimeout(stopPower, currentAllPowers[power].t, power, player)
+        stopPowerInterval1 = setTimeout(stopPower, currentAllPowers[power].t, power, player, ball)
     }
     else{
         clearTimeout(stopPowerInterval2)
-        stopPowerInterval2 = setTimeout(stopPower, currentAllPowers[power].t, power, player)
+        stopPowerInterval2 = setTimeout(stopPower, currentAllPowers[power].t, power, player, ball)
     }
     player.lastPower = power
     switch(currentAllPowers[power].p){
@@ -230,8 +238,7 @@ function powerCatch(power, player, ball){
         case 'Multibola':
             balls.push({
                     x: ball.x,
-                    y: ball.y,
-                    ballColor: [],
+                    y: ball.y,        
                     ballColorIndex: 0,
                     ballTrack: [],
                     horizontalControl: ball.horizontalControl*-1,
@@ -240,14 +247,18 @@ function powerCatch(power, player, ball){
                     angle: ball.angle,
                     lastPlayerHit: 1,
                     scoreValue: 1,
-                    sneak: false
+                    sneak: false,
+                    timeangle: 0,
+                    horizontaltime: 1,
+                    verticaltime: 1,
+                    timetravel: false,
+                    timereturn: false
                 })
             balls.forEach(ball => {
                 ball.distance = (screen.width*13/15)/120
                 ball.ballColorIndex = ball.ballColorIndex==1?0:ball.ballColorIndex
                 ball.ballColorIndex = ball.ballColorIndex==3?2:ball.ballColorIndex
             })
-            balls[balls.length-1]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
             break
         case 'Invertido':
             player.y = 0
@@ -268,13 +279,19 @@ function powerCatch(power, player, ball){
             player.color = 'green'
             break
         case 'Temporizador':
+            ball.timeangle = ball.angle
+            ball.horizontaltime = ball.horizontalControl
+            ball.verticaltime = ball.verticalControl
+            ball.ballTrack = []
+            ball.timetravel = true
+            ball.ballColorIndex = 4
             break
         default:
             break
     }
 }
 
-function stopPower(power, player){
+function stopPower(power, player, ball, nextpower){
     player.powerGot = false
     switch(currentAllPowers[power].p){
         case 'Pequeno':
@@ -299,6 +316,10 @@ function stopPower(power, player){
             player.color = 'white'
             break
         case 'Temporizador':
+            if(nextpower!='Temporizador'){
+                ball.timetravel = false
+                ball.timereturn = true
+            }
             break
         default:
             break
@@ -341,7 +362,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(12)
-        text('patch 1.52', 5, 15)
+        text('patch 1.53', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/9)
@@ -353,7 +374,7 @@ function draw(){
             balls.forEach(ball => {
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/5){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
-                    stopPower(rightPlayer.lastPower, rightPlayer)
+                    stopPower(rightPlayer.lastPower, rightPlayer, ball, currentAllPowers[currentPower].p)
                     powerCatch(currentPower, rightPlayer, ball)
                     if(ball.lastPlayerHit==1){player1.powerGot=true}
                     else{player2.powerGot=true}
@@ -426,15 +447,15 @@ function draw(){
             }
         }
         balls.forEach(ball => {
-            if(ball['ballTrack'].length>5){ball['ballTrack'].shift()}
-            ball['ballTrack'].push({x: ball.x, y:ball.y})
+            if(ball['ballTrack'].length>5&&!ball.timetravel&&!ball.timereturn){ball['ballTrack'].shift()}
+            if(!ball.timereturn){ball['ballTrack'].push({x: ball.x, y:ball.y})}
             ball['ballTrack'].forEach(past => {
-                ball['ballColor'][ball.ballColorIndex].setAlpha(50)
-                fill(ball['ballColor'][ball.ballColorIndex])
+                ballColors[ball.ballColorIndex].setAlpha(50)
+                fill(ballColors[ball.ballColorIndex])
                 ellipse(past.x, past.y, 20)
-                ball['ballColor'][ball.ballColorIndex].setAlpha(255)
+                ballColors[ball.ballColorIndex].setAlpha(255)
             })
-            fill(ball['ballColor'][ball.ballColorIndex])
+            fill(ballColors[ball.ballColorIndex])
             ellipse(ball.x, ball.y, 20)
             if(ball.sneak){
                 let horizontalballDistance = Math.cos(ball.angle)*ball.distance*6*ball.horizontalControl
@@ -460,17 +481,19 @@ function calculateball(){
                 AIrandomizer = Math.random()>0.5?1:-1
             }
             ball.lastPlayerHit = 2
-            ball.distance += (screen.width*13/15)/1500
-            ball.horizontalControl = -1
             playerMoved = player2.moved
-            changeAngle(player2, index)
-            if(player2.activatedFire){
-                const fireIndex = currentAllPowers.findIndex(power => {
-                    return power.p === 'Fogo';
-                })
-                clearTimeout(stopPowerInterval2)
-                stopPower(fireIndex, player2)
-                ball.distance += (screen.width*13/15)/70
+            ball.horizontalControl = -1
+            if(!ball.timereturn){
+                ball.distance += (screen.width*13/15)/1600
+                changeAngle(player2, index)
+                if(player2.activatedFire){
+                    const fireIndex = currentAllPowers.findIndex(power => {
+                        return power.p === 'Fogo';
+                    })
+                    clearTimeout(stopPowerInterval2)
+                    stopPower(fireIndex, player2)
+                    ball.distance += (screen.width*13/15)/70
+                }
             }
             if(player2.activatedSneak){
                 const sneakIndex = currentAllPowers.findIndex(power => {
@@ -489,17 +512,19 @@ function calculateball(){
         }
         if(ball.x-10<=player1.x){
             ball.lastPlayerHit = 1
-            ball.distance += (screen.width*13/15)/1500
-            ball.horizontalControl = 1
             playerMoved = player1.moved
-            changeAngle(player1, index)
-            if(player1.activatedFire){
-                const fireIndex = currentAllPowers.findIndex(power => {
-                    return power.p === 'Fogo';
-                })
-                clearTimeout(stopPowerInterval1)
-                stopPower(fireIndex, player1)
-                ball.distance += (screen.width*13/15)/70
+            ball.horizontalControl = 1
+            if(!ball.timereturn){
+                ball.distance += (screen.width*13/15)/1600
+                changeAngle(player1, index)
+                if(player1.activatedFire){
+                    const fireIndex = currentAllPowers.findIndex(power => {
+                        return power.p === 'Fogo';
+                    })
+                    clearTimeout(stopPowerInterval1)
+                    stopPower(fireIndex, player1)
+                    ball.distance += (screen.width*13/15)/70
+                }
             }
             if(player1.activatedSneak){
                 const sneakIndex = currentAllPowers.findIndex(power => {
@@ -517,22 +542,37 @@ function calculateball(){
             }
         }
         if(ball.sneak&&ball.horizontalControl===1){
-            if(ball.x>(screen.width*13/15)*3/7){ball.sneak=false}
+            if(ball.x>(screen.width*13/15)*7/20){ball.sneak=false}
         }
         if(ball.sneak&&ball.horizontalControl===-1){
-            if(ball.x<(screen.width*13/15)*4/7){ball.sneak=false}
+            if(ball.x<(screen.width*13/15)*13/20){ball.sneak=false}
         }
-        if(ball.y+10>screen.height){
-            ball.verticalControl = -1
+        if(ball.timereturn){
+            let length = ball['ballTrack'].length
+            ball.x = ball['ballTrack'][length-1].x
+            ball.y = ball['ballTrack'][length-1].y
+            ball['ballTrack'].pop()
+            if(length-1 === 0){
+                ball.horizontalControl = ball.horizontaltime*-1
+                ball.verticalControl = ball.verticaltime*-1
+                ball.angle = ball.timeangle
+                ball.timereturn = false
+                ball.ballColorIndex = ball.scoreValue === 1?0:2 
+            }
         }
-        if(ball.y-10<0){
-            ball.verticalControl = 1
-        }
-        ball.x += horizontalballDistance*ball.horizontalControl
-        ball.y += verticalballDistance*ball.verticalControl
-        if(ball.distance>=((screen.width*13/15)/70)+((screen.width*13/15)/120)){
-            if(ball.scoreValue==1){ball.ballColorIndex = 1}
-            else{ball.ballColorIndex = 3}
+        else{
+            if(ball.distance>=((screen.width*13/15)/70)+((screen.width*13/15)/120)){
+                if(ball.scoreValue==1){ball.ballColorIndex = 1}
+                else{ball.ballColorIndex = 3}
+            }
+            if(ball.y+10>screen.height){
+                ball.verticalControl = -1
+            }
+            if(ball.y-10<0){
+                ball.verticalControl = 1
+            }
+            ball.x += horizontalballDistance*ball.horizontalControl
+            ball.y += verticalballDistance*ball.verticalControl
         }
     })
     player1.moved = false
@@ -550,30 +590,36 @@ function changeAngle(player, index){
 function winner(){
     timeout = false
     if(player1.score>=scoreLimit&&scoreLimit!=0){
-        subtitle = 'Jogador 1 venceu!\n'+player1.score+' - '+player2.score
+        subtitle.html(`Jogador 1 venceu!<br/>${player1.score} - ${player2.score}`)
         start()
         return
     }
-    if(player2.score>=scoreLimit&&scoreLimit!=0){
-        subtitle = 'Jogador 2 venceu\n'+player1.score+' - '+player2.score
+    else if(player2.score>=scoreLimit&&scoreLimit!=0){
+        subtitle.html(`Jogador 2 venceu!<br/>${player1.score} - ${player2.score}`)
         start()
         return
+    }
+    else{
+        subtitle.html('Deixe o dispositivo na horizontal, recarregue a pagina e deixe em tela cheia (botao em cima na direita), nessa ordem!')
     }
     balls = [{
-            x: (screen.width*13/15)/2,
-            y: screen.height/2,
-            ballColor: [],
-            ballColorIndex: 0,
-            ballTrack: [],
-            horizontalControl: 1,
-            verticalControl: 1,
-            distance: (screen.width*13/15)/120,
-            angle: 0,
-            lastPlayerHit: 1,
-            scoreValue: 1,
-            sneak: false
-        }]
-    balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
+        x: (screen.width*13/15)/2,
+        y: screen.height/2,
+        ballColorIndex: 0,
+        ballTrack: [],
+        horizontalControl: 1,
+        verticalControl: 1,
+        distance: (screen.width*13/15)/120,
+        angle: 0,
+        lastPlayerHit: 1,
+        scoreValue: 1,
+        sneak: false,
+        timeangle: 0,
+        horizontaltime: 1,
+        verticaltime: 1,
+        timetravel: false,
+        timereturn: false
+    }]
     player1.y = screen.height*7/16
     player2.y = screen.height*7/16
 }
@@ -630,10 +676,19 @@ function start(){
         gameplaying = false
         isPower = false
         canSpawnPower = false
+        player1.score = 0
+        player1.y = screen.height*7/16
+        player1.powerGot = false
+        clearTimeout(stopPowerInterval1)
+        stopPower(player1.lastPower, player1, balls[0])
+        player2.score = 0
+        player2.y = screen.height*7/16
+        player2.powerGot = false
+        clearTimeout(stopPowerInterval2)
+        stopPower(player2.lastPower, player2, balls[0])
         balls = [{
             x: (screen.width*13/15)/2,
             y: screen.height/2,
-            ballColor: [],
             ballColorIndex: 0,
             ballTrack: [],
             horizontalControl: 1,
@@ -642,25 +697,19 @@ function start(){
             angle: 0,
             lastPlayerHit: 1,
             scoreValue: 1,
-            sneak: false
+            sneak: false,
+            timeangle: 0,
+            horizontaltime: 1,
+            verticaltime: 1,
+            timetravel: false,
+            timereturn: false
         }]
-        balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
-        player1.score = 0
-        player1.y = screen.height*7/16
-        player1.powerGot = false
-        clearTimeout(stopPowerInterval1)
-        stopPower(player1.lastPower, player1)
-        player2.score = 0
-        player2.y = screen.height*7/16
-        player2.powerGot = false
-        clearTimeout(stopPowerInterval2)
-        stopPower(player2.lastPower, player2)
         currentAllPowers = []
         startButton.html("Start")
         fill(255)
         textSize(14)
         textAlign(LEFT)
-        text('patch 1.52', 5, 15)
+        text('patch 1.53', 5, 15)
         powerSpeedSelect.show()
         selectMode.show()
         selectDifficulty.show()
