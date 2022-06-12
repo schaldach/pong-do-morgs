@@ -59,7 +59,7 @@ let AIrandomizer = 1
 let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
 powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect,
 scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed,
-Fireb,Iceb,Bigb,Smallb,Invertedb,Goldb,Multib,Timeb,Sneakb,Invisibleb,Configs, subtitle, buttonMenu
+Fireb,Iceb,Bigb,Smallb,Invertedb,Goldb,Multib,Timeb,Sneakb,Invisibleb,Configs,subtitle,buttonMenu
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -130,34 +130,34 @@ function setup(){
     configsmenu.addClass('configs')
     configsmenu.hide()
     Fireb = createButton()
-    Fireb.mousePressed(changePowerActive('Fogo'))
+    Fireb.mousePressed(() => changePowerActive('Fogo'))
     Fireb.parent('configsmenu')
     Iceb = createButton()
-    Iceb.mousePressed(changePowerActive('Congelado'))
+    Iceb.mousePressed(() => changePowerActive('Congelado'))
     Iceb.parent('configsmenu')
     Bigb = createButton()
-    Bigb.mousePressed(changePowerActive('Grande'))
+    Bigb.mousePressed(() => changePowerActive('Grande'))
     Bigb.parent('configsmenu')
     Smallb = createButton()
-    Smallb.mousePressed(changePowerActive('Pequeno'))
+    Smallb.mousePressed(() => changePowerActive('Pequeno'))
     Smallb.parent('configsmenu')
     Invertedb = createButton()
-    Invertedb.mousePressed(changePowerActive('Invertido'))
+    Invertedb.mousePressed(() => changePowerActive('Invertido'))
     Invertedb.parent('configsmenu')
     Goldb = createButton()
-    Goldb.mousePressed(changePowerActive('Gol de ouro'))
+    Goldb.mousePressed(() => changePowerActive('Gol de ouro'))
     Goldb.parent('configsmenu')
     Multib = createButton()
-    Multib.mousePressed(changePowerActive('Multibola'))
+    Multib.mousePressed(() => changePowerActive('Multibola'))
     Multib.parent('configsmenu')
     Invisibleb = createButton()
-    Invisibleb.mousePressed(changePowerActive('Invisivel'))
+    Invisibleb.mousePressed(() => changePowerActive('Invisivel'))
     Invisibleb.parent('configsmenu')
     Sneakb = createButton()
-    Sneakb.mousePressed(changePowerActive('Sorrateiro'))
+    Sneakb.mousePressed(() => changePowerActive('Sorrateiro'))
     Sneakb.parent('configsmenu')
     Timeb = createButton()
-    Timeb.mousePressed(changePowerActive('Temporizador'))
+    Timeb.mousePressed(() => changePowerActive('Temporizador'))
     Timeb.parent('configsmenu')
     page = document.getElementById('page')
     balls[0]['ballColor'].push(color(255,255,255), color(255,0,0), color(255,255,0), color(138,43,226))
@@ -186,13 +186,11 @@ function isTouchDevice() {
 }
 let device = isTouchDevice()
 function loadPowersActive(){
-    allPowers.forEach(anypower => {
-        if(anypower.active){
-            console.log('opa')
-            currentAllPowers.push(anypower)
+    allPowers.forEach(power => {
+        if(power.active){
+            currentAllPowers.push(power)
         }
     })
-    console.log(currentAllPowers)
 }
 function changePowerActive(power){
     let index = allPowers.findIndex(powers => {
