@@ -54,6 +54,7 @@ let timeout = false
 let playerMoved = false
 let isFull = false
 let canSpawnPower = false
+let paused = false
 let scoreLimit = 5
 let isPower = false
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7500, c:'red', active:true}, 
@@ -126,11 +127,9 @@ function setup(){
     fullScreen = createImg('screen.png')
     fullScreen.addClass('imgdiv')
     fullScreen.mousePressed(activateFullscreen)
-    fullScreen.size(40,40)
     fullScreen.parent('page')
     imgdiv = createDiv()
     imgdiv.addClass('imgdiv')
-    imgdiv.size(40,40)
     imgdiv.mousePressed(activateFullscreen)
     imgdiv.parent('page')
     configsmenu = createDiv()
@@ -171,6 +170,22 @@ function setup(){
     mainConfigs = createButton('Voltar')
     mainConfigs.mousePressed(goToMain)
     mainConfigs.parent('configsmenu')
+    pauseButton = createButton('Pause')
+    pauseButton.addClass('pausebutton')
+    pauseButton.mousePressed(pausegame)
+    pauseButton.hide()
+    pauseButton.parent('page')
+    pauseMenu = createDiv('')
+    pauseMenu.id('pausemenu')
+    pauseMenu.parent('page')
+    pauseMenu.hide()
+    pauseMenu.addClass('pausemenu')
+    resumeButton = createButton('Voltar')
+    resumeButton.mousePressed(resume)
+    resumeButton.parent('pausemenu')
+    resetButton = createButton('Resetar')
+    resetButton.parent('pausemenu')
+    resetButton.mousePressed(reset)
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     textAlign(LEFT)
@@ -341,7 +356,6 @@ function spawnNewPower(){
     canSpawnPower = false
     isPower = true
 }
-
 function drawPowerCircle(){
     let thisColor = color(170,0,255)
     thisColor.setAlpha(70)
@@ -352,7 +366,6 @@ function drawPowerCircle(){
     textAlign(CENTER)
     text('?',spawnedPower.x, spawnedPower.y+10)
 }
-
 function goToConfigs(){
     mainmenu.style('display','none')
     configsmenu.style('display','grid')
@@ -361,9 +374,19 @@ function goToMain(){
     mainmenu.style('display','flex')
     configsmenu.style('display','none')
 }
+function pausegame(){
+    pauseButton.hide()
+    pauseMenu.style('display', 'flex')
+    paused = true
+}
+function resume(){
+    pauseButton.show()
+    pauseMenu.hide()
+    paused = false
+}
 
 function draw(){
-    if(gameplaying&&!timeout){
+    if(gameplaying&&!timeout&&!paused){
         clear()
         background("#000000")
         fill(255)
@@ -598,12 +621,12 @@ function winner(){
     timeout = false
     if(player1.score>=scoreLimit&&scoreLimit>0){
         subtitle.html(`Jogador 1 venceu!<br/>${player1.score} - ${player2.score}`)
-        start()
+        reset()
         return
     }
     else if(player2.score>=scoreLimit&&scoreLimit>0){
         subtitle.html(`Jogador 2 venceu!<br/>${player1.score} - ${player2.score}`)
-        start()
+        reset()
         return
     }
     else{
@@ -632,99 +655,84 @@ function winner(){
 }
 
 function start(){
-    if(!gameplaying){
-        gameMode = selectMode.value() === '1 Player'?true:false
-        switch(selectDifficulty.value()){
-            case 'Facil':
-                AISpeed = screen.height/160
-                break
-            case 'Medio':
-                AISpeed = screen.height/125
-                break
-            case 'Dificil':
-                AISpeed = screen.height/80
-                break
-            case 'PESADELO':
-                AISpeed = screen.height/40
-                break
-        }
-        switch(powerSpeedSelect.value()){
-            case 'Devagar':
-                powerSpeed = 9000
-                break
-            case 'Normal':
-                powerSpeed = 6000
-                break
-            case 'Loucura':
-                powerSpeed = 3000
-                break
-        }
-        isPowers = powersSelect.value() === 'Com poderes'?true:false
-        if(isPowers){
-            powerInterval = setInterval(spawnPower, powerSpeed)
-            setTimeout(spawnPower, 1000)
-        }
-        gameplaying = true
-        startButton.html("Resetar")
-        goToMain()
-        selectMode.hide()
-        selectDifficulty.hide()
-        powersSelect.hide()
-        scoreDisplay.hide()
-        powerSpeedSelect.hide()
-        title.hide()
-        subtitle.hide()
-        advancedConfigs.hide()
-        loadPowersActive()
+    gameMode = selectMode.value() === '1 Player'?true:false
+    switch(selectDifficulty.value()){
+        case 'Facil':
+            AISpeed = screen.height/160
+            break
+        case 'Medio':
+            AISpeed = screen.height/125
+            break
+        case 'Dificil':
+            AISpeed = screen.height/80
+            break
+        case 'PESADELO':
+            AISpeed = screen.height/40
+            break
     }
-    else if(!timeout){
-        clearInterval(powerInterval)
-        clear()
-        background("#000000")
-        gameplaying = false
-        isPower = false
-        canSpawnPower = false
-        player1.score = 0
-        player1.y = screen.height*7/16
-        player1.powerGot = false
-        clearTimeout(stopPowerInterval1)
-        stopPower(player1.lastPower, player1, balls[0])
-        player2.score = 0
-        player2.y = screen.height*7/16
-        player2.powerGot = false
-        clearTimeout(stopPowerInterval2)
-        stopPower(player2.lastPower, player2, balls[0])
-        balls = [{
-            x: (screen.width*13/15)/2,
-            y: screen.height/2,
-            ballColorIndex: 0,
-            ballTrack: [],
-            horizontalControl: 1,
-            verticalControl: 1,
-            distance: (screen.width*13/15)/100,
-            angle: 0,
-            lastPlayerHit: 1,
-            scoreValue: 1,
-            sneak: false,
-            timeangle: 0,
-            horizontaltime: 1,
-            verticaltime: 1,
-            timetravel: false,
-            timereturn: false
-        }]
-        currentAllPowers = []
-        startButton.html("Start")
-        fill(255)
-        textSize(14)
-        textAlign(LEFT)
-        text('patch 1.53', 5, 15)
-        powerSpeedSelect.show()
-        selectMode.show()
-        selectDifficulty.show()
-        powersSelect.show()
-        title.show()
-        scoreDisplay.show()
-        subtitle.show()
-        advancedConfigs.show()
+    switch(powerSpeedSelect.value()){
+        case 'Devagar':
+            powerSpeed = 9000
+            break
+        case 'Normal':
+            powerSpeed = 6000
+            break
+        case 'Loucura':
+            powerSpeed = 3000
+            break
     }
+    isPowers = powersSelect.value() === 'Com poderes'?true:false
+    if(isPowers){
+        powerInterval = setInterval(spawnPower, powerSpeed)
+        setTimeout(spawnPower, 1000)
+    }
+    gameplaying = true
+    mainmenu.hide()
+    pauseButton.show()
+    loadPowersActive()
+}
+
+function reset(){
+    clearInterval(powerInterval)
+    clear()
+    background("#000000")
+    gameplaying = false
+    isPower = false
+    canSpawnPower = false
+    paused = false
+    player1.score = 0
+    player1.y = screen.height*7/16
+    player1.powerGot = false
+    clearTimeout(stopPowerInterval1)
+    stopPower(player1.lastPower, player1, balls[0])
+    player2.score = 0
+    player2.y = screen.height*7/16
+    player2.powerGot = false
+    clearTimeout(stopPowerInterval2)
+    stopPower(player2.lastPower, player2, balls[0])
+    balls = [{
+        x: (screen.width*13/15)/2,
+        y: screen.height/2,
+        ballColorIndex: 0,
+        ballTrack: [],
+        horizontalControl: 1,
+        verticalControl: 1,
+        distance: (screen.width*13/15)/100,
+        angle: 0,
+        lastPlayerHit: 1,
+        scoreValue: 1,
+        sneak: false,
+        timeangle: 0,
+        horizontaltime: 1,
+        verticaltime: 1,
+        timetravel: false,
+        timereturn: false
+    }]
+    currentAllPowers = []
+    fill(255)
+    textSize(14)
+    textAlign(LEFT)
+    text('patch 1.53', 5, 15)
+    mainmenu.style('display', 'flex')
+    pauseMenu.hide()
 }

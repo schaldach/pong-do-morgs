@@ -107,3 +107,14 @@ div{
 .redbutton{
     background-color: #ee1717;
 }
+.pausebutton{
+    position: absolute;
+    top: 1.5vh;
+}
+.pausemenu{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 10%;
+    gap: 5vh;
+}
