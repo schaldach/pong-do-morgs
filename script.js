@@ -54,6 +54,7 @@ let timeout = false
 let playerMoved = false
 let isFull = false
 let canSpawnPower = false
+let anyPowerActive = true
 let paused = false
 let scoreLimit = 5
 let isPower = false
@@ -65,7 +66,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7
 let currentAllPowers = []
 let AIrandomizer = 1
 let numberOfPowers = 10
-let powerInterval,stopPowerInterval1,stopPowerInterval2,timeinterval
+let powerInterval,stopPowerInterval1,stopPowerInterval2,timeinterval, timeTravelInterval
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -115,13 +116,7 @@ function setup(){
     scoreLimitSelect = createInput(5, 'number')
     scoreLimitSelect.parent('lim')
     scoreLimitSelect.input(setInput)
-    powerSpeedSelect = createSelect()
-    powerSpeedSelect.option('Devagar')
-    powerSpeedSelect.option('Normal')
-    powerSpeedSelect.option('Loucura')
-    powerSpeedSelect.parent('buttonmenu')
-    powerSpeedSelect.selected('Normal')
-    advancedConfigs = createButton('+ Configuracoes')
+    advancedConfigs = createButton('Outras Configs')
     advancedConfigs.parent('buttonmenu')
     advancedConfigs.mousePressed(goToConfigs)
     fullScreen = createImg('screen.png')
@@ -132,11 +127,15 @@ function setup(){
     imgdiv.addClass('imgdiv')
     imgdiv.mousePressed(activateFullscreen)
     imgdiv.parent('page')
+    advancedmenu = createDiv('Poderes disponíveis')
+    advancedmenu.parent('page')
+    advancedmenu.id('admenu')
+    advancedmenu.addClass('admenu')
     configsmenu = createDiv()
-    configsmenu.parent('page')
+    configsmenu.parent('admenu')
     configsmenu.id('configsmenu')
     configsmenu.addClass('configs')
-    configsmenu.hide()
+    advancedmenu.hide()
     Fireb = createButton('Fogo')
     Fireb.mousePressed(() => changePowerActive('Fogo', Fireb))
     Fireb.parent('configsmenu')
@@ -167,9 +166,19 @@ function setup(){
     Timeb = createButton('Temporizador')
     Timeb.mousePressed(() => changePowerActive('Temporizador', Timeb))
     Timeb.parent('configsmenu')
+    spawnSpeed = createDiv('Velocidade dos poderes')
+    spawnSpeed.parent('admenu')
+    spawnSpeed.id('sped')
+    spawnSpeed.addClass('sped')
+    powerSpeedSelect = createSelect()
+    powerSpeedSelect.option('Devagar')
+    powerSpeedSelect.option('Normal')
+    powerSpeedSelect.option('Loucura')
+    powerSpeedSelect.parent('sped')
+    powerSpeedSelect.selected('Normal')
     mainConfigs = createButton('Voltar')
     mainConfigs.mousePressed(goToMain)
-    mainConfigs.parent('configsmenu')
+    mainConfigs.parent('admenu')
     pauseButton = createButton('Pause')
     pauseButton.addClass('pausebutton')
     pauseButton.mousePressed(pausegame)
@@ -190,7 +199,7 @@ function setup(){
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     textAlign(LEFT)
     textSize(12)
-    text('patch 1.53', 5, 15)
+    text('patch 1.6', 5, 15)
     noStroke()
 }
 function setInput(){
@@ -219,13 +228,19 @@ function loadPowersActive(){
         }
     })
     numberOfPowers = currentAllPowers.length
+    if(numberOfPowers<1){
+        anyPowerActive = false
+    }
 }
 function changePowerActive(power, button){
     let index = allPowers.findIndex(powers => {
         return powers.p === power
     })
     allPowers[index].active = !allPowers[index].active
-    if(allPowers[index].active){button.removeClass('redbutton')}
+    if(allPowers[index].active){
+        button.removeClass('redbutton')
+        anyPowerActive = true
+    }
     else{button.addClass('redbutton')}
 }
 function spawnPower(){
@@ -233,18 +248,29 @@ function spawnPower(){
 }
 
 function powerCatch(power, player, ball){
-    if((ball.timetravel||ball.timereturn)&&currentAllPowers[power].p === 'Temporizador'){
+    player.lastPower = power
+    if(currentAllPowers[power].p === 'Temporizador'){
+        if(ball.timetravel||ball.timereturn){
+            return
+        }
+        ball.timeangle = ball.angle
+        ball.horizontaltime = ball.horizontalControl
+        ball.verticaltime = ball.verticalControl
+        ball.ballTrack = []
+        ball.timetravel = true
+        ball.ballColorIndex = 4
+        clearTimeout(timeTravelInterval)
+        timeTravelInterval = setTimeout(stopTimeTravel, currentAllPowers[power].t, player, ball)
         return
     }
     if(ball.horizontalControl===1){
         clearTimeout(stopPowerInterval1)
-        stopPowerInterval1 = setTimeout(stopPower, currentAllPowers[power].t, power, player, ball)
+        stopPowerInterval1 = setTimeout(stopPower, currentAllPowers[power].t, power, player)
     }
     else{
         clearTimeout(stopPowerInterval2)
-        stopPowerInterval2 = setTimeout(stopPower, currentAllPowers[power].t, power, player, ball)
+        stopPowerInterval2 = setTimeout(stopPower, currentAllPowers[power].t, power, player)
     }
-    player.lastPower = power
     switch(currentAllPowers[power].p){
         case 'Grande':
             player.height = screen.height*11/20
@@ -300,20 +326,18 @@ function powerCatch(power, player, ball){
             player.activatedSneak = true
             player.color = 'green'
             break
-        case 'Temporizador':
-            ball.timeangle = ball.angle
-            ball.horizontaltime = ball.horizontalControl
-            ball.verticaltime = ball.verticalControl
-            ball.ballTrack = []
-            ball.timetravel = true
-            ball.ballColorIndex = 4
-            break
         default:
             break
     }
 }
 
-function stopPower(power, player, ball, nextpower){
+function stopTimeTravel(player,ball){
+    if(currentAllPowers[player.lastPower].p === 'Temporizador'){player.powerGot = false}
+    ball.timetravel = false
+    ball.timereturn = true
+}
+
+function stopPower(power, player){
     player.powerGot = false
     switch(currentAllPowers[power].p){
         case 'Pequeno':
@@ -336,12 +360,6 @@ function stopPower(power, player, ball, nextpower){
         case 'Sorrateiro':
             player.activatedSneak = false
             player.color = 'white'
-            break
-        case 'Temporizador':
-            if(nextpower!='Temporizador'){
-                ball.timetravel = false
-                ball.timereturn = true
-            }
             break
         default:
             break
@@ -368,11 +386,11 @@ function drawPowerCircle(){
 }
 function goToConfigs(){
     mainmenu.style('display','none')
-    configsmenu.style('display','grid')
+    advancedmenu.style('display','flex')
 }
 function goToMain(){
     mainmenu.style('display','flex')
-    configsmenu.style('display','none')
+    advancedmenu.style('display','none')
 }
 function pausegame(){
     pauseButton.hide()
@@ -392,7 +410,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(12)
-        text('patch 1.53', 5, 15)
+        text('patch 1.6', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/9)
@@ -404,7 +422,7 @@ function draw(){
             balls.forEach(ball => {
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/5){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
-                    stopPower(rightPlayer.lastPower, rightPlayer, ball, currentAllPowers[currentPower].p)
+                    stopPower(rightPlayer.lastPower, rightPlayer)
                     powerCatch(currentPower, rightPlayer, ball)
                     if(ball.lastPlayerHit==1){player1.powerGot=true}
                     else{player2.powerGot=true}
@@ -514,7 +532,7 @@ function calculateball(){
             playerMoved = player2.moved
             ball.horizontalControl = -1
             if(!ball.timereturn){
-                ball.distance += (screen.width*13/15)/1600
+                ball.distance += (screen.width*13/15)/1400
                 changeAngle(player2, index)
                 if(player2.activatedFire){
                     const fireIndex = currentAllPowers.findIndex(power => {
@@ -545,7 +563,7 @@ function calculateball(){
             playerMoved = player1.moved
             ball.horizontalControl = 1
             if(!ball.timereturn){
-                ball.distance += (screen.width*13/15)/1600
+                ball.distance += (screen.width*13/15)/1400
                 changeAngle(player1, index)
                 if(player1.activatedFire){
                     const fireIndex = currentAllPowers.findIndex(power => {
@@ -587,7 +605,7 @@ function calculateball(){
                 ball.verticalControl = ball.verticaltime*-1
                 ball.angle = ball.timeangle
                 ball.timereturn = false
-                ball.ballColorIndex = ball.scoreValue === 1?0:2 
+                ball.ballColorIndex = ball.scoreValue === 1?0:2
             }
         }
         else{
@@ -681,15 +699,15 @@ function start(){
             powerSpeed = 3000
             break
     }
+    loadPowersActive()
     isPowers = powersSelect.value() === 'Com poderes'?true:false
-    if(isPowers){
+    if(isPowers&&anyPowerActive){
         powerInterval = setInterval(spawnPower, powerSpeed)
         setTimeout(spawnPower, 1000)
     }
     gameplaying = true
     mainmenu.hide()
     pauseButton.show()
-    loadPowersActive()
 }
 
 function reset(){
@@ -704,12 +722,15 @@ function reset(){
     player1.y = screen.height*7/16
     player1.powerGot = false
     clearTimeout(stopPowerInterval1)
-    stopPower(player1.lastPower, player1, balls[0])
     player2.score = 0
     player2.y = screen.height*7/16
     player2.powerGot = false
     clearTimeout(stopPowerInterval2)
-    stopPower(player2.lastPower, player2, balls[0])
+    clearTimeout(timeTravelInterval)
+    if(anyPowerActive&&isPowers){
+        stopPower(player2.lastPower, player2)
+        stopPower(player1.lastPower, player1)
+    }
     balls = [{
         x: (screen.width*13/15)/2,
         y: screen.height/2,
@@ -732,7 +753,8 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.53', 5, 15)
+    text('patch 1.6', 5, 15)
     mainmenu.style('display', 'flex')
     pauseMenu.hide()
+    pauseButton.hide()
 }
