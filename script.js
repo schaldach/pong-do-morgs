@@ -51,11 +51,12 @@ let isFull = false
 let canSpawnPower = false
 let scoreLimit = 5
 let isPower = false
-let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7500, c:'red', active:true}, {p:'Multibola', t:7500, c:'white', active:true},
-{p:'Gol de ouro', t:7500, c:'white', active:true}, {p:'Grande', t:7500, c:'green', active:true}, {p:'Pequeno', t:7500, c:'red', active:true}, {p:'Congelado', t:2000, c:'red', active:true},
-{p:'Invisivel', t:3750, c:'red', active:true}, {p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:7500, c:'white', active:true}]
+let allPowers = [{p:'Fogo', t:7500, c:'green', active:false}, {p:'Invertido', t:7500, c:'red', active:false}, {p:'Multibola', t:7500, c:'white', active:false},
+{p:'Gol de ouro', t:7500, c:'white', active:false}, {p:'Grande', t:7500, c:'green', active:false}, {p:'Pequeno', t:7500, c:'red', active:false}, {p:'Congelado', t:2000, c:'red', active:false},
+{p:'Invisivel', t:3750, c:'red', active:false}, {p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:7500, c:'white', active:false}]
 let currentAllPowers = []
 let AIrandomizer = 1
+let numberOfPowers = 10
 let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
 powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect,
 scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed,
@@ -129,34 +130,34 @@ function setup(){
     configsmenu.id('configsmenu')
     configsmenu.addClass('configs')
     configsmenu.hide()
-    Fireb = createButton()
+    Fireb = createButton('Fogo')
     Fireb.mousePressed(() => changePowerActive('Fogo'))
     Fireb.parent('configsmenu')
-    Iceb = createButton()
+    Iceb = createButton('Congelado')
     Iceb.mousePressed(() => changePowerActive('Congelado'))
     Iceb.parent('configsmenu')
-    Bigb = createButton()
+    Bigb = createButton('Grande')
     Bigb.mousePressed(() => changePowerActive('Grande'))
     Bigb.parent('configsmenu')
-    Smallb = createButton()
+    Smallb = createButton('Pequeno')
     Smallb.mousePressed(() => changePowerActive('Pequeno'))
     Smallb.parent('configsmenu')
-    Invertedb = createButton()
+    Invertedb = createButton('Invertido')
     Invertedb.mousePressed(() => changePowerActive('Invertido'))
     Invertedb.parent('configsmenu')
-    Goldb = createButton()
+    Goldb = createButton('Gol de ouro')
     Goldb.mousePressed(() => changePowerActive('Gol de ouro'))
     Goldb.parent('configsmenu')
-    Multib = createButton()
+    Multib = createButton('Multibola')
     Multib.mousePressed(() => changePowerActive('Multibola'))
     Multib.parent('configsmenu')
-    Invisibleb = createButton()
+    Invisibleb = createButton('Invisivel')
     Invisibleb.mousePressed(() => changePowerActive('Invisivel'))
     Invisibleb.parent('configsmenu')
-    Sneakb = createButton()
+    Sneakb = createButton('Sorrateiro')
     Sneakb.mousePressed(() => changePowerActive('Sorrateiro'))
     Sneakb.parent('configsmenu')
-    Timeb = createButton()
+    Timeb = createButton('Temporizador')
     Timeb.mousePressed(() => changePowerActive('Temporizador'))
     Timeb.parent('configsmenu')
     page = document.getElementById('page')
@@ -191,6 +192,7 @@ function loadPowersActive(){
             currentAllPowers.push(power)
         }
     })
+    numberOfPowers = currentAllPowers.length
 }
 function changePowerActive(power){
     let index = allPowers.findIndex(powers => {
@@ -306,7 +308,7 @@ function stopPower(power, player){
 function spawnNewPower(){
     let xPos = Math.floor(Math.random()*(screen.width*13/15)*2/3)+(screen.width*13/15)/6
     let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
-    currentPower = Math.floor(Math.random()*9)
+    currentPower = Math.floor(Math.random()*numberOfPowers)
     spawnedPower = {x: xPos, y: yPos}
     canSpawnPower = false
     isPower = true
@@ -440,7 +442,7 @@ function draw(){
             ellipse(ball.x, ball.y, 20)
             if(ball.sneak){
                 fill('green')
-                rect(ball.x-15,0,30,screen.height)
+                rect(ball.x-25,0,50,screen.height)
             }
         })
         calculateball()
@@ -513,11 +515,11 @@ function calculateball(){
                 return
             }
         }
-        if(ball.horizontalControl===1){
-            if(ball.x>screen.width/2){ball.sneak=false}
+        if(ball.sneak&&ball.horizontalControl===1){
+            if(ball.x>(screen.width*13/15)/2){ball.sneak=false}
         }
-        if(ball.horizontalControl===-1){
-            if(ball.x<screen.width/2){ball.sneak=false}
+        if(ball.sneak&&ball.horizontalControl===-1){
+            if(ball.x<(screen.width*13/15)/2){ball.sneak=false}
         }
         if(ball.y+10>screen.height){
             ball.verticalControl = -1
@@ -652,6 +654,7 @@ function start(){
         player2.powerGot = false
         clearTimeout(stopPowerInterval2)
         stopPower(player2.lastPower, player2)
+        currentAllPowers = []
         startButton.html("Start")
         fill(255)
         textSize(14)
