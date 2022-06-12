@@ -106,7 +106,7 @@ div{
 }
 .pausebutton{
     position: absolute;
-    top: 1vh;
+    top: 0.75vh;
 }
 .pausemenu{
     position: absolute;

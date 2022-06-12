@@ -66,6 +66,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7
 let currentAllPowers = []
 let AIrandomizer = 1
 let numberOfPowers = 10
+let currentPower = 0
 let powerInterval,stopPowerInterval1,stopPowerInterval2,timeinterval, timeTravelInterval
 
 function preload(){
@@ -590,10 +591,10 @@ function calculateball(){
             }
         }
         if(ball.sneak&&ball.horizontalControl===1){
-            if(ball.x>(screen.width*13/15)*7/20){ball.sneak=false}
+            if(ball.x>(screen.width*13/15)*3/7){ball.sneak=false}
         }
         if(ball.sneak&&ball.horizontalControl===-1){
-            if(ball.x<(screen.width*13/15)*13/20){ball.sneak=false}
+            if(ball.x<(screen.width*13/15)*4/7){ball.sneak=false}
         }
         if(ball.timereturn){
             let length = ball['ballTrack'].length
@@ -731,6 +732,8 @@ function reset(){
         stopPower(player2.lastPower, player2)
         stopPower(player1.lastPower, player1)
     }
+    player2.lastPower = 0
+    player1.lastPower = 0
     balls = [{
         x: (screen.width*13/15)/2,
         y: screen.height/2,
