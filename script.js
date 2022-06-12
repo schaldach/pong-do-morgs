@@ -56,16 +56,15 @@ let isFull = false
 let canSpawnPower = false
 let scoreLimit = 5
 let isPower = false
-let allPowers = [{p:'Fogo', t:7500, c:'green', active:false}, {p:'Invertido', t:7500, c:'red', active:false}, {p:'Multibola', t:7500, c:'white', active:false},
-{p:'Gol de ouro', t:7500, c:'white', active:false}, {p:'Grande', t:7500, c:'green', active:false}, {p:'Pequeno', t:7500, c:'red', active:false}, {p:'Congelado', t:2000, c:'red', active:false},
-{p:'Invisivel', t:3500, c:'red', active:false}, {p:'Sorrateiro', t:7500, c:'green', active:false}, {p:'Temporizador', t:3000, c:'white', active:true}]
+let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7500, c:'red', active:true}, 
+{p:'Multibola', t:7500, c:'white', active:true},{p:'Gol de ouro', t:7500, c:'white', active:true}, 
+{p:'Grande', t:7500, c:'green', active:true}, {p:'Pequeno', t:7500, c:'red', active:true}, 
+{p:'Congelado', t:2000, c:'red', active:true},{p:'Invisivel', t:3500, c:'red', active:true}, 
+{p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:3000, c:'white', active:true}]
 let currentAllPowers = []
 let AIrandomizer = 1
 let numberOfPowers = 10
-let myCanvas,startButton,selectMode,selectDifficulty,AISpeed,fullScreen,page,imgdiv,gameMode,
-powersSelect,title,powerInterval,stopPowerInterval1,stopPowerInterval2,scoreDisplay, powerSpeedSelect,
-scoreLimitSelect,mainmenu,currentPower,font,spawnedPower,isPowers,timeinterval, closestBall, powerSpeed,
-Fireb,Iceb,Bigb,Smallb,Invertedb,Goldb,Multib,Timeb,Sneakb,Invisibleb,Configs,subtitle,buttonMenu
+let powerInterval,stopPowerInterval1,stopPowerInterval2,timeinterval
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -121,13 +120,16 @@ function setup(){
     powerSpeedSelect.option('Loucura')
     powerSpeedSelect.parent('buttonmenu')
     powerSpeedSelect.selected('Normal')
+    advancedConfigs = createButton('+ Configuracoes')
+    advancedConfigs.parent('buttonmenu')
+    advancedConfigs.mousePressed(goToConfigs)
     fullScreen = createImg('screen.png')
-    fullScreen.position((screen.width*13/15)-60, 10)
+    fullScreen.addClass('imgdiv')
     fullScreen.mousePressed(activateFullscreen)
     fullScreen.size(40,40)
     fullScreen.parent('page')
     imgdiv = createDiv()
-    imgdiv.position((screen.width*13/15)-60, 10)
+    imgdiv.addClass('imgdiv')
     imgdiv.size(40,40)
     imgdiv.mousePressed(activateFullscreen)
     imgdiv.parent('page')
@@ -137,35 +139,38 @@ function setup(){
     configsmenu.addClass('configs')
     configsmenu.hide()
     Fireb = createButton('Fogo')
-    Fireb.mousePressed(() => changePowerActive('Fogo'))
+    Fireb.mousePressed(() => changePowerActive('Fogo', Fireb))
     Fireb.parent('configsmenu')
     Iceb = createButton('Congelado')
-    Iceb.mousePressed(() => changePowerActive('Congelado'))
+    Iceb.mousePressed(() => changePowerActive('Congelado', Iceb))
     Iceb.parent('configsmenu')
     Bigb = createButton('Grande')
-    Bigb.mousePressed(() => changePowerActive('Grande'))
+    Bigb.mousePressed(() => changePowerActive('Grande', Bigb))
     Bigb.parent('configsmenu')
     Smallb = createButton('Pequeno')
-    Smallb.mousePressed(() => changePowerActive('Pequeno'))
+    Smallb.mousePressed(() => changePowerActive('Pequeno', Smallb))
     Smallb.parent('configsmenu')
     Invertedb = createButton('Invertido')
-    Invertedb.mousePressed(() => changePowerActive('Invertido'))
+    Invertedb.mousePressed(() => changePowerActive('Invertido', Invertedb))
     Invertedb.parent('configsmenu')
     Goldb = createButton('Gol de ouro')
-    Goldb.mousePressed(() => changePowerActive('Gol de ouro'))
+    Goldb.mousePressed(() => changePowerActive('Gol de ouro', Goldb))
     Goldb.parent('configsmenu')
     Multib = createButton('Multibola')
-    Multib.mousePressed(() => changePowerActive('Multibola'))
+    Multib.mousePressed(() => changePowerActive('Multibola', Multib))
     Multib.parent('configsmenu')
     Invisibleb = createButton('Invisivel')
-    Invisibleb.mousePressed(() => changePowerActive('Invisivel'))
+    Invisibleb.mousePressed(() => changePowerActive('Invisivel', Invisibleb))
     Invisibleb.parent('configsmenu')
     Sneakb = createButton('Sorrateiro')
-    Sneakb.mousePressed(() => changePowerActive('Sorrateiro'))
+    Sneakb.mousePressed(() => changePowerActive('Sorrateiro', Sneakb))
     Sneakb.parent('configsmenu')
     Timeb = createButton('Temporizador')
-    Timeb.mousePressed(() => changePowerActive('Temporizador'))
+    Timeb.mousePressed(() => changePowerActive('Temporizador', Timeb))
     Timeb.parent('configsmenu')
+    mainConfigs = createButton('Voltar')
+    mainConfigs.mousePressed(goToMain)
+    mainConfigs.parent('configsmenu')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     textAlign(LEFT)
@@ -200,11 +205,13 @@ function loadPowersActive(){
     })
     numberOfPowers = currentAllPowers.length
 }
-function changePowerActive(power){
+function changePowerActive(power, button){
     let index = allPowers.findIndex(powers => {
         return powers.p === power
     })
     allPowers[index].active = !allPowers[index].active
+    if(allPowers[index].active){button.removeClass('redbutton')}
+    else{button.addClass('redbutton')}
 }
 function spawnPower(){
     canSpawnPower = true
@@ -667,6 +674,7 @@ function start(){
         powerSpeedSelect.hide()
         title.hide()
         subtitle.hide()
+        advancedConfigs.hide()
         loadPowersActive()
     }
     else if(!timeout){
@@ -717,5 +725,6 @@ function start(){
         title.show()
         scoreDisplay.show()
         subtitle.show()
+        advancedConfigs.show()
     }
 }

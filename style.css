@@ -23,7 +23,7 @@ button{
     color: #ffffff;
 }
 button:hover{
-    background-color: #112f70;
+    background-color: #6217a0;
 }
 input{
     padding-left: 10px;
@@ -43,8 +43,8 @@ select, input{
     -webkit-background-clip: text;
     color: transparent;
     width: fit-content;
-    font-size: 12vh;
-    height: 16vh;
+    font-size: 14vh;
+    height: 18vh;
 }
 
 div{
@@ -61,15 +61,20 @@ div{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: -15vh;
     gap: 4vh;
     position: absolute;
 }
 
 .configs{
+    width: 40%;
     display: grid;
     grid-template-columns: 1fr 1fr;
     justify-content: center;
-    margin-top: 2rem;
+    align-items: center;
+    position: absolute;
+    gap: 1vh;
+    margin-top: 20vh;
 }
 
 .buttonmenu{
@@ -82,6 +87,23 @@ div{
 }
 
 .subtitle{
-    font-size: 3.5vh;
-    width: 50%;
+    font-size: 3vh;
+    width: 70%;
+}
+
+#page{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.imgdiv{
+    height: 45px;
+    width: 45px;
+    top: 2vh;
+    right: 8vw;
+    position: fixed;
+}
+.redbutton{
+    background-color: #ee1717;
 }
