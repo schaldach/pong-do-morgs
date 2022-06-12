@@ -274,7 +274,7 @@ function powerCatch(power, player, ball){
 
 function stopPower(power, player){
     player.powerGot = false
-    switch(currentAllPowers[power].p){
+    switch(allPowers[power].p){
         case 'Pequeno':
         case 'Grande':
             player.height = screen.height/3
@@ -324,12 +324,12 @@ function drawPowerCircle(){
 }
 
 function goToConfigs(){
-    mainmenu.hide()
-    configsmenu.show()
+    mainmenu.style('display','none')
+    configsmenu.style('display','grid')
 }
 function goToMain(){
-    mainmenu.show()
-    configsmenu.hide()
+    mainmenu.style('display','flex')
+    configsmenu.style('display','none')
 }
 
 function draw(){
@@ -645,12 +645,10 @@ function start(){
         player1.score = 0
         player1.y = screen.height*7/16
         player1.powerGot = false
-        clearTimeout(stopPowerInterval1)
         stopPower(player1.lastPower, player1)
         player2.score = 0
         player2.y = screen.height*7/16
         player2.powerGot = false
-        clearTimeout(stopPowerInterval2)
         stopPower(player2.lastPower, player2)
         startButton.html("Start")
         fill(255)
