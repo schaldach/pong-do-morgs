@@ -121,7 +121,7 @@ div{
     justify-content: center;
     align-items: center;
     position: absolute;
-    gap: 1vh;
+    gap: 1.5vh;
     display: flex;
     flex-direction: column;
 }
