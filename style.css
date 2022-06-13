@@ -43,8 +43,10 @@ select, input{
     -webkit-background-clip: text;
     color: transparent;
     width: fit-content;
-    font-size: 14vh;
-    height: 18vh;
+    display: flex;
+    align-items: center;
+    font-size: 8vw;
+    height: 10vw;
 }
 
 div{
@@ -61,8 +63,8 @@ div{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: -15vh;
     gap: 4vh;
+    margin-top: 4vh;
     position: absolute;
 }
 
@@ -91,7 +93,6 @@ div{
 #page{
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
 }
 .imgdiv{
