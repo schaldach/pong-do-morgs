@@ -217,6 +217,56 @@ window.addEventListener("resize", function() {
     textAlign(LEFT)
     textSize(14)
     text('patch 1.62', 5, 15)
+    balls = [
+        {
+            x: (windowWidth*13/15)/2,
+            y: windowHeight/2,
+            ballColorIndex: 0,
+            ballTrack: [],
+            horizontalControl: 1,
+            verticalControl: 1,
+            distance: (windowWidth*13/15)/120,
+            angle: 0,
+            lastPlayerHit: 1,
+            scoreValue: 1,
+            sneak: false,
+            timeangle: 0,
+            horizontaltime: 1,
+            verticaltime: 1,
+            timetravel: false,
+            timereturn: false
+        }
+    ]
+    player1 = {
+        p: 'player1',
+        x: 10,
+        y: windowHeight*7/16,
+        height: windowHeight/3,
+        color: 'white',
+        lastPower: 0,
+        powerGot: false,
+        score: 0,
+        activatedFire: false,
+        activatedIce: false,
+        activatedInverted: false,
+        activatedSneak: false,
+        moved: false
+    }
+    player2 = {
+        p: 'player2',
+        x: (windowWidth*13/15)-10,
+        y: windowHeight*7/16,
+        height: windowHeight/3,
+        color: 'white',
+        lastPower: 0,
+        powerGot: false,
+        score: 0,
+        activatedFire: false,
+        activatedIce: false,
+        activatedInverted: false,
+        activatedSneak: false,
+        moved: false
+    }
 });
 window.addEventListener("orientationchange", function() {
     windowHeight = screen.height
@@ -227,6 +277,56 @@ window.addEventListener("orientationchange", function() {
     textAlign(LEFT)
     textSize(14)
     text('patch 1.62', 5, 15)
+    balls = [
+        {
+            x: (windowWidth*13/15)/2,
+            y: windowHeight/2,
+            ballColorIndex: 0,
+            ballTrack: [],
+            horizontalControl: 1,
+            verticalControl: 1,
+            distance: (windowWidth*13/15)/120,
+            angle: 0,
+            lastPlayerHit: 1,
+            scoreValue: 1,
+            sneak: false,
+            timeangle: 0,
+            horizontaltime: 1,
+            verticaltime: 1,
+            timetravel: false,
+            timereturn: false
+        }
+    ]
+    player1 = {
+        p: 'player1',
+        x: 10,
+        y: windowHeight*7/16,
+        height: windowHeight/3,
+        color: 'white',
+        lastPower: 0,
+        powerGot: false,
+        score: 0,
+        activatedFire: false,
+        activatedIce: false,
+        activatedInverted: false,
+        activatedSneak: false,
+        moved: false
+    }
+    player2 = {
+        p: 'player2',
+        x: (windowWidth*13/15)-10,
+        y: windowHeight*7/16,
+        height: windowHeight/3,
+        color: 'white',
+        lastPower: 0,
+        powerGot: false,
+        score: 0,
+        activatedFire: false,
+        activatedIce: false,
+        activatedInverted: false,
+        activatedSneak: false,
+        moved: false
+    }
 });
 
 function activateFullscreen(){
