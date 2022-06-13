@@ -221,7 +221,7 @@ function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 
         page.requestFullscreen({navigationUI:'hide'})
         isFull = true
-        if(device&&screen.availHeight > screen.availWidth){
+        if(device&&windowHeight > windowWidth){
             screen.orientation.lock("landscape-primary")
         }
     }
