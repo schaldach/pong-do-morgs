@@ -86,7 +86,7 @@ function setup(){
     title = createDiv('Pong do Morgs')
     title.addClass('titulo')
     title.parent('mainmenu')
-    subtitle = createDiv('Jogue em tela cheia<br/>(botao em cima na direita)!')
+    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita, talvez seja necessario clicar novamente)')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
     buttonMenu = createDiv('')
@@ -209,7 +209,7 @@ function activateFullscreen(){
     if (page.requestFullscreen && !isFull) {
         page.requestFullscreen({navigationUI:'hide'})
         isFull = true
-        if(device){
+        if(device&&screen.orientation!=="landscape-primary"){
             screen.orientation.lock("landscape-primary")
             location.reload()
             return false
@@ -709,7 +709,7 @@ function start(){
         setTimeout(spawnPower, 1000)
     }
     gameplaying = true
-    subtitle.html('Jogue em tela cheia<br/>(botao em cima na direita)!')
+    subtitle.html('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita, aperte novamente se necessario)')
     mainmenu.hide()
     fullScreen.hide()
     imgdiv.hide()
