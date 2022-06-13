@@ -67,7 +67,7 @@ let currentAllPowers = []
 let AIrandomizer = 1
 let numberOfPowers = 10
 let currentPower = 0
-let powerInterval,stopPowerInterval1,stopPowerInterval2,timeinterval, timeTravelInterval
+let powerInterval,stopPowerInterval1,stopPowerInterval2,timeinterval,timeTravelInterval
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -122,7 +122,6 @@ function setup(){
     advancedConfigs.mousePressed(goToConfigs)
     fullScreen = createImg('screen.png')
     fullScreen.addClass('imgdiv')
-    fullScreen.mousePressed(activateFullscreen)
     fullScreen.parent('page')
     imgdiv = createDiv()
     imgdiv.addClass('imgdiv')
@@ -212,11 +211,18 @@ function activateFullscreen(){
         isFull = true
         if(device){
             screen.orientation.lock("landscape-primary")
+            location.reload()
+            return false
         }
     }
     else if(document.exitFullscreen && isFull){
         document.exitFullscreen()
         isFull = false
+        if(device){
+            screen.orientation.unlock()
+            location.reload()
+            return false
+        }
     }
 }
 function isTouchDevice() {
@@ -709,6 +715,8 @@ function start(){
     gameplaying = true
     subtitle.html('Deixe o dispositivo na horizontal, recarregue a pagina e deixe em tela cheia (botao em cima na direita), nessa ordem!')
     mainmenu.hide()
+    fullScreen.hide()
+    imgdiv.hide()
     pauseButton.show()
 }
 
@@ -759,6 +767,8 @@ function reset(){
     textAlign(LEFT)
     text('patch 1.61', 5, 15)
     mainmenu.style('display', 'flex')
+    fullScreen.show()
+    imgdiv.show()
     pauseMenu.hide()
     pauseButton.hide()
 }
