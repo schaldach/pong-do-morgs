@@ -209,7 +209,7 @@ function activateFullscreen(){
     if (page.requestFullscreen && !isFull) {
         page.requestFullscreen({navigationUI:'hide'})
         isFull = true
-        if(device&&screen.orientation.type!=="landscape-primary"){
+        if(device&&screen.availHeight > screen.availWidth){
             screen.orientation.lock("landscape-primary")
             location.reload()
             return false
