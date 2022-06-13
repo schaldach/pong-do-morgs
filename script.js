@@ -1,12 +1,14 @@
+let windowHeight = screen.height
+let windowWidth = screen.width
 let balls = [
     {
-        x: (screen.width*13/15)/2,
-        y: screen.height/2,
+        x: (windowWidth*13/15)/2,
+        y: windowHeight/2,
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: 1,
         verticalControl: 1,
-        distance: (screen.width*13/15)/120,
+        distance: (windowWidth*13/15)/120,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1,
@@ -21,8 +23,8 @@ let balls = [
 let player1 = {
     p: 'player1',
     x: 10,
-    y: screen.height*7/16,
-    height: screen.height/3,
+    y: windowHeight*7/16,
+    height: windowHeight/3,
     color: 'white',
     lastPower: 0,
     powerGot: false,
@@ -35,9 +37,9 @@ let player1 = {
 }
 let player2 = {
     p: 'player2',
-    x: (screen.width*13/15)-10,
-    y: screen.height*7/16,
-    height: screen.height/3,
+    x: (windowWidth*13/15)-10,
+    y: windowHeight*7/16,
+    height: windowHeight/3,
     color: 'white',
     lastPower: 0,
     powerGot: false,
@@ -73,10 +75,10 @@ function preload(){
     font = loadFont('koulen.ttf')
 }
 function setup(){
-    myCanvas = createCanvas((screen.width*13/15),screen.height)
+    myCanvas = createCanvas((windowWidth*13/15),windowHeight)
     myCanvas.parent('page')
     background("#000000")
-    myCanvas.position(screen.width/15,0,"fixed")
+    myCanvas.position(windowWidth/15,0,"fixed")
     textFont(font)
     fill(255)
     mainmenu = createDiv()
@@ -205,6 +207,10 @@ function setup(){
 function setInput(){
     scoreLimit = parseInt(this.value())
 }
+function onResize(){
+    windowHeight = screen.height
+    windowWidth = screen.width
+}
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 
         page.requestFullscreen({navigationUI:'hide'})
@@ -212,10 +218,12 @@ function activateFullscreen(){
         if(device&&screen.availHeight > screen.availWidth){
             screen.orientation.lock("landscape-primary")
         }
+        onResize()
     }
     else if(document.exitFullscreen && isFull){
         document.exitFullscreen()
         isFull = false
+        onResize()
     }
 }
 function isTouchDevice() {
@@ -276,7 +284,7 @@ function powerCatch(power, player, ball){
     }
     switch(currentAllPowers[power].p){
         case 'Grande':
-            player.height = screen.height*11/20
+            player.height = windowHeight*11/20
             break
         case 'Fogo':
             player.activatedFire = true
@@ -306,7 +314,7 @@ function powerCatch(power, player, ball){
                     timereturn: false
                 })
             balls.forEach(ball => {
-                ball.distance = (screen.width*13/15)/120
+                ball.distance = (windowWidth*13/15)/120
                 ball.ballColorIndex = ball.ballColorIndex==1?0:ball.ballColorIndex
                 ball.ballColorIndex = ball.ballColorIndex==3?2:ball.ballColorIndex
             })
@@ -316,7 +324,7 @@ function powerCatch(power, player, ball){
             player.activatedInverted = true
             break
         case 'Pequeno':
-            player.height = screen.height/6
+            player.height = windowHeight/6
             break
         case 'Gol de ouro':
             ball.scoreValue = 2
@@ -345,7 +353,7 @@ function stopPower(power, player){
     switch(currentAllPowers[power].p){
         case 'Pequeno':
         case 'Grande':
-            player.height = screen.height/3
+            player.height = windowHeight/3
             break
         case 'Fogo':
             player.activatedFire = false
@@ -370,8 +378,8 @@ function stopPower(power, player){
 }
 
 function spawnNewPower(){
-    let xPos = Math.floor(Math.random()*(screen.width*13/15)*2/3)+(screen.width*13/15)/6
-    let yPos = Math.floor(Math.random()*screen.height*2/3)+screen.height/6
+    let xPos = Math.floor(Math.random()*(windowWidth*13/15)*2/3)+(windowWidth*13/15)/6
+    let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
     currentPower = Math.floor(Math.random()*numberOfPowers)
     spawnedPower = {x: xPos, y: yPos}
     canSpawnPower = false
@@ -381,7 +389,7 @@ function drawPowerCircle(){
     let thisColor = color(170,0,255)
     thisColor.setAlpha(70)
     fill(thisColor)
-    ellipse(spawnedPower.x, spawnedPower.y, screen.height*2/5)
+    ellipse(spawnedPower.x, spawnedPower.y, windowHeight*2/5)
     thisColor.setAlpha(255)
     textSize(40)
     textAlign(CENTER)
@@ -416,14 +424,14 @@ function draw(){
         text('patch 1.61', 5, 15)
         textAlign(CENTER)
         textSize(37)
-        text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/7)
+        text(player1.score+" - "+player2.score, (windowWidth*13/15)/2, windowHeight/7)
         if(canSpawnPower){
             spawnNewPower()
         }
         if(isPower){
             drawPowerCircle()
             balls.forEach(ball => {
-                if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+screen.height/5){
+                if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+windowHeight/5){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
                     stopPower(rightPlayer.lastPower, rightPlayer)
                     powerCatch(currentPower, rightPlayer, ball)
@@ -438,41 +446,41 @@ function draw(){
         if(player1.powerGot){
             fill(currentAllPowers[player1.lastPower].c)
             textAlign(LEFT)
-            text(currentAllPowers[player1.lastPower].p, 5, screen.height-16)
+            text(currentAllPowers[player1.lastPower].p, 5, windowHeight-16)
         }
         if(player2.powerGot){
             fill(currentAllPowers[player2.lastPower].c)
             textAlign(RIGHT)
-            text(currentAllPowers[player2.lastPower].p, (screen.width*13/15)-5, screen.height-16)
+            text(currentAllPowers[player2.lastPower].p, (windowWidth*13/15)-5, windowHeight-16)
         }
         if(gameMode){
-            let xDist = (screen.width*13/15)
+            let xDist = (windowWidth*13/15)
             let insaneMode = selectDifficulty.value()=='PESADELO'?true:false
             balls.forEach(ball => {
                 let index = balls.indexOf(ball)
-                if((screen.width*13/15)-ball.x<=xDist&&(!insaneMode||ball.horizontalControl==1)){
-                    xDist = (screen.width*13/15)-ball.x
+                if((windowWidth*13/15)-ball.x<=xDist&&(!insaneMode||ball.horizontalControl==1)){
+                    xDist = (windowWidth*13/15)-ball.x
                     closestBall = index
                 }
             })
-            let target = balls[closestBall].y+(AISpeed*4*AIrandomizer*player2.height/(screen.height/3))
+            let target = balls[closestBall].y+(AISpeed*4*AIrandomizer*player2.height/(windowHeight/3))
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
-            player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<screen.height)?player2.y+AISpeed:player2.y
-            player1.y = !player1.activatedIce&&!player1.activatedInverted&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=screen.height)?mouseY-(player1.height/2):player1.y
-            player1.y = player1.activatedInverted&&(screen.height-mouseY+(player1.height/2)<=screen.height&&screen.height-mouseY-(player1.height/2)>=0)?screen.height-mouseY-(player1.height/2):player1.y
+            player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<windowHeight)?player2.y+AISpeed:player2.y
+            player1.y = !player1.activatedIce&&!player1.activatedInverted&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=windowHeight)?mouseY-(player1.height/2):player1.y
+            player1.y = player1.activatedInverted&&(windowHeight-mouseY+(player1.height/2)<=windowHeight&&windowHeight-mouseY-(player1.height/2)>=0)?windowHeight-mouseY-(player1.height/2):player1.y
             player1.moved = true
             player2.moved = true
         }
         else{
             if(device){
                 touches.forEach(touch => {
-                    if(touch.x < (screen.width*13/15)/2){
-                        player1.y = !player1.activatedIce&&!player1.activatedInverted&&(touch.y-(player1.height/2)>=0&&touch.y+(player1.height/2)<=screen.height)?touch.y-(player1.height/2):player1.y
-                        player1.y = player1.activatedInverted&&(screen.height-touch.y+(player1.height/2)<=screen.height&&screen.height-touch.y-(player1.height/2)>=0)?screen.height-touch.y-(player1.height/2):player1.y
+                    if(touch.x < (windowWidth*13/15)/2){
+                        player1.y = !player1.activatedIce&&!player1.activatedInverted&&(touch.y-(player1.height/2)>=0&&touch.y+(player1.height/2)<=windowHeight)?touch.y-(player1.height/2):player1.y
+                        player1.y = player1.activatedInverted&&(windowHeight-touch.y+(player1.height/2)<=windowHeight&&windowHeight-touch.y-(player1.height/2)>=0)?windowHeight-touch.y-(player1.height/2):player1.y
                     }
                     else{
-                        player2.y = !player2.activatedIce&&!player2.activatedInverted&&(touch.y-(player2.height/2)>=0&&touch.y+(player2.height/2)<=screen.height)?touch.y-(player2.height/2):player2.y
-                        player2.y = player2.activatedInverted&&(screen.height-touch.y+(player2.height/2)<=screen.height&&screen.height-touch.y-(player2.height/2)>=0)?screen.height-touch.y-(player2.height/2):player2.y
+                        player2.y = !player2.activatedIce&&!player2.activatedInverted&&(touch.y-(player2.height/2)>=0&&touch.y+(player2.height/2)<=windowHeight)?touch.y-(player2.height/2):player2.y
+                        player2.y = player2.activatedInverted&&(windowHeight-touch.y+(player2.height/2)<=windowHeight&&windowHeight-touch.y-(player2.height/2)>=0)?windowHeight-touch.y-(player2.height/2):player2.y
                     }
                 })
                 player1.moved = true
@@ -484,7 +492,7 @@ function draw(){
                     player1.moved = true
                 }
                 if(!player1.activatedIce&&(keyIsDown(CONTROL)&&!player1.activatedInverted)||(keyIsDown(SHIFT)&&player1.activatedInverted)){
-                    player1.y = player1.y+player1.height>=screen.height?player1.y:player1.y+15
+                    player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+15
                     player1.moved = true
                 }
                 if(!player2.activatedIce&&(keyIsDown(UP_ARROW)&&!player2.activatedInverted)||(keyIsDown(DOWN_ARROW)&&player2.activatedInverted)){
@@ -492,7 +500,7 @@ function draw(){
                     player2.moved = true
                 }
                 if(!player2.activatedIce&&(keyIsDown(DOWN_ARROW)&&!player2.activatedInverted)||(keyIsDown(UP_ARROW)&&player2.activatedInverted)){
-                    player2.y = player2.y+player2.height>=screen.height?player2.y:player2.y+15
+                    player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+15
                     player2.moved = true
                 }
             }
@@ -511,7 +519,7 @@ function draw(){
             if(ball.sneak){
                 let horizontalballDistance = Math.cos(ball.angle)*ball.distance*6.5*ball.horizontalControl
                 fill('green')
-                rect(ball.x-horizontalballDistance,0,horizontalballDistance+15*ball.horizontalControl,screen.height)
+                rect(ball.x-horizontalballDistance,0,horizontalballDistance+15*ball.horizontalControl,windowHeight)
             }
         })
         fill(player1.color)
@@ -534,7 +542,7 @@ function calculateball(){
             ball.lastPlayerHit = 2
             playerMoved = player2.moved
             ball.horizontalControl = -1
-            ball.distance += (screen.width*13/15)/1400
+            ball.distance += (windowWidth*13/15)/1400
             changeAngle(player2, index)
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
                 player1.score+=ball.scoreValue
@@ -548,7 +556,7 @@ function calculateball(){
                 })
                 clearTimeout(stopPowerInterval2)
                 stopPower(fireIndex, player2)
-                ball.distance += (screen.width*13/15)/70
+                ball.distance += (windowWidth*13/15)/70
             }
             if(player2.activatedSneak){
                 const sneakIndex = currentAllPowers.findIndex(power => {
@@ -563,7 +571,7 @@ function calculateball(){
             ball.lastPlayerHit = 1
             playerMoved = player1.moved
             ball.horizontalControl = 1
-            ball.distance += (screen.width*13/15)/1400
+            ball.distance += (windowWidth*13/15)/1400
             changeAngle(player1, index)
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
                 player2.score+=ball.scoreValue
@@ -577,7 +585,7 @@ function calculateball(){
                 })
                 clearTimeout(stopPowerInterval1)
                 stopPower(fireIndex, player1)
-                ball.distance += (screen.width*13/15)/70
+                ball.distance += (windowWidth*13/15)/70
             }
             if(player1.activatedSneak){
                 const sneakIndex = currentAllPowers.findIndex(power => {
@@ -589,10 +597,10 @@ function calculateball(){
             }
         }
         if(ball.sneak&&ball.horizontalControl===1){
-            if(ball.x>(screen.width*13/15)*3/7){ball.sneak=false}
+            if(ball.x>(windowWidth*13/15)*3/7){ball.sneak=false}
         }
         if(ball.sneak&&ball.horizontalControl===-1){
-            if(ball.x<(screen.width*13/15)*4/7){ball.sneak=false}
+            if(ball.x<(windowWidth*13/15)*4/7){ball.sneak=false}
         }
         if(ball.timereturn){
             let length = ball['ballTrack'].length
@@ -608,11 +616,11 @@ function calculateball(){
             }
         }
         else{
-            if(ball.distance>=((screen.width*13/15)/70)+((screen.width*13/15)/120)&&!ball.timetravel){
+            if(ball.distance>=((windowWidth*13/15)/70)+((windowWidth*13/15)/120)&&!ball.timetravel){
                 if(ball.scoreValue==1){ball.ballColorIndex = 1}
                 else{ball.ballColorIndex = 3}
             }
-            if(ball.y+10>screen.height){
+            if(ball.y+10>windowHeight){
                 ball.verticalControl = -1
             }
             if(ball.y-10<0){
@@ -647,13 +655,13 @@ function winner(){
         return
     }
     balls = [{
-        x: (screen.width*13/15)/2,
-        y: screen.height/2,
+        x: (windowWidth*13/15)/2,
+        y: windowHeight/2,
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: 1,
         verticalControl: 1,
-        distance: (screen.width*13/15)/120,
+        distance: (windowWidth*13/15)/120,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1,
@@ -664,24 +672,24 @@ function winner(){
         timetravel: false,
         timereturn: false
     }]
-    player1.y = screen.height*7/16
-    player2.y = screen.height*7/16
+    player1.y = windowHeight*7/16
+    player2.y = windowHeight*7/16
 }
 
 function start(){
     gameMode = selectMode.value() === '1 Player'?true:false
     switch(selectDifficulty.value()){
         case 'Facil':
-            AISpeed = screen.height/160
+            AISpeed = windowHeight/160
             break
         case 'Medio':
-            AISpeed = screen.height/125
+            AISpeed = windowHeight/125
             break
         case 'Dificil':
-            AISpeed = screen.height/80
+            AISpeed = windowHeight/80
             break
         case 'PESADELO':
-            AISpeed = screen.height/40
+            AISpeed = windowHeight/40
             break
     }
     switch(powerSpeedSelect.value()){
@@ -718,11 +726,11 @@ function reset(){
     canSpawnPower = false
     paused = false
     player1.score = 0
-    player1.y = screen.height*7/16
+    player1.y = windowHeight*7/16
     player1.powerGot = false
     clearTimeout(stopPowerInterval1)
     player2.score = 0
-    player2.y = screen.height*7/16
+    player2.y = windowHeight*7/16
     player2.powerGot = false
     clearTimeout(stopPowerInterval2)
     clearTimeout(timeTravelInterval)
@@ -733,13 +741,13 @@ function reset(){
     player2.lastPower = 0
     player1.lastPower = 0
     balls = [{
-        x: (screen.width*13/15)/2,
-        y: screen.height/2,
+        x: (windowWidth*13/15)/2,
+        y: windowHeight/2,
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: 1,
         verticalControl: 1,
-        distance: (screen.width*13/15)/100,
+        distance: (windowWidth*13/15)/100,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1,
