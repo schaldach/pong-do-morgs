@@ -414,7 +414,7 @@ function draw(){
         text('patch 1.61', 5, 15)
         textAlign(CENTER)
         textSize(37)
-        text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/8)
+        text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/7)
         if(canSpawnPower){
             spawnNewPower()
         }
