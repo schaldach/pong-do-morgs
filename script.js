@@ -414,7 +414,7 @@ function draw(){
         text('patch 1.6', 5, 15)
         textAlign(CENTER)
         textSize(37)
-        text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/9)
+        text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/8)
         if(canSpawnPower){
             spawnNewPower()
         }
@@ -507,9 +507,9 @@ function draw(){
             fill(ballColors[ball.ballColorIndex])
             ellipse(ball.x, ball.y, 20)
             if(ball.sneak){
-                let horizontalballDistance = Math.cos(ball.angle)*ball.distance*6*ball.horizontalControl
+                let horizontalballDistance = Math.cos(ball.angle)*ball.distance*6.5*ball.horizontalControl
                 fill('green')
-                rect(ball.x-(horizontalballDistance),0,(horizontalballDistance+(20*ball.horizontalControl)),screen.height)
+                rect(ball.x-horizontalballDistance,0,horizontalballDistance+15*ball.horizontalControl,screen.height)
             }
         })
         fill(player1.color)
@@ -648,9 +648,6 @@ function winner(){
         reset()
         return
     }
-    else{
-        subtitle.html('Deixe o dispositivo na horizontal, recarregue a pagina e deixe em tela cheia (botao em cima na direita), nessa ordem!')
-    }
     balls = [{
         x: (screen.width*13/15)/2,
         y: screen.height/2,
@@ -707,6 +704,7 @@ function start(){
         setTimeout(spawnPower, 1000)
     }
     gameplaying = true
+    subtitle.html('Deixe o dispositivo na horizontal, recarregue a pagina e deixe em tela cheia (botao em cima na direita), nessa ordem!')
     mainmenu.hide()
     pauseButton.show()
 }
