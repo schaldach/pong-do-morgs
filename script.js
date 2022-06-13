@@ -212,6 +212,7 @@ function activateFullscreen(){
         if(device&&screen.orientation!=="landscape-primary"){
             screen.orientation.lock("landscape-primary")
             location.reload()
+            page.requestFullscreen({navigationUI:'hide'})
             return false
         }
     }
