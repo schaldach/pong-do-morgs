@@ -86,7 +86,7 @@ function setup(){
     title = createDiv('Pong do Morgs')
     title.addClass('titulo')
     title.parent('mainmenu')
-    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita, talvez seja necessario clicar novamente)')
+    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita, clique novamente se necessario)')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
     buttonMenu = createDiv('')
@@ -709,7 +709,7 @@ function start(){
         setTimeout(spawnPower, 1000)
     }
     gameplaying = true
-    subtitle.html('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita, aperte novamente se necessario)')
+    subtitle.html('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita, clique novamente se necessario)')
     mainmenu.hide()
     fullScreen.hide()
     imgdiv.hide()
