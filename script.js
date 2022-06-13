@@ -216,56 +216,14 @@ window.addEventListener("resize", function() {
     textAlign(LEFT)
     textSize(14)
     text('patch 1.62', 5, 15)
-    balls = [
-        {
-            x: (windowWidth*13/15)/2,
-            y: windowHeight/2,
-            ballColorIndex: 0,
-            ballTrack: [],
-            horizontalControl: 1,
-            verticalControl: 1,
-            distance: (windowWidth*13/15)/120,
-            angle: 0,
-            lastPlayerHit: 1,
-            scoreValue: 1,
-            sneak: false,
-            timeangle: 0,
-            horizontaltime: 1,
-            verticaltime: 1,
-            timetravel: false,
-            timereturn: false
-        }
-    ]
-    player1 = {
-        p: 'player1',
-        x: 10,
-        y: windowHeight*7/16,
-        height: windowHeight/3,
-        color: 'white',
-        lastPower: 0,
-        powerGot: false,
-        score: 0,
-        activatedFire: false,
-        activatedIce: false,
-        activatedInverted: false,
-        activatedSneak: false,
-        moved: false
-    }
-    player2 = {
-        p: 'player2',
-        x: (windowWidth*13/15)-10,
-        y: windowHeight*7/16,
-        height: windowHeight/3,
-        color: 'white',
-        lastPower: 0,
-        powerGot: false,
-        score: 0,
-        activatedFire: false,
-        activatedIce: false,
-        activatedInverted: false,
-        activatedSneak: false,
-        moved: false
-    }
+    balls[0].x = (windowWidth*13/15)/2
+    balls[0].y = windowHeight/2
+    balls[0].distance = (windowWidth*13/15)/120
+    player1.y = windowHeight*7/16
+    player1.height = windowHeight/3
+    player2.x = (windowWidth*13/15)-10
+    player2.y = windowHeight*7/16
+    player2.height = windowHeight/3
 });
 window.addEventListener("orientationchange", function() {
     windowHeight = screen.height
@@ -276,56 +234,14 @@ window.addEventListener("orientationchange", function() {
     textAlign(LEFT)
     textSize(14)
     text('patch 1.62', 5, 15)
-    balls = [
-        {
-            x: (windowWidth*13/15)/2,
-            y: windowHeight/2,
-            ballColorIndex: 0,
-            ballTrack: [],
-            horizontalControl: 1,
-            verticalControl: 1,
-            distance: (windowWidth*13/15)/120,
-            angle: 0,
-            lastPlayerHit: 1,
-            scoreValue: 1,
-            sneak: false,
-            timeangle: 0,
-            horizontaltime: 1,
-            verticaltime: 1,
-            timetravel: false,
-            timereturn: false
-        }
-    ]
-    player1 = {
-        p: 'player1',
-        x: 10,
-        y: windowHeight*7/16,
-        height: windowHeight/3,
-        color: 'white',
-        lastPower: 0,
-        powerGot: false,
-        score: 0,
-        activatedFire: false,
-        activatedIce: false,
-        activatedInverted: false,
-        activatedSneak: false,
-        moved: false
-    }
-    player2 = {
-        p: 'player2',
-        x: (windowWidth*13/15)-10,
-        y: windowHeight*7/16,
-        height: windowHeight/3,
-        color: 'white',
-        lastPower: 0,
-        powerGot: false,
-        score: 0,
-        activatedFire: false,
-        activatedIce: false,
-        activatedInverted: false,
-        activatedSneak: false,
-        moved: false
-    }
+    balls[0].x = (windowWidth*13/15)/2
+    balls[0].y = windowHeight/2
+    balls[0].distance = (windowWidth*13/15)/120
+    player1.y = windowHeight*7/16
+    player1.height = windowHeight/3
+    player2.x = (windowWidth*13/15)-10
+    player2.y = windowHeight*7/16
+    player2.height = windowHeight/3
 });
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 
@@ -382,7 +298,7 @@ function powerCatch(power, player, ball){
         ball.verticaltime = ball.verticalControl
         ball.ballTrack = []
         ball.timetravel = true
-        ball.ballColorIndex = 4
+        ball.ballColorIndex = ball.scoreValue === 1?4:2
         clearTimeout(timeTravelInterval)
         timeTravelInterval = setTimeout(stopTimeTravel, currentAllPowers[power].t, player, ball)
         return
