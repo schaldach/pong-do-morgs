@@ -38,7 +38,7 @@ select, input{
 
 .titulo{
     font-family: 'Koulen', cursive;
-    background-image: linear-gradient(to left, #c2fbff, #2c54ac);
+    background-image: linear-gradient(to right, #FF4E50, #F9D423);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
