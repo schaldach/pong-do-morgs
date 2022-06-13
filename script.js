@@ -209,10 +209,9 @@ function activateFullscreen(){
     if (page.requestFullscreen && !isFull) {
         page.requestFullscreen({navigationUI:'hide'})
         isFull = true
-        if(device&&screen.orientation!=="landscape-primary"){
+        if(device&&screen.orientation.type!=="landscape-primary"){
             screen.orientation.lock("landscape-primary")
             location.reload()
-            page.requestFullscreen({navigationUI:'hide'})
             return false
         }
     }
