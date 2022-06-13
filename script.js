@@ -713,7 +713,7 @@ function start(){
         setTimeout(spawnPower, 1000)
     }
     gameplaying = true
-    subtitle.html('Deixe o dispositivo na horizontal, recarregue a pagina e deixe em tela cheia (botao em cima na direita), nessa ordem!')
+    subtitle.html('Jogue em tela cheia e horizontal (botao em cima na direita)!')
     mainmenu.hide()
     fullScreen.hide()
     imgdiv.hide()
