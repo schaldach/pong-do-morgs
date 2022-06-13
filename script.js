@@ -201,7 +201,7 @@ function setup(){
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     textAlign(LEFT)
     textSize(12)
-    text('patch 1.61', 5, 15)
+    text('patch 1.62', 5, 15)
     noStroke()
 }
 function setInput(){
@@ -211,6 +211,7 @@ function onResize(){
     windowHeight = screen.height
     windowWidth = screen.width
 }
+window.addEventListener('resize', onResize);
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 
         page.requestFullscreen({navigationUI:'hide'})
@@ -218,12 +219,10 @@ function activateFullscreen(){
         if(device&&screen.availHeight > screen.availWidth){
             screen.orientation.lock("landscape-primary")
         }
-        onResize()
     }
     else if(document.exitFullscreen && isFull){
         document.exitFullscreen()
         isFull = false
-        onResize()
     }
 }
 function isTouchDevice() {
@@ -421,7 +420,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(12)
-        text('patch 1.61', 5, 15)
+        text('patch 1.62', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+" - "+player2.score, (windowWidth*13/15)/2, windowHeight/7)
@@ -762,7 +761,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.61', 5, 15)
+    text('patch 1.62', 5, 15)
     mainmenu.style('display', 'flex')
     fullScreen.show()
     imgdiv.show()
