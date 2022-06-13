@@ -45,8 +45,9 @@ select, input{
     width: fit-content;
     display: flex;
     align-items: center;
+    justify-content: center;
     font-size: 8vw;
-    height: 10vw;
+    height: 8vw;
 }
 
 div{
@@ -76,7 +77,6 @@ div{
 }
 
 .buttonmenu{
-    width: 40%;
     display: flex;
     justify-content: center;
     max-width: fit-content;

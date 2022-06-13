@@ -86,7 +86,7 @@ function setup(){
     title = createDiv('Pong do Morgs')
     title.addClass('titulo')
     title.parent('mainmenu')
-    subtitle = createDiv('Jogue em tela cheia e horizontal (botao em cima na direita)!')
+    subtitle = createDiv('Jogue em tela cheia<br/>(botao em cima na direita)!')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
     buttonMenu = createDiv('')
@@ -541,17 +541,21 @@ function calculateball(){
             ball.lastPlayerHit = 2
             playerMoved = player2.moved
             ball.horizontalControl = -1
-            if(!ball.timereturn){
-                ball.distance += (screen.width*13/15)/1400
-                changeAngle(player2, index)
-                if(player2.activatedFire){
-                    const fireIndex = currentAllPowers.findIndex(power => {
-                        return power.p === 'Fogo';
-                    })
-                    clearTimeout(stopPowerInterval2)
-                    stopPower(fireIndex, player2)
-                    ball.distance += (screen.width*13/15)/70
-                }
+            ball.distance += (screen.width*13/15)/1400
+            changeAngle(player2, index)
+            if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
+                player1.score+=ball.scoreValue
+                timeout = true
+                timeinterval = setTimeout(winner, 250)
+                return
+            }
+            if(player2.activatedFire){
+                const fireIndex = currentAllPowers.findIndex(power => {
+                    return power.p === 'Fogo';
+                })
+                clearTimeout(stopPowerInterval2)
+                stopPower(fireIndex, player2)
+                ball.distance += (screen.width*13/15)/70
             }
             if(player2.activatedSneak){
                 const sneakIndex = currentAllPowers.findIndex(power => {
@@ -561,28 +565,26 @@ function calculateball(){
                 stopPower(sneakIndex, player2)
                 ball.sneak = true
             }
-            if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
-                player1.score+=ball.scoreValue
-                timeout = true
-                timeinterval = setTimeout(winner, 250)
-                return
-            }
         }
         if(ball.x-10<=player1.x){
             ball.lastPlayerHit = 1
             playerMoved = player1.moved
             ball.horizontalControl = 1
-            if(!ball.timereturn){
-                ball.distance += (screen.width*13/15)/1400
-                changeAngle(player1, index)
-                if(player1.activatedFire){
-                    const fireIndex = currentAllPowers.findIndex(power => {
-                        return power.p === 'Fogo';
-                    })
-                    clearTimeout(stopPowerInterval1)
-                    stopPower(fireIndex, player1)
-                    ball.distance += (screen.width*13/15)/70
-                }
+            ball.distance += (screen.width*13/15)/1400
+            changeAngle(player1, index)
+            if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
+                player2.score+=ball.scoreValue
+                timeout = true
+                timeinterval = setTimeout(winner, 250)
+                return
+            }
+            if(player1.activatedFire){
+                const fireIndex = currentAllPowers.findIndex(power => {
+                    return power.p === 'Fogo';
+                })
+                clearTimeout(stopPowerInterval1)
+                stopPower(fireIndex, player1)
+                ball.distance += (screen.width*13/15)/70
             }
             if(player1.activatedSneak){
                 const sneakIndex = currentAllPowers.findIndex(power => {
@@ -591,12 +593,6 @@ function calculateball(){
                 clearTimeout(stopPowerInterval1)
                 stopPower(sneakIndex, player1)
                 ball.sneak = true
-            }
-            if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
-                player2.score+=ball.scoreValue
-                timeout = true
-                timeinterval = setTimeout(winner, 250)
-                return
             }
         }
         if(ball.sneak&&ball.horizontalControl===1){
@@ -713,7 +709,7 @@ function start(){
         setTimeout(spawnPower, 1000)
     }
     gameplaying = true
-    subtitle.html('Jogue em tela cheia e horizontal (botao em cima na direita)!')
+    subtitle.html('Jogue em tela cheia<br/>(botao em cima na direita)!')
     mainmenu.hide()
     fullScreen.hide()
     imgdiv.hide()
