@@ -211,11 +211,17 @@ function setInput(){
 window.addEventListener("resize", function() {
     windowHeight = screen.height
     windowWidth = screen.width
+    myCanvas = createCanvas((windowWidth*13/15),windowHeight)
+    background("#000000")
+    myCanvas.position(windowWidth/15,0,"fixed")
 });
 window.addEventListener("orientationchange", function() {
     windowHeight = screen.height
     windowWidth = screen.width
-}, false);
+    myCanvas = createCanvas((windowWidth*13/15),windowHeight)
+    background("#000000")
+    myCanvas.position(windowWidth/15,0,"fixed")
+});
 
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 

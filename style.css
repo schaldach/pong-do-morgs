@@ -23,7 +23,7 @@ button{
     color: #ffffff;
 }
 button:hover{
-    background-color: #6217a0;
+    filter: brightness(75%);
 }
 input{
     padding-left: 10px;
