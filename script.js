@@ -206,23 +206,16 @@ function setInput(){
     scoreLimit = parseInt(this.value())
 }
 function activateFullscreen(){
-    if (page.requestFullscreen && !isFull) {
+    if (page.requestFullscreen && !isFull) { 
         page.requestFullscreen({navigationUI:'hide'})
         isFull = true
         if(device&&screen.availHeight > screen.availWidth){
             screen.orientation.lock("landscape-primary")
-            location.reload()
-            return false
         }
     }
     else if(document.exitFullscreen && isFull){
         document.exitFullscreen()
         isFull = false
-        if(device){
-            screen.orientation.unlock()
-            location.reload()
-            return false
-        }
     }
 }
 function isTouchDevice() {
