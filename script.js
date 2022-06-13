@@ -200,7 +200,7 @@ function setup(){
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     textAlign(LEFT)
     textSize(12)
-    text('patch 1.6', 5, 15)
+    text('patch 1.61', 5, 15)
     noStroke()
 }
 function setInput(){
@@ -411,7 +411,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(12)
-        text('patch 1.6', 5, 15)
+        text('patch 1.61', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+" - "+player2.score, (screen.width*13/15)/2, screen.height/8)
@@ -754,7 +754,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.6', 5, 15)
+    text('patch 1.61', 5, 15)
     mainmenu.style('display', 'flex')
     pauseMenu.hide()
     pauseButton.hide()
