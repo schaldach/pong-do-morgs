@@ -200,7 +200,7 @@ function setup(){
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     textAlign(LEFT)
-    textSize(12)
+    textSize(14)
     text('patch 1.62', 5, 15)
     noStroke()
 }
@@ -214,6 +214,9 @@ window.addEventListener("resize", function() {
     myCanvas = createCanvas((windowWidth*13/15),windowHeight)
     background("#000000")
     myCanvas.position(windowWidth/15,0,"fixed")
+    textAlign(LEFT)
+    textSize(14)
+    text('patch 1.62', 5, 15)
 });
 window.addEventListener("orientationchange", function() {
     windowHeight = screen.height
@@ -221,6 +224,9 @@ window.addEventListener("orientationchange", function() {
     myCanvas = createCanvas((windowWidth*13/15),windowHeight)
     background("#000000")
     myCanvas.position(windowWidth/15,0,"fixed")
+    textAlign(LEFT)
+    textSize(14)
+    text('patch 1.62', 5, 15)
 });
 
 function activateFullscreen(){
@@ -430,7 +436,7 @@ function draw(){
         background("#000000")
         fill(255)
         textAlign(LEFT)
-        textSize(12)
+        textSize(14)
         text('patch 1.62', 5, 15)
         textAlign(CENTER)
         textSize(37)
