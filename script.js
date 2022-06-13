@@ -207,7 +207,6 @@ function setup(){
 function setInput(){
     scoreLimit = parseInt(this.value())
 }
-
 window.addEventListener("resize", function() {
     windowHeight = screen.height
     windowWidth = screen.width
@@ -328,7 +327,6 @@ window.addEventListener("orientationchange", function() {
         moved: false
     }
 });
-
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 
         page.requestFullscreen({navigationUI:'hide'})
@@ -373,7 +371,6 @@ function changePowerActive(power, button){
 function spawnPower(){
     canSpawnPower = true
 }
-
 function powerCatch(power, player, ball){
     player.lastPower = power
     if(currentAllPowers[power].p === 'Temporizador'){
@@ -457,13 +454,11 @@ function powerCatch(power, player, ball){
             break
     }
 }
-
 function stopTimeTravel(player,ball){
     if(currentAllPowers[player.lastPower].p === 'Temporizador'){player.powerGot = false}
     ball.timetravel = false
     ball.timereturn = true
 }
-
 function stopPower(power, player){
     player.powerGot = false
     switch(currentAllPowers[power].p){
@@ -492,7 +487,6 @@ function stopPower(power, player){
             break
     }
 }
-
 function spawnNewPower(){
     let xPos = Math.floor(Math.random()*(windowWidth*13/15)*2/3)+(windowWidth*13/15)/6
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
