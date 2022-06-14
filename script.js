@@ -299,6 +299,7 @@ function powerCatch(power, player, ball){
         ball.ballTrack = []
         ball.timetravel = true
         ball.ballColorIndex = ball.scoreValue === 1?4:2
+        ball.ballColorIndex = ball.scoreValue === 2&&ball.distance>=((windowWidth*13/15)/70)+((windowWidth*13/15)/120)?3:ball.ballColorIndex
         clearTimeout(timeTravelInterval)
         timeTravelInterval = setTimeout(stopTimeTravel, currentAllPowers[power].t, player, ball)
         return
