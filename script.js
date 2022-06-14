@@ -298,8 +298,6 @@ function powerCatch(power, player, ball){
         ball.verticaltime = ball.verticalControl
         ball.ballTrack = []
         ball.timetravel = true
-        ball.ballColorIndex = ball.scoreValue === 1?4:2
-        ball.ballColorIndex = ball.scoreValue === 2&&ball.distance>=((windowWidth*13/15)/70)+((windowWidth*13/15)/120)?3:ball.ballColorIndex
         clearTimeout(timeTravelInterval)
         timeTravelInterval = setTimeout(stopTimeTravel, currentAllPowers[power].t, player, ball)
         return
@@ -345,8 +343,6 @@ function powerCatch(power, player, ball){
                 })
             balls.forEach(ball => {
                 ball.distance = (windowWidth*13/15)/120
-                ball.ballColorIndex = ball.ballColorIndex==1?0:ball.ballColorIndex
-                ball.ballColorIndex = ball.ballColorIndex==3?2:ball.ballColorIndex
             })
             break
         case 'Invertido':
@@ -358,7 +354,6 @@ function powerCatch(power, player, ball){
             break
         case 'Gol de ouro':
             ball.scoreValue = 2
-            ball.ballColorIndex = 2
             break
         case 'Invisivel':
             player.color = 'black'
@@ -481,12 +476,11 @@ function draw(){
             text(currentAllPowers[player2.lastPower].p, (windowWidth*13/15)-5, windowHeight-16)
         }
         if(gameMode){
-            let xDist = (windowWidth*13/15)
-            let insaneMode = selectDifficulty.value()=='PESADELO'?true:false
+            let xDist = 0
             balls.forEach(ball => {
                 let index = balls.indexOf(ball)
-                if((windowWidth*13/15)-ball.x<=xDist&&(!insaneMode||ball.horizontalControl==1)){
-                    xDist = (windowWidth*13/15)-ball.x
+                if(ball.x>xDist){
+                    xDist = ball.x
                     closestBall = index
                 }
             })
@@ -639,14 +633,9 @@ function calculateball(){
                 ball.verticalControl = ball.verticaltime*-1
                 ball.angle = ball.timeangle
                 ball.timereturn = false
-                ball.ballColorIndex = ball.scoreValue === 1?0:2
             }
         }
         else{
-            if(ball.distance>=((windowWidth*13/15)/70)+((windowWidth*13/15)/120)&&!ball.timetravel){
-                if(ball.scoreValue==1){ball.ballColorIndex = 1}
-                else{ball.ballColorIndex = 3}
-            }
             if(ball.y+10>windowHeight){
                 ball.verticalControl = -1
             }
@@ -657,8 +646,21 @@ function calculateball(){
             ball.y += verticalballDistance*ball.verticalControl
         }
     })
+    determineColors()
     player1.moved = false
     player2.moved = false
+}
+
+function determineColors(){
+    balls.forEach(ball => {
+        ball.ballColorIndex = 0
+        if(ball.timetravel||ball.timereturn){ball.ballColorIndex=4}
+        if(ball.scoreValue===2){ball.ballColorIndex=2}
+        if(ball.distance>((windowWidth*13/15)/70)+((windowWidth*13/15)/120)){
+            if(ball.scoreValue===2){ball.ballColorIndex=3}
+            else{ball.ballColorIndex=1}
+        }
+    })
 }
 
 function changeAngle(player, index){
@@ -686,7 +688,7 @@ function winner(){
         y: windowHeight/2,
         ballColorIndex: 0,
         ballTrack: [],
-        horizontalControl: 1,
+        horizontalControl: Math.random()>0.5?1:-1,
         verticalControl: 1,
         distance: (windowWidth*13/15)/120,
         angle: 0,
