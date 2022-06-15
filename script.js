@@ -672,7 +672,6 @@ function changeAngle(player, index){
 }
 
 function winner(){
-    timeout = false
     if(player1.score>=scoreLimit&&scoreLimit>0){
         subtitle.html(`Jogador 1 venceu!<br/>${player1.score} - ${player2.score}`)
         reset()
@@ -703,6 +702,7 @@ function winner(){
     }]
     player1.y = windowHeight*7/16
     player2.y = windowHeight*7/16
+    timeout = false
 }
 
 function start(){
