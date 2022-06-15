@@ -60,11 +60,11 @@ let anyPowerActive = true
 let paused = false
 let scoreLimit = 5
 let isPower = false
-let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:7500, c:'red', active:true}, 
-{p:'Multibola', t:7500, c:'white', active:true},{p:'Gol de ouro', t:7500, c:'white', active:true}, 
+let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
+{p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
 {p:'Grande', t:7500, c:'green', active:true}, {p:'Pequeno', t:7500, c:'red', active:true}, 
-{p:'Congelado', t:2000, c:'red', active:true},{p:'Invisivel', t:3500, c:'red', active:true}, 
-{p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:3000, c:'white', active:true}]
+{p:'Congelado', t:1750, c:'red', active:true},{p:'Invisivel', t:3500, c:'red', active:true}, 
+{p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:3250, c:'white', active:true}]
 let currentAllPowers = []
 let AIrandomizer = 1
 let numberOfPowers = 10
@@ -723,13 +723,13 @@ function start(){
     }
     switch(powerSpeedSelect.value()){
         case 'Devagar':
-            powerSpeed = 9000
+            powerSpeed = 8500
             break
         case 'Normal':
-            powerSpeed = 6000
+            powerSpeed = 5500
             break
         case 'Loucura':
-            powerSpeed = 3000
+            powerSpeed = 2500
             break
     }
     loadPowersActive()
