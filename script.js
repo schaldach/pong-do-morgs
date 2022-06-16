@@ -382,7 +382,7 @@ function powerCatch(power, player, ball){
 }
 
 function stopPower(power, player, ball){
-    player['onlinePowers'].filter(onpower => onpower.index !== power)
+    player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)
     updatePowerShow()
     switch(currentAllPowers[power].p){
         case 'Pequeno':
