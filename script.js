@@ -312,13 +312,6 @@ function updatePowerShow(){
     })
 }
 function powerCatch(power, player, ball){
-    let time = new Date()
-    player['onlinePowers'].push({
-        index: power,
-        expire: time.getTime()+currentAllPowers[power].t,
-        ball: balls.indexOf(ball)
-    })
-    updatePowerShow()
     switch(currentAllPowers[power].p){
         case 'Grande':
             player.height = windowHeight*11/20
@@ -373,15 +366,24 @@ function powerCatch(power, player, ball){
             determinePlayerColors(player)
             break
         case 'Temporizador':
-            if(ball.timetravel||ball.timereturn){break}
+            if(ball.timetravel||ball.timereturn){return}
             ball.timeangle = ball.angle
             ball.horizontaltime = ball.horizontalControl
             ball.verticaltime = ball.verticalControl
             ball.ballTrack = []
             ball.timetravel = true
+            break
         default:
             break
     }
+    player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)
+    let time = new Date()
+    player['onlinePowers'].push({
+        index: power,
+        expire: time.getTime()+currentAllPowers[power].t,
+        ball: balls.indexOf(ball)
+    })
+    updatePowerShow()
 }
 
 function stopPower(power, player, ball){
@@ -411,8 +413,10 @@ function stopPower(power, player, ball){
             determinePlayerColors(player)
             break
         case 'Temporizador':
-            ball.timetravel = false
-            ball.timereturn = true
+            if(!balls[ball].timereturn){
+                balls[ball].timetravel = false
+                balls[ball].timereturn = true
+            }
         default:
             break
     }
@@ -666,7 +670,6 @@ function calculateball(){
     player1.moved = false
     player2.moved = false
 }
-
 function determineColors(){
     balls.forEach(ball => {
         ball.ballColorIndex = 0
@@ -685,7 +688,6 @@ function determinePlayerColors(player){
     if(player.activatedFire){player.color = 'red'}
     if(player.activatedInvisible){player.color = 'black'}
 }
-
 function changeAngle(player, index){
     let variation = player.y+(player.height/2)-balls[index].y
     balls[index].angle = Math.abs(variation)*(Math.PI/3)/(player.height/2+5)
@@ -693,7 +695,6 @@ function changeAngle(player, index){
         balls[index].verticalControl = variation>0?-1:1
     }
 }
-
 function winner(){
     timeout = false
     if(player1.score>=scoreLimit&&scoreLimit>0){
