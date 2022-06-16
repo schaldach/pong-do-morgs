@@ -31,6 +31,7 @@ let player1 = {
     activatedIce: false,
     activatedInverted: false,
     activatedSneak: false,
+    activatedInvisible: false,
     moved: false,
     onlinePowers: []
 }
@@ -45,6 +46,7 @@ let player2 = {
     activatedIce: false,
     activatedInverted: false,
     activatedSneak: false,
+    activatedInvisible: false,
     moved: false,
     onlinePowers: []
 }
@@ -323,11 +325,11 @@ function powerCatch(power, player, ball){
             break
         case 'Fogo':
             player.activatedFire = true
-            player.color = 'red'
+            determinePlayerColors(player)
             break
         case 'Congelado':
             player.activatedIce = true
-            player.color = 'blue'
+            determinePlayerColors(player)
             break
         case 'Multibola':
             balls.push({
@@ -363,11 +365,12 @@ function powerCatch(power, player, ball){
             ball.scoreValue = 2
             break
         case 'Invisivel':
-            player.color = 'black'
+            player.activatedInvisible = true
+            determinePlayerColors(player)
             break
         case 'Sorrateiro':
             player.activatedSneak = true
-            player.color = 'green'
+            determinePlayerColors(player)
             break
         case 'Temporizador':
             if(ball.timetravel||ball.timereturn){break}
@@ -391,20 +394,21 @@ function stopPower(power, player, ball){
             break
         case 'Fogo':
             player.activatedFire = false
-            player.color = 'white'
+            determinePlayerColors(player)
             break
         case 'Congelado':
             player.activatedIce = false
-            player.color = 'white'
+            determinePlayerColors(player)
             break
         case 'Invertido':
             player.activatedInverted = false
             break
         case 'Invisivel':
-            player.color = 'white'
+            player.activatedInvisible = false
+            determinePlayerColors(player)
         case 'Sorrateiro':
             player.activatedSneak = false
-            player.color = 'white'
+            determinePlayerColors(player)
             break
         case 'Temporizador':
             ball.timetravel = false
@@ -673,6 +677,13 @@ function determineColors(){
             else{ball.ballColorIndex=1}
         }
     })
+}
+function determinePlayerColors(player){
+    player.color = 'white'
+    if(player.activatedSneak){player.color = 'green'}
+    if(player.activatedIce){player.color = 'blue'}
+    if(player.activatedFire){player.color = 'red'}
+    if(player.activatedInvisible){player.color = 'black'}
 }
 
 function changeAngle(player, index){
