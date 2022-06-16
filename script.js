@@ -313,7 +313,8 @@ function powerCatch(power, player, ball){
     let time = new Date()
     player['onlinePowers'].push({
         index: power,
-        expire: time.getTime()+currentAllPowers[power].t
+        expire: time.getTime()+currentAllPowers[power].t,
+        ball: balls.indexOf(ball)
     })
     updatePowerShow()
     switch(currentAllPowers[power].p){
@@ -380,8 +381,9 @@ function powerCatch(power, player, ball){
     }
 }
 
-function stopPower(power, player){
-    player['onlinePowers'].filter(actualpower => actualpower.index!==power)
+function stopPower(power, player, ball){
+    player['onlinePowers'].filter(onpower => onpower.index !== power)
+    updatePowerShow()
     switch(currentAllPowers[power].p){
         case 'Pequeno':
         case 'Grande':
@@ -555,12 +557,12 @@ function checkActivePowers(){
     let time = new Date()
     player1['onlinePowers'].forEach(onpower => {
         if(time.getTime()>onpower.expire){
-            stopPower(onpower.index, player1)
+            stopPower(onpower.index, player1, onpower.ball)
         }
     })
     player2['onlinePowers'].forEach(onpower => {
         if(time.getTime()>onpower.expire){
-            stopPower(onpower.index, player2)
+            stopPower(onpower.index, player2, onpower.ball)
         }
     })
 }
