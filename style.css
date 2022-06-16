@@ -126,10 +126,25 @@ div{
     display: flex;
     flex-direction: column;
 }
+.powershow{
+    position: fixed;
+    bottom: 15px;
+    display: flex;
+    flex-direction: column-reverse;
+    font-size: 3vh;
+    justify-content: flex-end;
+}
 
 .sped{
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 2vw;
+}
+
+.red{
+    color: #ee1717;
+}
+.green{
+    color: #48d61d;
 }

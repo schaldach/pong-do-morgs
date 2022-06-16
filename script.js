@@ -26,14 +26,13 @@ let player1 = {
     y: windowHeight*7/16,
     height: windowHeight/3,
     color: 'white',
-    lastPower: 0,
-    powerGot: false,
     score: 0,
     activatedFire: false,
     activatedIce: false,
     activatedInverted: false,
     activatedSneak: false,
-    moved: false
+    moved: false,
+    onlinePowers: []
 }
 let player2 = {
     p: 'player2',
@@ -41,14 +40,13 @@ let player2 = {
     y: windowHeight*7/16,
     height: windowHeight/3,
     color: 'white',
-    lastPower: 0,
-    powerGot: false,
     score: 0,
     activatedFire: false,
     activatedIce: false,
     activatedInverted: false,
     activatedSneak: false,
-    moved: false
+    moved: false,
+    onlinePowers: []
 }
 let ballColors = []
 let gameplaying = false
@@ -69,7 +67,7 @@ let currentAllPowers = []
 let AIrandomizer = 1
 let numberOfPowers = 10
 let currentPower = 0
-let powerInterval,stopPowerInterval1,stopPowerInterval2,timeinterval,timeTravelInterval
+let powerInterval
 
 function preload(){
     font = loadFont('koulen.ttf')
@@ -197,6 +195,16 @@ function setup(){
     resetButton = createButton('Resetar')
     resetButton.parent('pausemenu')
     resetButton.mousePressed(reset)
+    p1powers = createDiv()
+    p1powers.addClass('powershow')
+    p1powers.style('right','37.5vw')
+    p1powers.id('p1powers')
+    p1powers.parent('page')
+    p2powers = createDiv()
+    p2powers.addClass('powershow')
+    p2powers.style('left','37.5vw')
+    p2powers.id('p2powers')
+    p2powers.parent('page')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     textAlign(LEFT)
@@ -287,29 +295,27 @@ function changePowerActive(power, button){
 function spawnPower(){
     canSpawnPower = true
 }
+function updatePowerShow(){
+    p1powers.html('')
+    p2powers.html('')
+    player1['onlinePowers'].forEach(onpower => {
+        let div = createDiv(currentAllPowers[onpower.index].p)
+        div.addClass(currentAllPowers[onpower.index].c)
+        div.parent('p1powers')
+    })
+    player2['onlinePowers'].forEach(onpower => {
+        let div = createDiv(currentAllPowers[onpower.index].p)
+        div.addClass(currentAllPowers[onpower.index].c)
+        div.parent('p2powers')
+    })
+}
 function powerCatch(power, player, ball){
-    player.lastPower = power
-    if(currentAllPowers[power].p === 'Temporizador'){
-        if(ball.timetravel||ball.timereturn){
-            return
-        }
-        ball.timeangle = ball.angle
-        ball.horizontaltime = ball.horizontalControl
-        ball.verticaltime = ball.verticalControl
-        ball.ballTrack = []
-        ball.timetravel = true
-        clearTimeout(timeTravelInterval)
-        timeTravelInterval = setTimeout(stopTimeTravel, currentAllPowers[power].t, player, ball)
-        return
-    }
-    if(ball.horizontalControl===1){
-        clearTimeout(stopPowerInterval1)
-        stopPowerInterval1 = setTimeout(stopPower, currentAllPowers[power].t, power, player)
-    }
-    else{
-        clearTimeout(stopPowerInterval2)
-        stopPowerInterval2 = setTimeout(stopPower, currentAllPowers[power].t, power, player)
-    }
+    let time = new Date()
+    player['onlinePowers'].push({
+        index: power,
+        expire: time.getTime()+currentAllPowers[power].t
+    })
+    updatePowerShow()
     switch(currentAllPowers[power].p){
         case 'Grande':
             player.height = windowHeight*11/20
@@ -362,17 +368,20 @@ function powerCatch(power, player, ball){
             player.activatedSneak = true
             player.color = 'green'
             break
+        case 'Temporizador':
+            if(ball.timetravel||ball.timereturn){break}
+            ball.timeangle = ball.angle
+            ball.horizontaltime = ball.horizontalControl
+            ball.verticaltime = ball.verticalControl
+            ball.ballTrack = []
+            ball.timetravel = true
         default:
             break
     }
 }
-function stopTimeTravel(player,ball){
-    if(currentAllPowers[player.lastPower].p === 'Temporizador'){player.powerGot = false}
-    ball.timetravel = false
-    ball.timereturn = true
-}
+
 function stopPower(power, player){
-    player.powerGot = false
+    player['onlinePowers'].filter(actualpower => actualpower.index!==power)
     switch(currentAllPowers[power].p){
         case 'Pequeno':
         case 'Grande':
@@ -395,6 +404,9 @@ function stopPower(power, player){
             player.activatedSneak = false
             player.color = 'white'
             break
+        case 'Temporizador':
+            ball.timetravel = false
+            ball.timereturn = true
         default:
             break
     }
@@ -455,26 +467,13 @@ function draw(){
             balls.forEach(ball => {
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+windowHeight/5){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
-                    stopPower(rightPlayer.lastPower, rightPlayer)
                     powerCatch(currentPower, rightPlayer, ball)
-                    if(ball.lastPlayerHit==1){player1.powerGot=true}
-                    else{player2.powerGot=true}
                     spawnedPower = {}
                     isPower = false
                 }
             })
         }
         textSize(26)
-        if(player1.powerGot){
-            fill(currentAllPowers[player1.lastPower].c)
-            textAlign(LEFT)
-            text(currentAllPowers[player1.lastPower].p, 5, windowHeight-16)
-        }
-        if(player2.powerGot){
-            fill(currentAllPowers[player2.lastPower].c)
-            textAlign(RIGHT)
-            text(currentAllPowers[player2.lastPower].p, (windowWidth*13/15)-5, windowHeight-16)
-        }
         if(gameMode){
             let xDist = 0
             balls.forEach(ball => {
@@ -547,8 +546,23 @@ function draw(){
         rect(player1.x, player1.y, -10, player1.height)
         fill(player2.color)
         rect(player2.x, player2.y, 10, player2.height)
+        checkActivePowers()
         calculateball()
     }
+}
+
+function checkActivePowers(){
+    let time = new Date()
+    player1['onlinePowers'].forEach(onpower => {
+        if(time.getTime()>onpower.expire){
+            stopPower(onpower.index, player1)
+        }
+    })
+    player2['onlinePowers'].forEach(onpower => {
+        if(time.getTime()>onpower.expire){
+            stopPower(onpower.index, player2)
+        }
+    })
 }
 
 function calculateball(){
@@ -568,14 +582,13 @@ function calculateball(){
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
                 player1.score+=ball.scoreValue
                 timeout = true
-                timeinterval = setTimeout(winner, 250)
+                setTimeout(winner, 250)
                 return
             }
             if(player2.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {
                     return power.p === 'Fogo';
                 })
-                clearTimeout(stopPowerInterval2)
                 stopPower(fireIndex, player2)
                 ball.distance += (windowWidth*13/15)/70
             }
@@ -583,7 +596,6 @@ function calculateball(){
                 const sneakIndex = currentAllPowers.findIndex(power => {
                     return power.p === 'Sorrateiro';
                 })
-                clearTimeout(stopPowerInterval2)
                 stopPower(sneakIndex, player2)
                 ball.sneak = true
             }
@@ -597,14 +609,13 @@ function calculateball(){
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
                 player2.score+=ball.scoreValue
                 timeout = true
-                timeinterval = setTimeout(winner, 250)
+                setTimeout(winner, 250)
                 return
             }
             if(player1.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {
                     return power.p === 'Fogo';
                 })
-                clearTimeout(stopPowerInterval1)
                 stopPower(fireIndex, player1)
                 ball.distance += (windowWidth*13/15)/70
             }
@@ -612,7 +623,6 @@ function calculateball(){
                 const sneakIndex = currentAllPowers.findIndex(power => {
                     return power.p === 'Sorrateiro';
                 })
-                clearTimeout(stopPowerInterval1)
                 stopPower(sneakIndex, player1)
                 ball.sneak = true
             }
@@ -750,25 +760,20 @@ function reset(){
     clearInterval(powerInterval)
     clear()
     background("#000000")
+    p1powers.html('')
+    p2powers.html('')
     gameplaying = false
     isPower = false
     canSpawnPower = false
     paused = false
     player1.score = 0
     player1.y = windowHeight*7/16
-    player1.powerGot = false
-    clearTimeout(stopPowerInterval1)
+    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1)})
+    player1['onlinePowers'] = []
     player2.score = 0
     player2.y = windowHeight*7/16
-    player2.powerGot = false
-    clearTimeout(stopPowerInterval2)
-    clearTimeout(timeTravelInterval)
-    if(anyPowerActive&&isPowers){
-        stopPower(player2.lastPower, player2)
-        stopPower(player1.lastPower, player1)
-    }
-    player2.lastPower = 0
-    player1.lastPower = 0
+    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2)})
+    player2['onlinePowers'] = []
     balls = [{
         x: (windowWidth*13/15)/2,
         y: windowHeight/2,
