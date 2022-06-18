@@ -443,7 +443,19 @@ function drawParticles(){
                 ellipse(particlearea.x+part.x+particlearea.frame*2*part.horizontal*Math.abs(part.x)*10/windowHeight, particlearea.y+part.y+particlearea.frame*2*part.vertical*Math.abs(part.y)*10/windowHeight, 5)
             })
         }
-        else{}
+        else{
+            if(!particlearea['particles'].length){
+                for(i=0; i<40; i++){
+                    let xPosition = Math.floor(Math.random()*20)
+                    let yRandomizer = Math.random()>0.5?1:-1
+                    let yPosition = Math.floor(Math.random()*20)
+                    particlearea['particles'].push({x: xPosition*particlearea.direction, y: yPosition*yRandomizer, vertical: yRandomizer})
+                }
+            }
+            particlearea['particles'].forEach(part => {
+                ellipse(particlearea.x+part.x+particlearea.frame*12*particlearea.direction*Math.abs(part.x)/20, particlearea.y+part.y+particlearea.frame*5*part.vertical*Math.abs(part.y)/30, 10)
+            })
+        }
         particlearea.frame++
     })
 }
@@ -452,7 +464,7 @@ function spawnNewPower(){
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
     currentPower = Math.floor(Math.random()*numberOfPowers)
     let time = new Date()
-    powersSpawned.push({x: xPos, y: yPos, p:currentPower, expiretrack: time.getTime(), powerflicker:[4,8,16,20,24,26,28,29,30,31,32]})
+    powersSpawned.push({x: xPos, y: yPos, p:currentPower, expiretrack: time.getTime(), powerflicker:[4,8,12,16,20,24,26,28,29,30,31,32]})
     canSpawnPower = false
 }
 function drawPowerCircle(spawnedPower){
@@ -647,7 +659,7 @@ function calculateball(){
                     return power.p === 'Fogo';
                 })
                 stopPower(fireIndex, player2)
-                allParticles.push({x:ball.x, y:ball.y, type:'fire', color:1, frame:0, particles:[]})
+                allParticles.push({x:ball.x, y:ball.y, direction:-1, type:'fire', color:1, frame:0, particles:[]})
                 ball.distance += (windowWidth*13/15)/70
             }
             if(player2.activatedSneak){
@@ -675,7 +687,7 @@ function calculateball(){
                     return power.p === 'Fogo';
                 })
                 stopPower(fireIndex, player1)
-                allParticles.push({x:ball.x, y:ball.y, type:'fire', color:1, frame:0, particles:[]})
+                allParticles.push({x:ball.x, y:ball.y, direction:1, type:'fire', color:1, frame:0, particles:[]})
                 ball.distance += (windowWidth*13/15)/70
             }
             if(player1.activatedSneak){
