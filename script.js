@@ -421,12 +421,16 @@ function stopPower(power, player, ball){
             break
     }
 }
+function spawnParticles(x,y){
+    
+}
+
 function spawnNewPower(){
     let xPos = Math.floor(Math.random()*(windowWidth*13/15)*2/3)+(windowWidth*13/15)/6
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
     currentPower = Math.floor(Math.random()*numberOfPowers)
     let time = new Date()
-    powersSpawned.push({x: xPos, y: yPos, expiretrack: time.getTime(), powerflicker:[4,8,12,16,18,20,22,24,26,28,30,32]})
+    powersSpawned.push({x: xPos, y: yPos, expiretrack: time.getTime(), powerflicker:[4,8,16,20,24,26,28,29,30,31,32]})
     canSpawnPower = false
 }
 function drawPowerCircle(spawnedPower){
