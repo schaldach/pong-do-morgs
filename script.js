@@ -59,13 +59,13 @@ let canSpawnPower = false
 let anyPowerActive = true
 let paused = false
 let scoreLimit = 5
-let isPower = false
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
 {p:'Grande', t:7500, c:'green', active:true}, {p:'Pequeno', t:7500, c:'red', active:true}, 
 {p:'Congelado', t:1750, c:'red', active:true},{p:'Invisivel', t:3500, c:'red', active:true}, 
 {p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:3250, c:'white', active:true}]
 let currentAllPowers = []
+let powersSpawned = []
 let AIrandomizer = 1
 let numberOfPowers = 10
 let currentPower = 0
@@ -425,11 +425,19 @@ function spawnNewPower(){
     let xPos = Math.floor(Math.random()*(windowWidth*13/15)*2/3)+(windowWidth*13/15)/6
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
     currentPower = Math.floor(Math.random()*numberOfPowers)
-    spawnedPower = {x: xPos, y: yPos}
+    let time = new Date()
+    powersSpawned.push({x: xPos, y: yPos, expiretrack: time.getTime(), powerflicker:[4,8,12,16,18,20,22,24,26,28,30,32]})
     canSpawnPower = false
-    isPower = true
 }
-function drawPowerCircle(){
+function drawPowerCircle(spawnedPower){
+    let time = new Date()
+    if(time.getTime()>spawnedPower.expiretrack+1.5*powerSpeed){
+        powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
+    }
+    if(time.getTime()-spawnedPower.expiretrack>powerSpeed*1.5-(powerSpeed*1.5/spawnedPower['powerflicker'][0])){
+        spawnedPower['powerflicker'].shift()
+        return
+    }
     let thisColor = color(170,0,255)
     thisColor.setAlpha(70)
     fill(thisColor)
@@ -472,18 +480,16 @@ function draw(){
         if(canSpawnPower){
             spawnNewPower()
         }
-        if(isPower){
-            drawPowerCircle()
+        powersSpawned.forEach(spawnedPower => {
+            drawPowerCircle(spawnedPower)
             balls.forEach(ball => {
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+windowHeight/5){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
                     powerCatch(currentPower, rightPlayer, ball)
-                    spawnedPower = {}
-                    isPower = false
+                    powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
                 }
             })
-        }
-        textSize(26)
+        })
         if(gameMode){
             let xDist = 0
             balls.forEach(ball => {
@@ -497,7 +503,7 @@ function draw(){
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<windowHeight)?player2.y+AISpeed:player2.y
             player1.y = !player1.activatedIce&&!player1.activatedInverted&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=windowHeight)?mouseY-(player1.height/2):player1.y
-            player1.y = player1.activatedInverted&&(windowHeight-mouseY+(player1.height/2)<=windowHeight&&windowHeight-mouseY-(player1.height/2)>=0)?windowHeight-mouseY-(player1.height/2):player1.y
+            player1.y = !player1.activatedIce&&player1.activatedInverted&&(windowHeight-mouseY+(player1.height/2)<=windowHeight&&windowHeight-mouseY-(player1.height/2)>=0)?windowHeight-mouseY-(player1.height/2):player1.y
             player1.moved = true
             player2.moved = true
         }
@@ -506,30 +512,30 @@ function draw(){
                 touches.forEach(touch => {
                     if(touch.x < (windowWidth*13/15)/2){
                         player1.y = !player1.activatedIce&&!player1.activatedInverted&&(touch.y-(player1.height/2)>=0&&touch.y+(player1.height/2)<=windowHeight)?touch.y-(player1.height/2):player1.y
-                        player1.y = player1.activatedInverted&&(windowHeight-touch.y+(player1.height/2)<=windowHeight&&windowHeight-touch.y-(player1.height/2)>=0)?windowHeight-touch.y-(player1.height/2):player1.y
+                        player1.y = !player1.activatedIce&&player1.activatedInverted&&(windowHeight-touch.y+(player1.height/2)<=windowHeight&&windowHeight-touch.y-(player1.height/2)>=0)?windowHeight-touch.y-(player1.height/2):player1.y
                     }
                     else{
                         player2.y = !player2.activatedIce&&!player2.activatedInverted&&(touch.y-(player2.height/2)>=0&&touch.y+(player2.height/2)<=windowHeight)?touch.y-(player2.height/2):player2.y
-                        player2.y = player2.activatedInverted&&(windowHeight-touch.y+(player2.height/2)<=windowHeight&&windowHeight-touch.y-(player2.height/2)>=0)?windowHeight-touch.y-(player2.height/2):player2.y
+                        player2.y = !player2.activatedIce&&player2.activatedInverted&&(windowHeight-touch.y+(player2.height/2)<=windowHeight&&windowHeight-touch.y-(player2.height/2)>=0)?windowHeight-touch.y-(player2.height/2):player2.y
                     }
                 })
                 player1.moved = true
                 player2.moved = true
             }
             else{
-                if(!player1.activatedIce&&(keyIsDown(SHIFT)&&!player1.activatedInverted)||(keyIsDown(CONTROL)&&player1.activatedInverted)){
+                if(!player1.activatedIce&&(keyIsDown(SHIFT)&&!player1.activatedInverted)||(!player1.activatedIce&&keyIsDown(CONTROL)&&player1.activatedInverted)){
                     player1.y = player1.y<=0?player1.y:player1.y-15
                     player1.moved = true
                 }
-                if(!player1.activatedIce&&(keyIsDown(CONTROL)&&!player1.activatedInverted)||(keyIsDown(SHIFT)&&player1.activatedInverted)){
+                if(!player1.activatedIce&&(keyIsDown(CONTROL)&&!player1.activatedInverted)||(!player1.activatedIce&&keyIsDown(SHIFT)&&player1.activatedInverted)){
                     player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+15
                     player1.moved = true
                 }
-                if(!player2.activatedIce&&(keyIsDown(UP_ARROW)&&!player2.activatedInverted)||(keyIsDown(DOWN_ARROW)&&player2.activatedInverted)){
+                if(!player2.activatedIce&&(keyIsDown(UP_ARROW)&&!player2.activatedInverted)||(!player2.activatedIce&&keyIsDown(DOWN_ARROW)&&player2.activatedInverted)){
                     player2.y = player2.y<=0?player2.y:player2.y-15
                     player2.moved = true
                 }
-                if(!player2.activatedIce&&(keyIsDown(DOWN_ARROW)&&!player2.activatedInverted)||(keyIsDown(UP_ARROW)&&player2.activatedInverted)){
+                if(!player2.activatedIce&&(keyIsDown(DOWN_ARROW)&&!player2.activatedInverted)||(!player2.activatedIce&&keyIsDown(UP_ARROW)&&player2.activatedInverted)){
                     player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+15
                     player2.moved = true
                 }
@@ -725,8 +731,13 @@ function winner(){
         timetravel: false,
         timereturn: false
     }]
+    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1, 0)})
+    player1['onlinePowers'] = []
     player1.y = windowHeight*7/16
+    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2, 0)})
+    player2['onlinePowers'] = []
     player2.y = windowHeight*7/16
+    balls[0].timereturn = false
 }
 
 function start(){
@@ -747,20 +758,19 @@ function start(){
     }
     switch(powerSpeedSelect.value()){
         case 'Devagar':
-            powerSpeed = 8500
+            powerSpeed = 8000
             break
         case 'Normal':
-            powerSpeed = 5500
+            powerSpeed = 5000
             break
         case 'Loucura':
-            powerSpeed = 2500
+            powerSpeed = 2000
             break
     }
     loadPowersActive()
     isPowers = powersSelect.value() === 'Com poderes'?true:false
     if(isPowers&&anyPowerActive){
         powerInterval = setInterval(spawnPower, powerSpeed)
-        setTimeout(spawnPower, 1000)
     }
     gameplaying = true
     subtitle.html('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita)')
@@ -776,18 +786,10 @@ function reset(){
     background("#000000")
     p1powers.html('')
     p2powers.html('')
+    powersSpawned = []
     gameplaying = false
-    isPower = false
     canSpawnPower = false
     paused = false
-    player1.score = 0
-    player1.y = windowHeight*7/16
-    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1)})
-    player1['onlinePowers'] = []
-    player2.score = 0
-    player2.y = windowHeight*7/16
-    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2)})
-    player2['onlinePowers'] = []
     balls = [{
         x: (windowWidth*13/15)/2,
         y: windowHeight/2,
@@ -806,7 +808,16 @@ function reset(){
         timetravel: false,
         timereturn: false
     }]
+    player1.score = 0
+    player1.y = windowHeight*7/16
+    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1, 0)})
+    player1['onlinePowers'] = []
+    player2.score = 0
+    player2.y = windowHeight*7/16
+    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2, 0)})
+    player2['onlinePowers'] = []
     currentAllPowers = []
+    balls[0].timereturn = false
     fill(255)
     textSize(14)
     textAlign(LEFT)
