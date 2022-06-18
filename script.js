@@ -792,11 +792,13 @@ function winner(){
         timetravel: false,
         timereturn: false
     }]
-    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1, 0)})
-    player1['onlinePowers'] = []
+    let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Temporizador'})
+    if(timeIndex>=0){
+        stopPower(timeIndex, player1, 0)
+        stopPower(timeIndex, player2, 0)
+        console.log('foi')
+    }
     player1.y = windowHeight*7/16
-    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2, 0)})
-    player2['onlinePowers'] = []
     player2.y = windowHeight*7/16
     balls[0].timereturn = false
 }
