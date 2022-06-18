@@ -58,6 +58,7 @@ let isFull = false
 let canSpawnPower = false
 let anyPowerActive = true
 let paused = false
+
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -180,6 +181,15 @@ function setup(){
     powerSpeedSelect.option('Loucura')
     powerSpeedSelect.parent('sped')
     powerSpeedSelect.selected('Normal')
+    particleDiv = createDiv('Partículas')
+    particleDiv.parent('admenu')
+    particleDiv.id('partc')
+    particleDiv.addClass('sped')
+    particleSelect = createSelect()
+    particleSelect.option('Ativadas')
+    particleSelect.option('Desativadas')
+    particleSelect.parent('partc')
+    particleSelect.selected('Ativadas')
     mainConfigs = createButton('Voltar')
     mainConfigs.mousePressed(goToMain)
     mainConfigs.parent('admenu')
@@ -542,7 +552,7 @@ function draw(){
                 }
             })
         })
-        drawParticles()
+        if(isParticles){drawParticles()}
         if(gameMode){
             let xDist = 0
             balls.forEach(ball => {
@@ -827,6 +837,7 @@ function start(){
     if(isPowers&&anyPowerActive){
         powerInterval = setInterval(spawnPower, powerSpeed)
     }
+    isParticles = particleSelect.value() === 'Ativadas'?true:false
     gameplaying = true
     subtitle.html('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita)')
     mainmenu.hide()
