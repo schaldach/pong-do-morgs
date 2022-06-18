@@ -327,7 +327,9 @@ function updatePowerShow(){
 function powerCatch(power, player, ball){
     switch(currentAllPowers[power].p){
         case 'Grande':
-            player.height = windowHeight*11/20
+            let smallIndex = currentAllPowers.findIndex(power => {return power.p === 'Pequeno'})
+            player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== smallIndex)
+            player.height = windowHeight/2
             break
         case 'Fogo':
             player.activatedFire = true
@@ -365,6 +367,8 @@ function powerCatch(power, player, ball){
             player.activatedInverted = true
             break
         case 'Pequeno':
+            let bigIndex = currentAllPowers.findIndex(power => {return power.p === 'Grande'})
+            player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== bigIndex)
             player.height = windowHeight/6
             break
         case 'Gol de ouro':
@@ -665,17 +669,13 @@ function calculateball(){
                 return
             }
             if(player2.activatedFire){
-                const fireIndex = currentAllPowers.findIndex(power => {
-                    return power.p === 'Fogo';
-                })
+                const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player2)
                 allParticles.push({x:ball.x, y:ball.y, direction:-1, type:'fire', color:1, frame:0, particles:[]})
                 ball.distance += (windowWidth*13/15)/70
             }
             if(player2.activatedSneak){
-                const sneakIndex = currentAllPowers.findIndex(power => {
-                    return power.p === 'Sorrateiro';
-                })
+                const sneakIndex = currentAllPowers.findIndex(power => {return power.p === 'Sorrateiro'})
                 stopPower(sneakIndex, player2)
                 ball.sneak = true
             }
@@ -693,17 +693,13 @@ function calculateball(){
                 return
             }
             if(player1.activatedFire){
-                const fireIndex = currentAllPowers.findIndex(power => {
-                    return power.p === 'Fogo';
-                })
+                const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player1)
                 allParticles.push({x:ball.x, y:ball.y, direction:1, type:'fire', color:1, frame:0, particles:[]})
                 ball.distance += (windowWidth*13/15)/70
             }
             if(player1.activatedSneak){
-                const sneakIndex = currentAllPowers.findIndex(power => {
-                    return power.p === 'Sorrateiro';
-                })
+                const sneakIndex = currentAllPowers.findIndex(power => {return power.p === 'Sorrateiro'})
                 stopPower(sneakIndex, player1)
                 ball.sneak = true
             }
