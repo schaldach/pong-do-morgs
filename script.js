@@ -431,7 +431,7 @@ function drawParticles(){
         fill(rightcolor)
         if(particlearea.type === 'despawn'){
             if(!particlearea['particles'].length){
-                for(i=0; i<40; i++){
+                for(i=0; i<30; i++){
                     let xRandomizer = Math.random()>0.5?1:-1
                     let xPosition = Math.floor(Math.random()*windowHeight/10)
                     let yRandomizer = Math.random()>0.5?1:-1
@@ -453,7 +453,7 @@ function drawParticles(){
                 }
             }
             particlearea['particles'].forEach(part => {
-                ellipse(particlearea.x+part.x+particlearea.frame*12*particlearea.direction*Math.abs(part.x)/20, particlearea.y+part.y+particlearea.frame*5*part.vertical*Math.abs(part.y)/30, 10)
+                ellipse(particlearea.x+part.x+particlearea.frame*12*particlearea.direction*Math.abs(part.x)/20, particlearea.y+part.y+particlearea.frame*5*part.vertical*Math.abs(part.y)/40, 10)
             })
         }
         particlearea.frame++
