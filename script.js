@@ -67,6 +67,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 let currentAllPowers = []
 let powersSpawned = []
 let allParticles = []
+let particleColors = []
 let AIrandomizer = 1
 let numberOfPowers = 10
 let currentPower = 0
@@ -210,6 +211,7 @@ function setup(){
     p2powers.parent('page')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
+    particleColors.push(color(255,255,255),color(255,0,0),color(0,255,0),color(170,0,255))
     textAlign(LEFT)
     textSize(14)
     text('patch 1.62', 5, 15)
@@ -423,19 +425,26 @@ function stopPower(power, player, ball){
 }
 function drawParticles(){
     allParticles.forEach(particlearea => {
-        let rightcolor = particlearea.color
+        if(particlearea.frame>30){allParticles = allParticles.filter(part => part!==particlearea)}
+        let rightcolor = particleColors[particlearea.color]
         rightcolor.setAlpha(70)
         fill(rightcolor)
         if(particlearea.type === 'despawn'){
-            for(i=0; i<20; i++){
-                let xPosition = Math.floor(Math.random()*windowHeight/6)
-                let yPosition = Math.floor(Math.random()*windowHeight/6)+particlearea.frame*2
-                ellipse(xPosition, yPosition, 3)
+            if(!particlearea['particles'].length){
+                for(i=0; i<40; i++){
+                    let xRandomizer = Math.random()>0.5?1:-1
+                    let xPosition = Math.floor(Math.random()*windowHeight/10)
+                    let yRandomizer = Math.random()>0.5?1:-1
+                    let yPosition = Math.floor(Math.random()*windowHeight/10)
+                    particlearea['particles'].push({x: xPosition*xRandomizer, y: yPosition*yRandomizer, horizontal:xRandomizer, vertical: yRandomizer})
+                }
             }
+            particlearea['particles'].forEach(part => {
+                ellipse(particlearea.x+part.x+particlearea.frame*2*part.horizontal*Math.abs(part.x)*10/windowHeight, particlearea.y+part.y+particlearea.frame*2*part.vertical*Math.abs(part.y)*10/windowHeight, 5)
+            })
         }
         else{}
         particlearea.frame++
-        if(particlearea.frame>20){allParticles = allParticles.filter(part => part!==particlearea)}
     })
 }
 function spawnNewPower(){
@@ -450,18 +459,17 @@ function drawPowerCircle(spawnedPower){
     let time = new Date()
     if(time.getTime()>spawnedPower.expiretrack+1.5*powerSpeed){
         powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
-        allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color: color(170,0,255), frame:0})
+        allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:3, frame:0, particles:[]})
         return
     }
     if(time.getTime()-spawnedPower.expiretrack>powerSpeed*1.5-(powerSpeed*1.5/spawnedPower['powerflicker'][0])){
         spawnedPower['powerflicker'].shift()
         return
     }
-    let thisColor = color(170,0,255)
-    thisColor.setAlpha(70)
-    fill(thisColor)
+    particleColors[3].setAlpha(70)
+    fill(particleColors[3])
     ellipse(spawnedPower.x, spawnedPower.y, windowHeight*2/5)
-    thisColor.setAlpha(255)
+    particleColors[3].setAlpha(255)
     textSize(40)
     textAlign(CENTER)
     text('?',spawnedPower.x, spawnedPower.y+10)
@@ -506,7 +514,19 @@ function draw(){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
                     powerCatch(spawnedPower.p, rightPlayer, ball)
                     powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
-                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:currentAllPowers[spawnedPower.p].c, frame:0})
+                    let colorindex
+                    switch(currentAllPowers[spawnedPower.p].c){
+                        case 'white':
+                            colorindex = 0
+                            break
+                        case 'red':
+                            colorindex = 1
+                            break
+                        case 'green':
+                            colorindex = 2
+                            break
+                    }
+                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:colorindex, frame:0, particles:[]})
                 }
             })
         })
@@ -627,7 +647,7 @@ function calculateball(){
                     return power.p === 'Fogo';
                 })
                 stopPower(fireIndex, player2)
-                allParticles.push({x:ball.x, y:ball.y, type:'fire', color:'red', frame:0})
+                allParticles.push({x:ball.x, y:ball.y, type:'fire', color:1, frame:0, particles:[]})
                 ball.distance += (windowWidth*13/15)/70
             }
             if(player2.activatedSneak){
@@ -655,6 +675,7 @@ function calculateball(){
                     return power.p === 'Fogo';
                 })
                 stopPower(fireIndex, player1)
+                allParticles.push({x:ball.x, y:ball.y, type:'fire', color:1, frame:0, particles:[]})
                 ball.distance += (windowWidth*13/15)/70
             }
             if(player1.activatedSneak){
