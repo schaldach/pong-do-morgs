@@ -224,7 +224,7 @@ function setup(){
     particleColors.push(color(255,255,255),color(255,0,0),color(0,255,0),color(170,0,255))
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.62', 5, 15)
+    text('patch 1.64', 5, 15)
     noStroke()
 }
 function setInput(){
@@ -238,7 +238,7 @@ window.addEventListener("resize", function() {
     myCanvas.position(windowWidth/15,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.62', 5, 15)
+    text('patch 1.64', 5, 15)
     balls[0].x = (windowWidth*13/15)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*13/15)/120
@@ -256,7 +256,7 @@ window.addEventListener("orientationchange", function() {
     myCanvas.position(windowWidth/15,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.62', 5, 15)
+    text('patch 1.64', 5, 15)
     balls[0].x = (windowWidth*13/15)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*13/15)/120
@@ -445,7 +445,7 @@ function drawParticles(){
         fill(rightcolor)
         if(particlearea.type === 'despawn'){
             if(!particlearea['particles'].length){
-                for(i=0; i<30; i++){
+                for(i=0; i<25; i++){
                     let xRandomizer = Math.random()>0.5?1:-1
                     let xPosition = Math.floor(Math.random()*windowHeight/10)
                     let yRandomizer = Math.random()>0.5?1:-1
@@ -459,7 +459,7 @@ function drawParticles(){
         }
         else{
             if(!particlearea['particles'].length){
-                for(i=0; i<40; i++){
+                for(i=0; i<25; i++){
                     let xPosition = Math.floor(Math.random()*20)
                     let yRandomizer = Math.random()>0.5?1:-1
                     let yPosition = Math.floor(Math.random()*20)
@@ -526,7 +526,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.62', 5, 15)
+        text('patch 1.64', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+" - "+player2.score, (windowWidth*13/15)/2, windowHeight/7)
@@ -885,7 +885,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.62', 5, 15)
+    text('patch 1.64', 5, 15)
     mainmenu.style('display', 'flex')
     fullScreen.show()
     imgdiv.show()
