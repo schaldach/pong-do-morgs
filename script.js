@@ -463,7 +463,7 @@ function drawParticles(){
                 }
             }
             particlearea['particles'].forEach(part => {
-                ellipse(particlearea.x+part.x+particlearea.frame*12*particlearea.direction*Math.abs(part.x)/20, particlearea.y+part.y+particlearea.frame*5*part.vertical*Math.abs(part.y)/40, 10)
+                ellipse(particlearea.x+part.x+particlearea.frame*12*particlearea.direction*Math.abs(part.x)/20, particlearea.y+part.y+particlearea.frame*5*part.vertical*Math.abs(part.y)/20, 10)
             })
         }
         particlearea.frame++
