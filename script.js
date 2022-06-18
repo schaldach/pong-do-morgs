@@ -66,6 +66,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:3250, c:'white', active:true}]
 let currentAllPowers = []
 let powersSpawned = []
+let allParticles = []
 let AIrandomizer = 1
 let numberOfPowers = 10
 let currentPower = 0
@@ -385,7 +386,6 @@ function powerCatch(power, player, ball){
     })
     updatePowerShow()
 }
-
 function stopPower(power, player, ball){
     player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)
     updatePowerShow()
@@ -421,22 +421,37 @@ function stopPower(power, player, ball){
             break
     }
 }
-function spawnParticles(x,y){
-    
+function drawParticles(){
+    allParticles.forEach(particlearea => {
+        let rightcolor = particlearea.color
+        rightcolor.setAlpha(70)
+        fill(rightcolor)
+        if(particlearea.type === 'despawn'){
+            for(i=0; i<20; i++){
+                let xPosition = Math.floor(Math.random()*windowHeight/6)
+                let yPosition = Math.floor(Math.random()*windowHeight/6)+particlearea.frame*2
+                ellipse(xPosition, yPosition, 3)
+            }
+        }
+        else{}
+        particlearea.frame++
+        if(particlearea.frame>20){allParticles = allParticles.filter(part => part!==particlearea)}
+    })
 }
-
 function spawnNewPower(){
     let xPos = Math.floor(Math.random()*(windowWidth*13/15)*2/3)+(windowWidth*13/15)/6
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
     currentPower = Math.floor(Math.random()*numberOfPowers)
     let time = new Date()
-    powersSpawned.push({x: xPos, y: yPos, expiretrack: time.getTime(), powerflicker:[4,8,16,20,24,26,28,29,30,31,32]})
+    powersSpawned.push({x: xPos, y: yPos, p:currentPower, expiretrack: time.getTime(), powerflicker:[4,8,16,20,24,26,28,29,30,31,32]})
     canSpawnPower = false
 }
 function drawPowerCircle(spawnedPower){
     let time = new Date()
     if(time.getTime()>spawnedPower.expiretrack+1.5*powerSpeed){
         powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
+        allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color: color(170,0,255), frame:0})
+        return
     }
     if(time.getTime()-spawnedPower.expiretrack>powerSpeed*1.5-(powerSpeed*1.5/spawnedPower['powerflicker'][0])){
         spawnedPower['powerflicker'].shift()
@@ -489,11 +504,13 @@ function draw(){
             balls.forEach(ball => {
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+windowHeight/5){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
-                    powerCatch(currentPower, rightPlayer, ball)
+                    powerCatch(spawnedPower.p, rightPlayer, ball)
                     powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
+                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:currentAllPowers[spawnedPower.p].c, frame:0})
                 }
             })
         })
+        drawParticles()
         if(gameMode){
             let xDist = 0
             balls.forEach(ball => {
@@ -610,6 +627,7 @@ function calculateball(){
                     return power.p === 'Fogo';
                 })
                 stopPower(fireIndex, player2)
+                allParticles.push({x:ball.x, y:ball.y, type:'fire', color:'red', frame:0})
                 ball.distance += (windowWidth*13/15)/70
             }
             if(player2.activatedSneak){
