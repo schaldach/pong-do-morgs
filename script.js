@@ -33,7 +33,9 @@ let player1 = {
     activatedSneak: false,
     activatedInvisible: false,
     moved: false,
-    onlinePowers: []
+    onlinePowers: [],
+    up: false,
+    down: false
 }
 let player2 = {
     p: 'player2',
@@ -48,7 +50,9 @@ let player2 = {
     activatedSneak: false,
     activatedInvisible: false,
     moved: false,
-    onlinePowers: []
+    onlinePowers: [],
+    up: false,
+    down: false
 }
 let ballColors = []
 let gameplaying = false
@@ -58,7 +62,6 @@ let isFull = false
 let canSpawnPower = false
 let anyPowerActive = true
 let paused = false
-
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -518,6 +521,13 @@ function resume(){
     pauseMenu.hide()
     paused = false
 }
+window.addEventListener('keydown', (event) => {
+    if(event.key === 'w'){}
+    else if(event.key === 's'){}
+    if(event.key === 'ArrowUp'){}
+    else if(event.key === 'ArrowDown'){}
+    console.log(event.key)
+})
 
 function draw(){
     if(gameplaying&&!timeout&&!paused){
@@ -590,19 +600,19 @@ function draw(){
                 player2.moved = true
             }
             else{
-                if(!player1.activatedIce&&(keyIsDown(SHIFT)&&!player1.activatedInverted)||(!player1.activatedIce&&keyIsDown(CONTROL)&&player1.activatedInverted)){
+                if((!player1.activatedIce&&player1.up&&!player1.activatedInverted)||(!player1.activatedIce&&keyIsDown(S)&&player1.activatedInverted)){
                     player1.y = player1.y<=0?player1.y:player1.y-15
                     player1.moved = true
                 }
-                if(!player1.activatedIce&&(keyIsDown(CONTROL)&&!player1.activatedInverted)||(!player1.activatedIce&&keyIsDown(SHIFT)&&player1.activatedInverted)){
+                if((!player1.activatedIce&&keyIsDown(S)&&!player1.activatedInverted)||(!player1.activatedIce&&keyIsDown(W)&&player1.activatedInverted)){
                     player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+15
                     player1.moved = true
                 }
-                if(!player2.activatedIce&&(keyIsDown(UP_ARROW)&&!player2.activatedInverted)||(!player2.activatedIce&&keyIsDown(DOWN_ARROW)&&player2.activatedInverted)){
+                if((!player2.activatedIce&&keyIsDown(UP_ARROW)&&!player2.activatedInverted)||(!player2.activatedIce&&keyIsDown(DOWN_ARROW)&&player2.activatedInverted)){
                     player2.y = player2.y<=0?player2.y:player2.y-15
                     player2.moved = true
                 }
-                if(!player2.activatedIce&&(keyIsDown(DOWN_ARROW)&&!player2.activatedInverted)||(!player2.activatedIce&&keyIsDown(UP_ARROW)&&player2.activatedInverted)){
+                if((!player2.activatedIce&&keyIsDown(DOWN_ARROW)&&!player2.activatedInverted)||(!player2.activatedIce&&keyIsDown(UP_ARROW)&&player2.activatedInverted)){
                     player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+15
                     player2.moved = true
                 }
