@@ -605,21 +605,21 @@ function draw(){
             else{
                 if(!player1.activatedIce){
                     if((player1.up&&!player1.activatedInverted)||(player1.down&&player1.activatedInverted)){
-                        player1.y = player1.y<=0?player1.y:player1.y-15
+                        player1.y = player1.y<=0?player1.y:player1.y-13
                         player1.moved = true
                     }
                     if((player1.down&&!player1.activatedInverted)||(player1.up&&player1.activatedInverted)){
-                        player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+15
+                        player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+13
                         player1.moved = true
                     }
                 }
                 if(!player2.activatedIce){
                     if((player2.up&&!player2.activatedInverted)||(player2.down&&player2.activatedInverted)){
-                        player2.y = player2.y<=0?player2.y:player2.y-15
+                        player2.y = player2.y<=0?player2.y:player2.y-13
                         player2.moved = true
                     }
                     if((player2.down&&!player2.activatedInverted)||(player2.up&&player2.activatedInverted)){
-                        player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+15
+                        player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+13
                         player2.moved = true
                     }
                 }
