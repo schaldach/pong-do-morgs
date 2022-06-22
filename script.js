@@ -62,6 +62,7 @@ let isFull = false
 let canSpawnPower = false
 let anyPowerActive = true
 let paused = false
+let firstwarning = true
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -222,6 +223,8 @@ function setup(){
     p2powers.style('left','37.5vw')
     p2powers.id('p2powers')
     p2powers.parent('page')
+    warning = createDiv('PC: Jogador 1 - W e S<br/>Jogador 2 - ↑ e ↓<br/>Mobile: Cada jogador controla sua barra')
+    warning.addClass('warning')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     particleColors.push(color(255,255,255),color(255,0,0),color(0,255,0),color(170,0,255))
@@ -822,6 +825,11 @@ function winner(){
 
 function start(){
     gameMode = selectMode.value() === '1 Player'?true:false
+    if(!gameMode&&firstwarning){
+        warning.show()
+        firstwarning = false
+        return
+    }
     switch(selectDifficulty.value()){
         case 'Facil':
             AISpeed = windowHeight/160
