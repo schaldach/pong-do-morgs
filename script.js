@@ -62,7 +62,8 @@ let isFull = false
 let canSpawnPower = false
 let anyPowerActive = true
 let paused = false
-let firstwarning = true
+let firstwarning2 = true
+let firstwarning1 = true
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -95,7 +96,7 @@ function setup(){
     title = createDiv('Pong do Morgs')
     title.addClass('titulo')
     title.parent('mainmenu')
-    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita)')
+    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita)<br/>(Funciona em PC e Mobile)')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
     buttonMenu = createDiv('')
@@ -223,14 +224,22 @@ function setup(){
     p2powers.style('left','37.5vw')
     p2powers.id('p2powers')
     p2powers.parent('page')
-    warning = createDiv('PC:<br/> Jogador 1 - W e S<br/>Jogador 2 - ↑ e ↓<br/>Mobile:<br/> Cada jogador controla sua barra<br/>')
-    warning.addClass('warning')
-    warning.id('warning')
-    warning.parent('page')
-    warning.hide()
-    warningButton = createButton('Entendido')
-    warningButton.mousePressed(start)
-    warningButton.parent('warning')
+    warning1 = createDiv('PC: Use o Mouse<br/>Mobile: Use o toque<br/>')
+    warning1.addClass('warning')
+    warning1.id('warning1')
+    warning1.parent('page')
+    warning1.hide()
+    warningButton1 = createButton('Entendido')
+    warningButton1.mousePressed(start)
+    warningButton1.parent('warning1')
+    warning2 = createDiv('PC:<br/> Jogador 1 - W e S<br/>Jogador 2 - ↑ e ↓<br/>Mobile:<br/> Cada um controla <br/>seu lado com o toque<br/>')
+    warning2.addClass('warning')
+    warning2.id('warning2')
+    warning2.parent('page')
+    warning2.hide()
+    warningButton2 = createButton('Entendido')
+    warningButton2.mousePressed(start)
+    warningButton2.parent('warning2')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     particleColors.push(color(255,255,255),color(255,0,0),color(0,255,0),color(170,0,255))
@@ -831,12 +840,20 @@ function winner(){
 
 function start(){
     gameMode = selectMode.value() === '1 Player'?true:false
-    if(!gameMode&&firstwarning){
-        warning.show()
+    if(gameMode&&firstwarning1){
+        warning1.show()
         mainmenu.hide()
         fullScreen.hide()
         imgdiv.hide()
-        firstwarning = false
+        firstwarning1 = false
+        return
+    }
+    if(!gameMode&&firstwarning2){
+        warning2.show()
+        mainmenu.hide()
+        fullScreen.hide()
+        imgdiv.hide()
+        firstwarning2 = false
         return
     }
     switch(selectDifficulty.value()){
@@ -873,7 +890,8 @@ function start(){
     gameplaying = true
     subtitle.html('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita)')
     mainmenu.hide()
-    warning.hide()
+    warning1.hide()
+    warning2.hide()
     fullScreen.hide()
     imgdiv.hide()
     pauseButton.show()
