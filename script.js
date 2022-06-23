@@ -914,7 +914,7 @@ function reset(){
         ballTrack: [],
         horizontalControl: 1,
         verticalControl: 1,
-        distance: (windowWidth*13/15)/100,
+        distance: (windowWidth*13/15)/120,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1,
