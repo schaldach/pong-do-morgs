@@ -96,7 +96,7 @@ function setup(){
     title = createDiv('Pong do Morgs')
     title.addClass('titulo')
     title.parent('mainmenu')
-    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita)<br/>(Funciona em PC e Mobile)')
+    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>-botao em cima na direita-<br/>(Funciona em PC e Mobile)')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
     buttonMenu = createDiv('')
