@@ -142,6 +142,13 @@ div{
     gap: 2vw;
 }
 
+.warning{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .red{
     color: #ee1717;
 }

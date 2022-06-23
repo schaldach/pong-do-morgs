@@ -223,8 +223,14 @@ function setup(){
     p2powers.style('left','37.5vw')
     p2powers.id('p2powers')
     p2powers.parent('page')
-    warning = createDiv('PC: Jogador 1 - W e S<br/>Jogador 2 - ↑ e ↓<br/>Mobile: Cada jogador controla sua barra')
+    warning = createDiv('PC:<br/> Jogador 1 - W e S<br/>Jogador 2 - ↑ e ↓<br/>Mobile:<br/> Cada jogador controla sua barra<br/>')
     warning.addClass('warning')
+    warning.id('warning')
+    warning.parent('page')
+    warning.hide()
+    warningButton = createButton('Entendido')
+    warningButton.mousePressed(start)
+    warningButton.parent('warning')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     particleColors.push(color(255,255,255),color(255,0,0),color(0,255,0),color(170,0,255))
@@ -827,6 +833,9 @@ function start(){
     gameMode = selectMode.value() === '1 Player'?true:false
     if(!gameMode&&firstwarning){
         warning.show()
+        mainmenu.hide()
+        fullScreen.hide()
+        imgdiv.hide()
         firstwarning = false
         return
     }
@@ -864,6 +873,7 @@ function start(){
     gameplaying = true
     subtitle.html('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita)')
     mainmenu.hide()
+    warning.hide()
     fullScreen.hide()
     imgdiv.hide()
     pauseButton.show()
