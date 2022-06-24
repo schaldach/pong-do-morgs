@@ -1,5 +1,5 @@
-let windowHeight = screen.height
-let windowWidth = screen.width
+let windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
+let windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
 let balls = [
     {
         x: (windowWidth*13/15)/2,
@@ -96,7 +96,7 @@ function setup(){
     title = createDiv('Pong do Morgs')
     title.addClass('titulo')
     title.parent('mainmenu')
-    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>-botao em cima na direita-<br/>(Funciona em PC e Mobile)')
+    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao em cima na direita<br/>(Funciona em PC e Mobile)')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
     buttonMenu = createDiv('')
@@ -252,8 +252,8 @@ function setInput(){
     scoreLimit = parseInt(this.value())
 }
 window.addEventListener("resize", function() {
-    windowHeight = screen.height
-    windowWidth = screen.width
+    windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
+    windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
     myCanvas = createCanvas((windowWidth*13/15),windowHeight)
     background("#000000")
     myCanvas.position(windowWidth/15,0,"fixed")
@@ -270,8 +270,8 @@ window.addEventListener("resize", function() {
     player2.height = windowHeight/3
 });
 window.addEventListener("orientationchange", function() {
-    windowHeight = screen.height
-    windowWidth = screen.width
+    windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
+    windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
     myCanvas = createCanvas((windowWidth*13/15),windowHeight)
     background("#000000")
     myCanvas.position(windowWidth/15,0,"fixed")
@@ -298,6 +298,7 @@ function activateFullscreen(){
     else if(document.exitFullscreen && isFull){
         document.exitFullscreen()
         isFull = false
+        screen.orientation.unlock()
     }
 }
 function isTouchDevice() {
@@ -888,7 +889,7 @@ function start(){
     }
     isParticles = particleSelect.value() === 'Ativadas'?true:false
     gameplaying = true
-    subtitle.html('Jogue em tela cheia e horizontal!<br/>(botao em cima na direita)')
+    subtitle.html('Jogue em tela cheia e horizontal!<br/>aperte o botao em cima na direita<br/>(Funciona em PC e Mobile)')
     mainmenu.hide()
     warning1.hide()
     warning2.hide()
