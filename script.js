@@ -289,11 +289,9 @@ window.addEventListener("orientationchange", function() {
 });
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 
-        page.requestFullscreen({navigationUI:'hide'})
+        page.requestFullscreen()
         isFull = true
-        if(device&&windowHeight > windowWidth){
-            screen.orientation.lock("landscape-primary")
-        }
+        screen.orientation.lock("landscape-primary")
     }
     else if(document.exitFullscreen && isFull){
         document.exitFullscreen()
