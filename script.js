@@ -277,7 +277,7 @@ function setup(){
     particleColors.push(color(255,255,255),color(255,0,0),color(0,255,0),color(170,0,255))
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.64', 5, 15)
+    text('patch 1.69', 5, 15)
     noStroke()
 }
 function toggleSound(){
@@ -313,7 +313,7 @@ window.addEventListener("resize", function() {
     myCanvas.position(windowWidth/15,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.64', 5, 15)
+    text('patch 1.69', 5, 15)
     balls[0].x = (windowWidth*13/15)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*13/15)/120
@@ -331,7 +331,7 @@ window.addEventListener("orientationchange", function() {
     myCanvas.position(windowWidth/15,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.64', 5, 15)
+    text('patch 1.69', 5, 15)
     balls[0].x = (windowWidth*13/15)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*13/15)/120
@@ -610,7 +610,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.64', 5, 15)
+        text('patch 1.69', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+" - "+player2.score, (windowWidth*13/15)/2, windowHeight/7)
@@ -1003,7 +1003,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.64', 5, 15)
+    text('patch 1.69', 5, 15)
     mainmenu.style('display', 'flex')
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
