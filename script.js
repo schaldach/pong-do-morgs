@@ -55,7 +55,8 @@ let player2 = {
     down: false
 }
 let ballColors = []
-let sound = true
+let sound = false
+let song
 let gameplaying = false
 let timeout = false
 let playerMoved = false
@@ -65,6 +66,7 @@ let anyPowerActive = true
 let paused = false
 let firstwarning2 = true
 let firstwarning1 = true
+let musica = new Audio('musica.mp3');
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -149,6 +151,10 @@ function setup(){
     soundActive = createImg('sound-on.png')
     soundActive.addClass('imgfunction')
     soundActive.parent('imgdiv')
+    soundOff = createImg('sound-off.png')
+    soundOff.addClass('imgfunction')
+    soundOff.parent('imgdiv')
+    soundActive.hide()
     soundActivediv = createDiv()
     soundActivediv.addClass('imgfunction')
     soundActivediv.mousePressed(toggleSound)
@@ -265,13 +271,18 @@ function setup(){
     noStroke()
 }
 function toggleSound(){
-    if(sound){
-        sound = false
-        soundActive.style('url', 'sound-off.png')
+    if(!sound){
+        sound = true
+        musica.play()
+        soundActive.show()
+        soundOff.hide()
     }
     else{
-        sound = true
-        soundActive.style('url', 'sound-on.png')
+        sound = false
+        musica.pause()
+        musica.currentTime = 0
+        soundActive.hide()
+        soundOff.show()
     }
 }
 function setInput(){
