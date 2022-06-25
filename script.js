@@ -67,6 +67,7 @@ let paused = false
 let firstwarning2 = true
 let firstwarning1 = true
 let musicamenu = new Audio('musicamenu.mp3')
+musicamenu.currentTime = 1.5
 let efeito = new Audio('hitsound.mp3')
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
@@ -282,7 +283,7 @@ function toggleSound(){
     else{
         sound = false
         musicamenu.pause()
-        musicamenu.currentTime = 0
+        musicamenu.currentTime = 1.5
         soundActive.hide()
         soundOff.show()
     }
@@ -291,7 +292,7 @@ function setInput(){
     scoreLimit = parseInt(this.value())
 }
 musicamenu.addEventListener('ended', function() {
-    this.currentTime = 0
+    this.currentTime = 1.5
     this.play()
 }, false)
 window.addEventListener("resize", function() {
