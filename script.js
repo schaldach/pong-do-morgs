@@ -55,6 +55,7 @@ let player2 = {
     down: false
 }
 let ballColors = []
+let sound = true
 let gameplaying = false
 let timeout = false
 let playerMoved = false
@@ -130,13 +131,28 @@ function setup(){
     advancedConfigs = createButton('Outras Configs')
     advancedConfigs.parent('buttonmenu')
     advancedConfigs.mousePressed(goToConfigs)
-    fullScreen = createImg('screen.png')
-    fullScreen.addClass('imgdiv')
-    fullScreen.parent('page')
     imgdiv = createDiv()
     imgdiv.addClass('imgdiv')
-    imgdiv.mousePressed(activateFullscreen)
+    imgdiv.id('imgdiv')
     imgdiv.parent('page')
+    functiondiv = createDiv()
+    functiondiv.addClass('imgdiv')
+    functiondiv.id('fundiv')
+    functiondiv.parent('page')
+    fullScreen = createImg('screen.png')
+    fullScreen.addClass('imgfunction')
+    fullScreen.parent('imgdiv')
+    fullScreendiv = createDiv()
+    fullScreendiv.addClass('imgfunction')
+    fullScreendiv.mousePressed(activateFullscreen)
+    fullScreendiv.parent('fundiv')
+    soundActive = createImg('sound-on.png')
+    soundActive.addClass('imgfunction')
+    soundActive.parent('imgdiv')
+    soundActivediv = createDiv()
+    soundActivediv.addClass('imgfunction')
+    soundActivediv.mousePressed(toggleSound)
+    soundActivediv.parent('fundiv')
     advancedmenu = createDiv('Poderes disponiveis')
     advancedmenu.parent('page')
     advancedmenu.id('admenu')
@@ -247,6 +263,16 @@ function setup(){
     textSize(14)
     text('patch 1.64', 5, 15)
     noStroke()
+}
+function toggleSound(){
+    if(sound){
+        sound = false
+        soundActive.style('url', 'sound-off.png')
+    }
+    else{
+        sound = true
+        soundActive.style('url', 'sound-on.png')
+    }
 }
 function setInput(){
     scoreLimit = parseInt(this.value())
@@ -842,7 +868,7 @@ function start(){
     if(gameMode&&firstwarning1){
         warning1.show()
         mainmenu.hide()
-        fullScreen.hide()
+        functiondiv.hide()
         imgdiv.hide()
         firstwarning1 = false
         return
@@ -850,7 +876,7 @@ function start(){
     if(!gameMode&&firstwarning2){
         warning2.show()
         mainmenu.hide()
-        fullScreen.hide()
+        functiondiv.hide()
         imgdiv.hide()
         firstwarning2 = false
         return
@@ -891,7 +917,7 @@ function start(){
     mainmenu.hide()
     warning1.hide()
     warning2.hide()
-    fullScreen.hide()
+    functiondiv.hide()
     imgdiv.hide()
     pauseButton.show()
 }
@@ -939,8 +965,8 @@ function reset(){
     textAlign(LEFT)
     text('patch 1.64', 5, 15)
     mainmenu.style('display', 'flex')
-    fullScreen.show()
-    imgdiv.show()
+    imgdiv.style('display', 'flex')
+    functiondiv.style('display', 'flex')
     pauseMenu.hide()
     pauseButton.hide()
 }

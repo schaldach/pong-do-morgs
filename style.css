@@ -97,10 +97,22 @@ div{
 }
 .imgdiv{
     height: 50px;
-    width: 50px;
+    width: 120px;
     top: 2vh;
     right: 8vw;
+    gap: 20px;
+    display: flex;
+    flex-direction: row-reverse;
     position: fixed;
+}
+.imgfunction{
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+}
+.imgfunction:hover{
+    border: solid #ffffff;
+    border-width: 0px 0px 1px 0px;
 }
 .redbutton{
     background-color: #ee1717;
