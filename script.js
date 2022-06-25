@@ -746,6 +746,7 @@ function calculateball(){
                 setTimeout(winner, 250)
                 return
             }
+            efeito.play()
             if(player2.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player2)
@@ -770,6 +771,7 @@ function calculateball(){
                 setTimeout(winner, 250)
                 return
             }
+            efeito.play()
             if(player1.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player1)
@@ -899,7 +901,7 @@ function start(){
         firstwarning2 = false
         return
     }
-    musicamenu.volume = 0.45
+    musicamenu.volume = 0.6
     switch(selectDifficulty.value()){
         case 'Facil':
             AISpeed = windowHeight/160
