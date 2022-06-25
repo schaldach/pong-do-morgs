@@ -68,7 +68,9 @@ let firstwarning2 = true
 let firstwarning1 = true
 let musicamenu = new Audio('musicamenu.mp3')
 musicamenu.currentTime = 1.5
-let efeito = new Audio('hitsound.mp3')
+let efeito1 = new Audio('hitsound.mp3')
+efeito1.volume = 0.6
+let efeito2 = new Audio('')
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -746,7 +748,7 @@ function calculateball(){
                 setTimeout(winner, 250)
                 return
             }
-            efeito.play()
+            if(sound){efeito1.play()}
             if(player2.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player2)
@@ -771,7 +773,7 @@ function calculateball(){
                 setTimeout(winner, 250)
                 return
             }
-            efeito.play()
+            if(sound){efeito1.play()}
             if(player1.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player1)
