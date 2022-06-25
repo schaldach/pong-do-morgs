@@ -66,7 +66,8 @@ let anyPowerActive = true
 let paused = false
 let firstwarning2 = true
 let firstwarning1 = true
-let musica = new Audio('musica.mp3');
+let musicamenu = new Audio('musicamenu.mp3')
+let efeito = new Audio('hitsound.mp3')
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -273,14 +274,15 @@ function setup(){
 function toggleSound(){
     if(!sound){
         sound = true
-        musica.play()
+        musicamenu.volume = 0.9
+        musicamenu.play()
         soundActive.show()
         soundOff.hide()
     }
     else{
         sound = false
-        musica.pause()
-        musica.currentTime = 0
+        musicamenu.pause()
+        musicamenu.currentTime = 0
         soundActive.hide()
         soundOff.show()
     }
@@ -288,6 +290,10 @@ function toggleSound(){
 function setInput(){
     scoreLimit = parseInt(this.value())
 }
+musicamenu.addEventListener('ended', function() {
+    this.currentTime = 0
+    this.play()
+}, false)
 window.addEventListener("resize", function() {
     windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
     windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
@@ -892,6 +898,7 @@ function start(){
         firstwarning2 = false
         return
     }
+    musicamenu.volume = 0.45
     switch(selectDifficulty.value()){
         case 'Facil':
             AISpeed = windowHeight/160
@@ -937,6 +944,7 @@ function reset(){
     clearInterval(powerInterval)
     clear()
     background("#000000")
+    musicamenu.volume = 0.9
     p1powers.html('')
     p2powers.html('')
     powersSpawned = []
