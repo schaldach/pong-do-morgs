@@ -68,14 +68,14 @@ let firstwarning2 = true
 let firstwarning1 = true
 let musicamenu = new Audio('musicamenu.mp3')
 musicamenu.currentTime = 1.5
-musicamenu.volume = 0.5
+musicamenu.volume = 0.4
 let efeito1 = new Audio('hitsound1.mp3')
 efeito1.volume = 0.7
 let efeito2 = new Audio('hitsound2.mp3')
 efeito2.volume = 0.7
 let efeito3 = new Audio('hitsound3.mp3')
 let musicajogo = new Audio('gamemusic.mp3')
-musicajogo.volume = 0.5
+musicajogo.volume = 0.2
 musicajogo.currentTime = 7
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
@@ -283,13 +283,15 @@ function setup(){
 function toggleSound(){
     if(!sound){
         sound = true
-        musicamenu.play()
+        if(gameplaying){musicajogo.play()}
+        else{musicamenu.play()}
         soundActive.show()
         soundOff.hide()
     }
     else{
         sound = false
-        musicamenu.pause()
+        if(gameplaying){musicajogo.pause()}
+        else{musicamenu.pause()}
         soundActive.hide()
         soundOff.show()
     }
@@ -305,6 +307,11 @@ musicajogo.addEventListener('ended', function() {
     this.currentTime = 7
     this.play()
 }, false)
+document.addEventListener('click', ({ target }) => {
+    if (target.matches('button')) {
+      console.log(target);
+    }
+})
 window.addEventListener("resize", function() {
     windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
     windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
@@ -584,11 +591,15 @@ function goToMain(){
 function pausegame(){
     pauseButton.hide()
     pauseMenu.style('display', 'flex')
+    imgdiv.style('display', 'flex')
+    functiondiv.style('display', 'flex')
     paused = true
 }
 function resume(){
     pauseButton.show()
     pauseMenu.hide()
+    imgdiv.hide()
+    functiondiv.hide()
     paused = false
 }
 window.addEventListener('keydown', (event) => {
