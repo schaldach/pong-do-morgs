@@ -77,6 +77,8 @@ let efeito3 = new Audio('hitsound3.mp3')
 let musicajogo = new Audio('gamemusic.mp3')
 musicajogo.volume = 0.2
 musicajogo.currentTime = 7
+let menusom = new Audio('menusound.mp3')
+menusom.volume = 0.4
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -280,6 +282,7 @@ function setup(){
     text('patch 1.69', 5, 15)
     noStroke()
 }
+
 function toggleSound(){
     if(!sound){
         sound = true
@@ -307,10 +310,8 @@ musicajogo.addEventListener('ended', function() {
     this.currentTime = 7
     this.play()
 }, false)
-document.addEventListener('click', ({ target }) => {
-    if (target.matches('button')) {
-      console.log(target);
-    }
+window.addEventListener('click', function(){
+    if(sound){menusom.play()}
 })
 window.addEventListener("resize", function() {
     windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
@@ -899,7 +900,6 @@ function winner(){
     if(timeIndex>=0){
         stopPower(timeIndex, player1, 0)
         stopPower(timeIndex, player2, 0)
-        console.log('foi')
     }
     player1.y = windowHeight*7/16
     player2.y = windowHeight*7/16
