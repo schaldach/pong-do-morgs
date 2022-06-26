@@ -56,7 +56,6 @@ let player2 = {
 }
 let ballColors = []
 let sound = false
-let song
 let gameplaying = false
 let timeout = false
 let playerMoved = false
