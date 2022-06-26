@@ -66,17 +66,17 @@ let anyPowerActive = true
 let paused = false
 let firstwarning2 = true
 let firstwarning1 = true
-let musicamenu = new Audio('musicamenu.mp3')
-musicamenu.currentTime = 1.5
-musicamenu.volume = 0.4
+let musicamenu = new Audio('musicadomenu.mp3')
+musicamenu.currentTime = 1
+musicamenu.volume = 0.3
 let efeito1 = new Audio('hitsound1.mp3')
 efeito1.volume = 0.7
 let efeito2 = new Audio('hitsound2.mp3')
 efeito2.volume = 0.7
 let efeito3 = new Audio('hitsound3.mp3')
-let musicajogo = new Audio('gamemusic.mp3')
+let musicajogo = new Audio('musicadojogo.mp3')
 musicajogo.volume = 0.2
-musicajogo.currentTime = 7
+musicajogo.currentTime = 2
 let menusom = new Audio('menusound.mp3')
 menusom.volume = 0.4
 let scoreLimit = 5
@@ -303,11 +303,11 @@ function setInput(){
     scoreLimit = parseInt(this.value())
 }
 musicamenu.addEventListener('ended', function() {
-    this.currentTime = 1.5
+    this.currentTime = 1
     this.play()
 }, false)
 musicajogo.addEventListener('ended', function() {
-    this.currentTime = 7
+    this.currentTime = 2
     this.play()
 }, false)
 window.addEventListener('click', function(){
