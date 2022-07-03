@@ -65,19 +65,19 @@ let anyPowerActive = true
 let paused = false
 let firstwarning2 = true
 let firstwarning1 = true
-let musicamenu = new Audio('musicadomenu.mp3')
-musicamenu.currentTime = 1
-musicamenu.volume = 0.3
-let efeito1 = new Audio('hitsound1.mp3')
+let musicajogo = new Audio('./assets/audio/musicadomenu.mp3')
+musicajogo.currentTime = 1
+musicajogo.volume = 0.3
+let efeito1 = new Audio('./assets/audio/hitsound1.mp3')
 efeito1.volume = 0.7
-let efeito2 = new Audio('hitsound2.mp3')
+let efeito2 = new Audio('./assets/audio/hitsound2.mp3')
 efeito2.volume = 0.7
-let efeito3 = new Audio('hitsound3.mp3')
-let musicajogo = new Audio('musicadojogo.mp3')
-musicajogo.volume = 0.2
-musicajogo.currentTime = 2
-let menusom = new Audio('menusound.mp3')
+let efeito3 = new Audio('./assets/audio/hitsound3.mp3')
+let menusom = new Audio('./assets/audio/menusound.mp3')
 menusom.volume = 0.4
+let vitoriasom = new Audio('./assets/audio/win.mp3')
+let powerpickupsom = new Audio('./assets/audio/pickup.mp3')
+let pointsom = new Audio('./assets/audio/point.mp3')
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
 {p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
@@ -94,7 +94,7 @@ let currentPower = 0
 let powerInterval
 
 function preload(){
-    font = loadFont('koulen.ttf')
+    font = loadFont('./assets/koulen.ttf')
 }
 function setup(){
     myCanvas = createCanvas((windowWidth*13/15),windowHeight)
@@ -152,17 +152,17 @@ function setup(){
     functiondiv.addClass('imgdiv')
     functiondiv.id('fundiv')
     functiondiv.parent('page')
-    fullScreen = createImg('screen.png')
+    fullScreen = createImg('./assets/images/screen.png')
     fullScreen.addClass('imgfunction')
     fullScreen.parent('imgdiv')
     fullScreendiv = createDiv()
     fullScreendiv.addClass('imgfunction')
     fullScreendiv.mousePressed(activateFullscreen)
     fullScreendiv.parent('fundiv')
-    soundActive = createImg('sound-on.png')
+    soundActive = createImg('./assets/images/sound-on.png')
     soundActive.addClass('imgfunction')
     soundActive.parent('imgdiv')
-    soundOff = createImg('sound-off.png')
+    soundOff = createImg('./assets/images/sound-off.png')
     soundOff.addClass('imgfunction')
     soundOff.parent('imgdiv')
     soundActive.hide()
@@ -285,15 +285,13 @@ function setup(){
 function toggleSound(){
     if(!sound){
         sound = true
-        if(gameplaying){musicajogo.play()}
-        else{musicamenu.play()}
+        musicajogo.play()
         soundActive.show()
         soundOff.hide()
     }
     else{
         sound = false
-        if(gameplaying){musicajogo.pause()}
-        else{musicamenu.pause()}
+        musicajogo.pause()
         soundActive.hide()
         soundOff.show()
     }
@@ -301,12 +299,11 @@ function toggleSound(){
 function setInput(){
     scoreLimit = parseInt(this.value())
 }
-musicamenu.addEventListener('ended', function() {
-    this.currentTime = 1
-    this.play()
-}, false)
+vitoriasom.addEventListener('ended', function() {
+    musicajogo.play()
+})
 musicajogo.addEventListener('ended', function() {
-    this.currentTime = 2
+    this.currentTime = 1
     this.play()
 }, false)
 window.addEventListener('click', function(){
@@ -406,6 +403,7 @@ function updatePowerShow(){
     })
 }
 function powerCatch(power, player, ball){
+    if(sound){powerpickupsom.play()}
     switch(currentAllPowers[power].p){
         case 'Grande':
             let smallIndex = currentAllPowers.findIndex(power => {return power.p === 'Pequeno'})
@@ -764,6 +762,7 @@ function calculateball(){
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
                 player1.score+=ball.scoreValue
                 timeout = true
+                if(sound){pointsom.play()}
                 setTimeout(winner, 250)
                 return
             }
@@ -790,6 +789,7 @@ function calculateball(){
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
                 player2.score+=ball.scoreValue
                 timeout = true
+                if(sound){pointsom.play()}
                 setTimeout(winner, 250)
                 return
             }
@@ -869,11 +869,19 @@ function winner(){
     timeout = false
     if(player1.score>=scoreLimit&&scoreLimit>0){
         subtitle.html(`Jogador 1 venceu!<br/>${player1.score} - ${player2.score}`)
+        if(sound){
+            musicajogo.pause()
+            vitoriasom.play()
+        }
         reset()
         return
     }
     else if(player2.score>=scoreLimit&&scoreLimit>0){
         subtitle.html(`Jogador 2 venceu!<br/>${player1.score} - ${player2.score}`)
+        if(sound){
+            musicajogo.pause()
+            vitoriasom.play()
+        }
         reset()
         return
     }
@@ -924,8 +932,7 @@ function start(){
         return
     }
     if(sound){
-        musicamenu.pause()
-        musicajogo.play()
+        musicajogo.volume = 0.15
     }
     switch(selectDifficulty.value()){
         case 'Facil':
@@ -973,8 +980,7 @@ function reset(){
     clear()
     background("#000000")
     if(sound){
-        musicamenu.play()
-        musicajogo.pause()
+        musicajogo.volume = 0.3
     }
     p1powers.html('')
     p2powers.html('')
