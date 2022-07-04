@@ -563,13 +563,14 @@ function spawnNewPower(){
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
     let numberOfPowersSpawned
     let allPowersChosen = []
-    if(Math.random()<0.5){numberOfPowersSpawned=1}
-    else if(Math.random()<0.75){numberOfPowersSpawned=2}
-    else if(Math.random()<0.90){numberOfPowersSpawned=3}
-    else if(Math.random()<0.99){numberOfPowersSpawned=4}
+    let randomNumber = Math.random()
+    if(randomNumber<0.5){numberOfPowersSpawned=1}
+    else if(randomNumber<0.75){numberOfPowersSpawned=2}
+    else if(randomNumber<0.90){numberOfPowersSpawned=3}
+    else if(randomNumber<0.99){numberOfPowersSpawned=4}
     else{numberOfPowersSpawned=10}
     if(numberOfPowersSpawned>numberOfPowers){numberOfPowersSpawned=numberOfPowers}
-    if(numberOfPowersSpawned=10){allPowersChosen.push(0,1,2,3,4,5,6,7,8,9)}
+    if(numberOfPowersSpawned===10){allPowersChosen.push(0,1,2,3,4,5,6,7,8,9)}
     else{
         for(i=0; i<numberOfPowersSpawned; i++){
             for(y=0; y>=0; y++){
