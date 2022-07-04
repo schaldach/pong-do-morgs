@@ -66,15 +66,10 @@ let paused = false
 let firstwarning2 = true
 let firstwarning1 = true
 let musicajogo = new Audio('./assets/audio/musicadomenu.mp3')
-musicajogo.currentTime = 1
-musicajogo.volume = 0.3
 let efeito1 = new Audio('./assets/audio/hitsound1.mp3')
-efeito1.volume = 0.7
 let efeito2 = new Audio('./assets/audio/hitsound2.mp3')
-efeito2.volume = 0.7
 let efeito3 = new Audio('./assets/audio/hitsound3.mp3')
 let menusom = new Audio('./assets/audio/menusound.mp3')
-menusom.volume = 0.4
 let vitoriasom = new Audio('./assets/audio/win.mp3')
 let powerpickupsom = new Audio('./assets/audio/pickup.mp3')
 let pointsom = new Audio('./assets/audio/point.mp3')
@@ -90,7 +85,6 @@ let allParticles = []
 let particleColors = []
 let AIrandomizer = 1
 let numberOfPowers = 10
-let currentPower = 0
 let powerInterval
 
 function preload(){
@@ -228,6 +222,20 @@ function setup(){
     particleSelect.option('Desativadas')
     particleSelect.parent('partc')
     particleSelect.selected('Ativadas')
+    musicVolumeControl = createDiv('Volume da musica')
+    musicVolumeControl.parent('admenu')
+    musicVolumeControl.id('mvc')
+    musicSlider = createSlider(0, 1, 0.2, 0.05)
+    musicSlider.size(80)
+    musicSlider.parent('mvc')
+    musicSlider.addClass('slider')
+    sfxVolumeControl = createDiv('Volume dos efeitos')
+    sfxVolumeControl.parent('admenu')
+    sfxVolumeControl.id('svc')
+    sfxSlider = createSlider(0, 1, 0.4, 0.05)
+    sfxSlider.style('width', '80px')
+    sfxSlider.parent('svc')
+    sfxSlider.addClass('slider')
     mainConfigs = createButton('Voltar')
     mainConfigs.mousePressed(goToMain)
     mainConfigs.parent('admenu')
@@ -303,7 +311,6 @@ vitoriasom.addEventListener('ended', function() {
     musicajogo.play()
 })
 musicajogo.addEventListener('ended', function() {
-    this.currentTime = 1
     this.play()
 }, false)
 window.addEventListener('click', function(){
@@ -554,9 +561,28 @@ function drawParticles(){
 function spawnNewPower(){
     let xPos = Math.floor(Math.random()*(windowWidth*13/15)*2/3)+(windowWidth*13/15)/6
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
-    currentPower = Math.floor(Math.random()*numberOfPowers)
+    let numberOfPowersSpawned
+    let allPowersChosen = []
+    if(Math.random()<0.5){numberOfPowersSpawned=1}
+    else if(Math.random()<0.75){numberOfPowersSpawned=2}
+    else if(Math.random()<0.90){numberOfPowersSpawned=3}
+    else if(Math.random()<0.99){numberOfPowersSpawned=4}
+    else{numberOfPowersSpawned=10}
+    if(numberOfPowersSpawned>numberOfPowers){numberOfPowersSpawned=numberOfPowers}
+    if(numberOfPowersSpawned=10){allPowersChosen.push(0,1,2,3,4,5,6,7,8,9)}
+    else{
+        for(i=0; i<numberOfPowersSpawned; i++){
+            for(y=0; y>=0; y++){
+                powerChosen = Math.floor(Math.random()*numberOfPowers)
+                if(allPowersChosen.indexOf(powerChosen)===-1){
+                    allPowersChosen.push(powerChosen)
+                    break
+                }
+            }
+        }
+    }
     let time = new Date()
-    powersSpawned.push({x: xPos, y: yPos, p:currentPower, expiretrack: time.getTime(), powerflicker:[4,8,12,16,20,24,26,28,29,30,31,32]})
+    powersSpawned.push({n:numberOfPowersSpawned, x: xPos, y: yPos, p:allPowersChosen, expiretrack: time.getTime(), powerflicker:[4,8,12,16,20,24,26,28,29,30,31,32]})
     canSpawnPower = false
 }
 function drawPowerCircle(spawnedPower){
@@ -572,11 +598,11 @@ function drawPowerCircle(spawnedPower){
     }
     particleColors[3].setAlpha(70)
     fill(particleColors[3])
-    ellipse(spawnedPower.x, spawnedPower.y, windowHeight*2/5)
+    ellipse(spawnedPower.x, spawnedPower.y, windowHeight/3)
     particleColors[3].setAlpha(255)
     textSize(40)
     textAlign(CENTER)
-    text('?',spawnedPower.x, spawnedPower.y+10)
+    text(spawnedPower.n,spawnedPower.x, spawnedPower.y+10)
 }
 function goToConfigs(){
     mainmenu.style('display','none')
@@ -613,6 +639,18 @@ window.addEventListener('keyup', (event) => {
     else if(event.key === 'ArrowDown'){player2.down = false}
 })
 function draw(){
+    if(!gameplaying){
+        volumeparaefeitos = sfxSlider.value()
+        volumeparamusicas = musicSlider.value()
+        musicajogo.volume = volumeparamusicas
+        vitoriasom.volume = volumeparamusicas
+        efeito1.volume = volumeparaefeitos
+        efeito2.volume = volumeparaefeitos
+        efeito3.volume = volumeparaefeitos
+        menusom.volume = volumeparaefeitos
+        powerpickupsom.volume = volumeparaefeitos
+        pointsom.volume = volumeparaefeitos
+    }
     if(gameplaying&&!timeout&&!paused){
         clear()
         background("#000000")
@@ -629,23 +667,13 @@ function draw(){
         powersSpawned.forEach(spawnedPower => {
             drawPowerCircle(spawnedPower)
             balls.forEach(ball => {
-                if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+windowHeight/5){
+                if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+windowHeight/6){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
-                    powerCatch(spawnedPower.p, rightPlayer, ball)
+                    spawnedPower['p'].forEach(chosenPower => {
+                        powerCatch(chosenPower, rightPlayer, ball)
+                    })
                     powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
-                    let colorindex
-                    switch(currentAllPowers[spawnedPower.p].c){
-                        case 'white':
-                            colorindex = 0
-                            break
-                        case 'red':
-                            colorindex = 1
-                            break
-                        case 'green':
-                            colorindex = 2
-                            break
-                    }
-                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:colorindex, frame:0, particles:[]})
+                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:3, frame:0, particles:[]})
                 }
             })
         })
@@ -931,9 +959,6 @@ function start(){
         firstwarning2 = false
         return
     }
-    if(sound){
-        musicajogo.volume = 0.15
-    }
     switch(selectDifficulty.value()){
         case 'Facil':
             AISpeed = windowHeight/160
@@ -979,9 +1004,6 @@ function reset(){
     clearInterval(powerInterval)
     clear()
     background("#000000")
-    if(sound){
-        musicajogo.volume = 0.3
-    }
     p1powers.html('')
     p2powers.html('')
     powersSpawned = []
