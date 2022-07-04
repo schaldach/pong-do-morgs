@@ -70,10 +70,11 @@ div{
 
 .configs{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
     gap: 1vh;
+    margin-bottom: 3vh;
 }
 
 .buttonmenu{
@@ -128,9 +129,22 @@ div{
     width: 10%;
     gap: 5vh;
 }
-
+.gamemodes button{
+    background-color: #ffffff;
+    color: #2c54ac;
+}
+.gamemodes{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.main button{
+    width: 225px;
+}
 .admenu{
-    width: 50%;
+    width: 66%;
     justify-content: center;
     align-items: center;
     position: absolute;

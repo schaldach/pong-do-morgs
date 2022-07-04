@@ -75,10 +75,13 @@ let powerpickupsom = new Audio('./assets/audio/pickup.mp3')
 let pointsom = new Audio('./assets/audio/point.mp3')
 let scoreLimit = 5
 let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
-{p:'Multibola', t:5000, c:'white', active:true},{p:'Gol de ouro', t:5000, c:'white', active:true}, 
-{p:'Grande', t:7500, c:'green', active:true}, {p:'Pequeno', t:7500, c:'red', active:true}, 
-{p:'Congelado', t:1750, c:'red', active:true},{p:'Invisivel', t:3500, c:'red', active:true}, 
-{p:'Sorrateiro', t:7500, c:'green', active:true}, {p:'Temporizador', t:3250, c:'white', active:true}]
+{p:'Multibola', t:5000, c:'white', active:true}, {p:'Grande', t:7500, c:'green', active:true}, 
+{p:'Pequeno', t:7500, c:'red', active:true}, {p:'Gol de ouro', t:5000, c:'white', active:true},
+{p:'Flares', t:7500, c:'green', active:true}, {p:'Congelado', t:1750, c:'red', active:true},
+{p:'Temporizador', t:3250, c:'white', active:true}, {p:'bom', t:0, c:'green', active:true}, 
+{p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:7500, c:'white', active:true},
+{p:'bom2', t:0, c:'green', active:true}, {p:'Desordenado', t:0, c:'red', active:true},
+{p:'Trapaceiro', t:7500, c:'white', active:true},]
 let currentAllPowers = []
 let powersSpawned = []
 let allParticles = []
@@ -100,16 +103,81 @@ function setup(){
     mainmenu = createDiv()
     mainmenu.parent('page')
     mainmenu.id('mainmenu')
-    mainmenu.addClass('mainmenu')
+    mainmenu.addClass('mainmenu main')
     title = createDiv('Pong do Morgs')
     title.addClass('titulo')
     title.parent('mainmenu')
     subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao em cima na direita<br/>(Funciona em PC e Mobile)')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
+    gamemodes = createDiv()
+    gamemodes.id('gamemodes')
+    gamemodes.addClass('gamemodes')
+    gamemodes.parent('mainmenu')
+    campaignbutton = createButton('Campanha')
+    campaignbutton.parent('gamemodes')
+    campaignbutton.mousePressed(goToUnfinished)
+    customgamebutton = createButton('Jogo Customizado')
+    customgamebutton.mousePressed(goToCustom)
+    customgamebutton.parent('gamemodes')
+    onlinebutton = createButton('Multiplayer')
+    onlinebutton.mousePressed(goToUnfinished)
+    onlinebutton.parent('gamemodes')
+    mainconfigsbutton = createButton('Configs')
+    mainconfigsbutton.parent('mainmenu')
+    mainconfigsbutton.mousePressed(goToMainConfigs)
+    mainmenuconfigs = createDiv()
+    mainmenuconfigs.addClass('admenu')
+    mainmenuconfigs.id('mainconfigs')
+    mainmenuconfigs.hide()
+    particleDiv = createDiv('Particulas')
+    particleDiv.parent('mainconfigs')
+    particleDiv.id('partc')
+    particleDiv.addClass('sped')
+    particleSelect = createSelect()
+    particleSelect.option('Ativadas')
+    particleSelect.option('Desativadas')
+    particleSelect.parent('partc')
+    particleSelect.selected('Ativadas')
+    musicVolumeControl = createDiv('Volume da musica')
+    musicVolumeControl.parent('mainconfigs')
+    musicVolumeControl.id('mvc')
+    musicSlider = createSlider(0, 1, 0.2, 0.05)
+    musicSlider.size(80)
+    musicSlider.parent('mvc')
+    musicSlider.addClass('slider')
+    sfxVolumeControl = createDiv('Volume dos efeitos')
+    sfxVolumeControl.parent('mainconfigs')
+    sfxVolumeControl.id('svc')
+    sfxSlider = createSlider(0, 1, 0.4, 0.05)
+    sfxSlider.style('width', '80px')
+    sfxSlider.parent('svc')
+    sfxSlider.addClass('slider')
+    mainmenuButton2 = createButton('← Voltar')
+    mainmenuButton2.mousePressed(goToMain)
+    mainmenuButton2.parent('mainconfigs')
+    unfinished = createDiv('Em breve...')
+    unfinished.id('unfinish')
+    unfinished.parent('page')
+    unfinished.addClass('mainmenu')
+    unfinished.hide()
+    unfinishedbutton = createButton('← Voltar')
+    unfinishedbutton.parent('unfinish')
+    unfinishedbutton.mousePressed(goToMain)
+    customgamemenu = createDiv()
+    customgamemenu.parent('page')
+    customgamemenu.id('customgamemenu')
+    customgamemenu.addClass('mainmenu')
+    customgamemenu.hide()
+    title2 = createDiv('Pong do Morgs')
+    title2.addClass('titulo')
+    title2.parent('customgamemenu')
+    subtitle2 = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao em cima na direita<br/>(Funciona em PC e Mobile)')
+    subtitle2.addClass('subtitle')
+    subtitle2.parent('customgamemenu')
     buttonMenu = createDiv('')
     buttonMenu.addClass('buttonmenu')
-    buttonMenu.parent('mainmenu')
+    buttonMenu.parent('customgamemenu')
     buttonMenu.id('buttonmenu')
     startButton = createButton("Start")
     startButton.mousePressed(start)
@@ -125,19 +193,18 @@ function setup(){
     selectDifficulty.option('PESADELO')
     selectDifficulty.selected('Medio')
     selectDifficulty.parent('buttonmenu')
-    powersSelect = createSelect()
-    powersSelect.option('Com poderes')
-    powersSelect.option('Sem poderes')
-    powersSelect.parent('buttonmenu')
     scoreDisplay = createDiv('Pontos para vencer')
     scoreDisplay.id('lim')
     scoreDisplay.parent('buttonmenu')
     scoreLimitSelect = createInput(5, 'number')
     scoreLimitSelect.parent('lim')
     scoreLimitSelect.input(setInput)
-    advancedConfigs = createButton('Outras Configs')
+    advancedConfigs = createButton('Outras Configs →')
     advancedConfigs.parent('buttonmenu')
-    advancedConfigs.mousePressed(goToConfigs)
+    advancedConfigs.mousePressed(goToCustomConfigs)
+    mainmenuButton = createButton('← Menu principal')
+    mainmenuButton.mousePressed(goToMain)
+    mainmenuButton.parent('buttonmenu')
     imgdiv = createDiv()
     imgdiv.addClass('imgdiv')
     imgdiv.id('imgdiv')
@@ -164,45 +231,28 @@ function setup(){
     soundActivediv.addClass('imgfunction')
     soundActivediv.mousePressed(toggleSound)
     soundActivediv.parent('fundiv')
-    advancedmenu = createDiv('Poderes disponiveis')
-    advancedmenu.parent('page')
-    advancedmenu.id('admenu')
-    advancedmenu.addClass('admenu')
+    customgameconfigs = createDiv('Poderes disponiveis')
+    customgameconfigs.parent('page')
+    customgameconfigs.id('admenu')
+    customgameconfigs.addClass('admenu')
     configsmenu = createDiv()
     configsmenu.parent('admenu')
     configsmenu.id('configsmenu')
     configsmenu.addClass('configs')
-    advancedmenu.hide()
-    Fireb = createButton('Fogo')
-    Fireb.mousePressed(() => changePowerActive('Fogo', Fireb))
-    Fireb.parent('configsmenu')
-    Iceb = createButton('Congelado')
-    Iceb.mousePressed(() => changePowerActive('Congelado', Iceb))
-    Iceb.parent('configsmenu')
-    Bigb = createButton('Grande')
-    Bigb.mousePressed(() => changePowerActive('Grande', Bigb))
-    Bigb.parent('configsmenu')
-    Smallb = createButton('Pequeno')
-    Smallb.mousePressed(() => changePowerActive('Pequeno', Smallb))
-    Smallb.parent('configsmenu')
-    Invertedb = createButton('Invertido')
-    Invertedb.mousePressed(() => changePowerActive('Invertido', Invertedb))
-    Invertedb.parent('configsmenu')
-    Goldb = createButton('Gol de ouro')
-    Goldb.mousePressed(() => changePowerActive('Gol de ouro', Goldb))
-    Goldb.parent('configsmenu')
-    Multib = createButton('Multibola')
-    Multib.mousePressed(() => changePowerActive('Multibola', Multib))
-    Multib.parent('configsmenu')
-    Invisibleb = createButton('Invisivel')
-    Invisibleb.mousePressed(() => changePowerActive('Invisivel', Invisibleb))
-    Invisibleb.parent('configsmenu')
-    Sneakb = createButton('Sorrateiro')
-    Sneakb.mousePressed(() => changePowerActive('Sorrateiro', Sneakb))
-    Sneakb.parent('configsmenu')
-    Timeb = createButton('Temporizador')
-    Timeb.mousePressed(() => changePowerActive('Temporizador', Timeb))
-    Timeb.parent('configsmenu')
+    text1 = createDiv('Positivos')
+    text1.parent('configsmenu')
+    text1.addClass('green')
+    text2 = createDiv('Negativos')
+    text2.parent('configsmenu')
+    text2.addClass('red')
+    text3 = createDiv('Neutros')
+    text3.parent('configsmenu')
+    customgameconfigs.hide()
+    allPowers.forEach(power => {
+        let button = createButton(power.p)
+        button.mousePressed(() => changePowerActive(power.p, button))
+        button.parent('configsmenu')
+    })
     spawnSpeed = createDiv('Velocidade dos poderes')
     spawnSpeed.parent('admenu')
     spawnSpeed.id('sped')
@@ -213,32 +263,9 @@ function setup(){
     powerSpeedSelect.option('Loucura')
     powerSpeedSelect.parent('sped')
     powerSpeedSelect.selected('Normal')
-    particleDiv = createDiv('Particulas')
-    particleDiv.parent('admenu')
-    particleDiv.id('partc')
-    particleDiv.addClass('sped')
-    particleSelect = createSelect()
-    particleSelect.option('Ativadas')
-    particleSelect.option('Desativadas')
-    particleSelect.parent('partc')
-    particleSelect.selected('Ativadas')
-    musicVolumeControl = createDiv('Volume da musica')
-    musicVolumeControl.parent('admenu')
-    musicVolumeControl.id('mvc')
-    musicSlider = createSlider(0, 1, 0.2, 0.05)
-    musicSlider.size(80)
-    musicSlider.parent('mvc')
-    musicSlider.addClass('slider')
-    sfxVolumeControl = createDiv('Volume dos efeitos')
-    sfxVolumeControl.parent('admenu')
-    sfxVolumeControl.id('svc')
-    sfxSlider = createSlider(0, 1, 0.4, 0.05)
-    sfxSlider.style('width', '80px')
-    sfxSlider.parent('svc')
-    sfxSlider.addClass('slider')
-    mainConfigs = createButton('Voltar')
-    mainConfigs.mousePressed(goToMain)
-    mainConfigs.parent('admenu')
+    custommenu = createButton('← Voltar')
+    custommenu.mousePressed(goToCustom)
+    custommenu.parent('admenu')
     pauseButton = createButton('Pause')
     pauseButton.addClass('pausebutton')
     pauseButton.mousePressed(pausegame)
@@ -463,7 +490,7 @@ function powerCatch(power, player, ball){
             player.activatedInvisible = true
             determinePlayerColors(player)
             break
-        case 'Sorrateiro':
+        case 'Flares':
             player.activatedSneak = true
             determinePlayerColors(player)
             break
@@ -509,7 +536,7 @@ function stopPower(power, player, ball){
         case 'Invisivel':
             player.activatedInvisible = false
             determinePlayerColors(player)
-        case 'Sorrateiro':
+        case 'Flares':
             player.activatedSneak = false
             determinePlayerColors(player)
             break
@@ -564,9 +591,9 @@ function spawnNewPower(){
     let numberOfPowersSpawned
     let allPowersChosen = []
     let randomNumber = Math.random()
-    if(randomNumber<0.5){numberOfPowersSpawned=1}
-    else if(randomNumber<0.75){numberOfPowersSpawned=2}
-    else if(randomNumber<0.90){numberOfPowersSpawned=3}
+    if(randomNumber<0.6){numberOfPowersSpawned=1}
+    else if(randomNumber<0.85){numberOfPowersSpawned=2}
+    else if(randomNumber<0.95){numberOfPowersSpawned=3}
     else if(randomNumber<0.99){numberOfPowersSpawned=4}
     else{numberOfPowersSpawned=10}
     if(numberOfPowersSpawned>numberOfPowers){numberOfPowersSpawned=numberOfPowers}
@@ -605,13 +632,29 @@ function drawPowerCircle(spawnedPower){
     textAlign(CENTER)
     text(spawnedPower.n,spawnedPower.x, spawnedPower.y+10)
 }
-function goToConfigs(){
+function goToUnfinished(){
+    mainmenu.style('display', 'none')
+    unfinished.style('display', 'flex')
+}
+function goToMainConfigs(){
     mainmenu.style('display','none')
-    advancedmenu.style('display','flex')
+    mainmenuconfigs.style('display','flex')
+}
+function goToCustomConfigs(){
+    customgamemenu.style('display','none')
+    customgameconfigs.style('display','flex')
 }
 function goToMain(){
     mainmenu.style('display','flex')
-    advancedmenu.style('display','none')
+    unfinished.style('display', 'none')
+    customgamemenu.style('display','none')
+    mainmenuconfigs.style('display','none')
+}
+function goToCustom(){
+    mainmenu.style('display','none')
+    customgameconfigs.style('display', 'none')
+    customgamemenu.style('display','flex')
+    subtitle2.html('Jogo customizado')
 }
 function pausegame(){
     pauseButton.hide()
@@ -804,7 +847,7 @@ function calculateball(){
                 if(sound){efeito3.play()}
             }
             if(player2.activatedSneak){
-                const sneakIndex = currentAllPowers.findIndex(power => {return power.p === 'Sorrateiro'})
+                const sneakIndex = currentAllPowers.findIndex(power => {return power.p === 'Flares'})
                 stopPower(sneakIndex, player2)
                 ball.sneak = true
             }
@@ -831,7 +874,7 @@ function calculateball(){
                 if(sound){efeito3.play()}
             }
             if(player1.activatedSneak){
-                const sneakIndex = currentAllPowers.findIndex(power => {return power.p === 'Sorrateiro'})
+                const sneakIndex = currentAllPowers.findIndex(power => {return power.p === 'Flares'})
                 stopPower(sneakIndex, player1)
                 ball.sneak = true
             }
@@ -897,7 +940,7 @@ function changeAngle(player, index){
 function winner(){
     timeout = false
     if(player1.score>=scoreLimit&&scoreLimit>0){
-        subtitle.html(`Jogador 1 venceu!<br/>${player1.score} - ${player2.score}`)
+        subtitle2.html(`Jogador 1 venceu!<br/>${player1.score} - ${player2.score}`)
         if(sound){
             musicajogo.pause()
             vitoriasom.play()
@@ -906,7 +949,7 @@ function winner(){
         return
     }
     else if(player2.score>=scoreLimit&&scoreLimit>0){
-        subtitle.html(`Jogador 2 venceu!<br/>${player1.score} - ${player2.score}`)
+        subtitle2.html(`Jogador 2 venceu!<br/>${player1.score} - ${player2.score}`)
         if(sound){
             musicajogo.pause()
             vitoriasom.play()
@@ -946,17 +989,13 @@ function start(){
     gameMode = selectMode.value() === '1 Player'?true:false
     if(gameMode&&firstwarning1){
         warning1.show()
-        mainmenu.hide()
-        functiondiv.hide()
-        imgdiv.hide()
+        customgamemenu.hide()
         firstwarning1 = false
         return
     }
     if(!gameMode&&firstwarning2){
         warning2.show()
-        mainmenu.hide()
-        functiondiv.hide()
-        imgdiv.hide()
+        customgamemenu.hide()
         firstwarning2 = false
         return
     }
@@ -986,14 +1025,12 @@ function start(){
             break
     }
     loadPowersActive()
-    isPowers = powersSelect.value() === 'Com poderes'?true:false
-    if(isPowers&&anyPowerActive){
+    if(anyPowerActive){
         powerInterval = setInterval(spawnPower, powerSpeed)
     }
     isParticles = particleSelect.value() === 'Ativadas'?true:false
     gameplaying = true
-    subtitle.html('Jogue em tela cheia e horizontal!<br/>aperte o botao em cima na direita<br/>(Funciona em PC e Mobile)')
-    mainmenu.hide()
+    customgamemenu.hide()
     warning1.hide()
     warning2.hide()
     functiondiv.hide()
@@ -1043,7 +1080,7 @@ function reset(){
     textSize(14)
     textAlign(LEFT)
     text('patch 1.69', 5, 15)
-    mainmenu.style('display', 'flex')
+    customgamemenu.style('display', 'flex')
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
     pauseMenu.hide()
