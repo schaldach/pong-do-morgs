@@ -83,6 +83,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'bom2', t:0, c:'green', active:true}, {p:'Desordenado', t:0, c:'red', active:true},
 {p:'Trapaceiro', t:7500, c:'white', active:true},]
 let currentAllPowers = []
+let allBlackHoles = []
 let powersSpawned = []
 let allParticles = []
 let particleColors = []
@@ -153,7 +154,7 @@ function setup(){
     sfxSlider.style('width', '80px')
     sfxSlider.parent('svc')
     sfxSlider.addClass('slider')
-    mainmenuButton2 = createButton('← Voltar')
+    mainmenuButton2 = createButton('Voltar')
     mainmenuButton2.mousePressed(goToMain)
     mainmenuButton2.parent('mainconfigs')
     unfinished = createDiv('Em breve...')
@@ -161,7 +162,7 @@ function setup(){
     unfinished.parent('page')
     unfinished.addClass('mainmenu')
     unfinished.hide()
-    unfinishedbutton = createButton('← Voltar')
+    unfinishedbutton = createButton('Voltar')
     unfinishedbutton.parent('unfinish')
     unfinishedbutton.mousePressed(goToMain)
     customgamemenu = createDiv()
@@ -199,10 +200,10 @@ function setup(){
     scoreLimitSelect = createInput(5, 'number')
     scoreLimitSelect.parent('lim')
     scoreLimitSelect.input(setInput)
-    advancedConfigs = createButton('Outras Configs →')
+    advancedConfigs = createButton('Outras Configs')
     advancedConfigs.parent('buttonmenu')
     advancedConfigs.mousePressed(goToCustomConfigs)
-    mainmenuButton = createButton('← Menu principal')
+    mainmenuButton = createButton('Menu principal')
     mainmenuButton.mousePressed(goToMain)
     mainmenuButton.parent('buttonmenu')
     imgdiv = createDiv()
@@ -263,7 +264,7 @@ function setup(){
     powerSpeedSelect.option('Loucura')
     powerSpeedSelect.parent('sped')
     powerSpeedSelect.selected('Normal')
-    custommenu = createButton('← Voltar')
+    custommenu = createButton('Voltar')
     custommenu.mousePressed(goToCustom)
     custommenu.parent('admenu')
     pauseButton = createButton('Pause')
@@ -310,10 +311,10 @@ function setup(){
     warningButton2.parent('warning2')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
-    particleColors.push(color(255,255,255),color(255,0,0),color(0,255,0),color(170,0,255))
+    particleColors.push(color(255,0,0),color(170,0,255))
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.69', 5, 15)
+    text('patch 1.699', 5, 15)
     noStroke()
 }
 
@@ -351,7 +352,7 @@ window.addEventListener("resize", function() {
     myCanvas.position(windowWidth/15,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.69', 5, 15)
+    text('patch 1.699', 5, 15)
     balls[0].x = (windowWidth*13/15)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*13/15)/120
@@ -369,7 +370,7 @@ window.addEventListener("orientationchange", function() {
     myCanvas.position(windowWidth/15,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.69', 5, 15)
+    text('patch 1.699', 5, 15)
     balls[0].x = (windowWidth*13/15)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*13/15)/120
@@ -436,7 +437,7 @@ function updatePowerShow(){
         div.parent('p2powers')
     })
 }
-function powerCatch(power, player, ball){
+function powerCatch(power, player, ball, referencex, referencey){
     if(sound){powerpickupsom.play()}
     switch(currentAllPowers[power].p){
         case 'Grande':
@@ -501,6 +502,11 @@ function powerCatch(power, player, ball){
             ball.verticaltime = ball.verticalControl
             ball.ballTrack = []
             ball.timetravel = true
+            break
+        case 'Buraco Negro':
+            allBlackHoles.push({x:referencex, y:referencey, frame:0})
+            break
+        case 'Desordenado':
             break
         default:
             break
@@ -617,17 +623,17 @@ function drawPowerCircle(spawnedPower){
     let time = new Date()
     if(time.getTime()>spawnedPower.expiretrack+2.5*powerSpeed){
         powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
-        allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:3, frame:0, particles:[]})
+        allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:1, frame:0, particles:[]})
         return
     }
     if(time.getTime()-spawnedPower.expiretrack>powerSpeed*2.5-(powerSpeed*2.5/spawnedPower['powerflicker'][0])){
         spawnedPower['powerflicker'].shift()
         return
     }
-    particleColors[3].setAlpha(70)
-    fill(particleColors[3])
+    particleColors[1].setAlpha(70)
+    fill(particleColors[1])
     ellipse(spawnedPower.x, spawnedPower.y, windowHeight/3)
-    particleColors[3].setAlpha(255)
+    particleColors[1].setAlpha(255)
     textSize(40)
     textAlign(CENTER)
     text(spawnedPower.n,spawnedPower.x, spawnedPower.y+10)
@@ -701,10 +707,17 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.69', 5, 15)
+        text('patch 1.699', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+" - "+player2.score, (windowWidth*13/15)/2, windowHeight/7)
+        allBlackHoles.forEach(blackhole => {
+            stroke(particleColors[1])
+            strokeWeight(3)
+            fill(0)
+            ellipse(blackhole.x, blackhole.y, windowHeight/3)
+            blackhole.frame++
+        })
         if(canSpawnPower){
             spawnNewPower()
         }
@@ -714,13 +727,14 @@ function draw(){
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+windowHeight/6){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
                     spawnedPower['p'].forEach(chosenPower => {
-                        powerCatch(chosenPower, rightPlayer, ball)
+                        powerCatch(chosenPower, rightPlayer, ball, spawnedPower.x, spawnedPower.y)
                     })
                     powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
-                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:3, frame:0, particles:[]})
+                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:1, frame:0, particles:[]})
                 }
             })
         })
+        noStroke()
         if(isParticles){drawParticles()}
         if(gameMode){
             let xDist = 0
@@ -842,7 +856,7 @@ function calculateball(){
             if(player2.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player2)
-                allParticles.push({x:ball.x, y:ball.y, direction:-1, type:'fire', color:1, frame:0, particles:[]})
+                allParticles.push({x:ball.x, y:ball.y, direction:-1, type:'fire', color:0, frame:0, particles:[]})
                 ball.distance += (windowWidth*13/15)/70
                 if(sound){efeito3.play()}
             }
@@ -869,7 +883,7 @@ function calculateball(){
             if(player1.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player1)
-                allParticles.push({x:ball.x, y:ball.y, direction:1, type:'fire', color:1, frame:0, particles:[]})
+                allParticles.push({x:ball.x, y:ball.y, direction:1, type:'fire', color:0, frame:0, particles:[]})
                 ball.distance += (windowWidth*13/15)/70
                 if(sound){efeito3.play()}
             }
@@ -1079,7 +1093,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.69', 5, 15)
+    text('patch 1.699', 5, 15)
     customgamemenu.style('display', 'flex')
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
