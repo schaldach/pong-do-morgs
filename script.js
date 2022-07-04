@@ -183,7 +183,7 @@ function setup(){
     startButton = createButton("Start")
     startButton.mousePressed(start)
     startButton.parent('buttonmenu')
-    selectMode = createSelect();
+    selectMode = createSelect()
     selectMode.option('1 Player')
     selectMode.option('2 Players')
     selectMode.parent('buttonmenu')
@@ -551,6 +551,8 @@ function stopPower(power, player, ball){
                 balls[ball].timetravel = false
                 balls[ball].timereturn = true
             }
+        case 'Buraco Negro':
+            allBlackHoles.shift()
         default:
             break
     }
@@ -713,11 +715,16 @@ function draw(){
         text(player1.score+" - "+player2.score, (windowWidth*13/15)/2, windowHeight/7)
         allBlackHoles.forEach(blackhole => {
             stroke(particleColors[1])
-            strokeWeight(3)
             fill(0)
+            if(isParticles){
+                for(i=0; i<30; i++){
+                    rect(blackhole.x+windowHeight/6, blackhole.y, 1, 40)
+                }
+            }
             ellipse(blackhole.x, blackhole.y, windowHeight/3)
             blackhole.frame++
         })
+        noStroke()
         if(canSpawnPower){
             spawnNewPower()
         }
@@ -734,7 +741,6 @@ function draw(){
                 }
             })
         })
-        noStroke()
         if(isParticles){drawParticles()}
         if(gameMode){
             let xDist = 0
