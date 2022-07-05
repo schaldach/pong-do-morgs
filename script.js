@@ -2,13 +2,13 @@ let windowHeight = window.innerHeight|| document.documentElement.clientHeight|| 
 let windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
 let balls = [
     {
-        x: (windowWidth*13/15)/2,
+        x: (windowWidth*4/5)/2,
         y: windowHeight/2,
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: 1,
         verticalControl: 1,
-        distance: (windowWidth*13/15)/120,
+        distance: (windowWidth*4/5)/120,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1,
@@ -39,7 +39,7 @@ let player1 = {
 }
 let player2 = {
     p: 'player2',
-    x: (windowWidth*13/15)-10,
+    x: (windowWidth*4/5)-10,
     y: windowHeight*7/16,
     height: windowHeight/3,
     color: 'white',
@@ -95,10 +95,10 @@ function preload(){
     font = loadFont('./assets/koulen.ttf')
 }
 function setup(){
-    myCanvas = createCanvas((windowWidth*13/15),windowHeight)
+    myCanvas = createCanvas((windowWidth*4/5),windowHeight)
     myCanvas.parent('page')
     background("#000000")
-    myCanvas.position(windowWidth/15,0,"fixed")
+    myCanvas.position(windowWidth/10,0,"fixed")
     textFont(font)
     fill(255)
     mainmenu = createDiv()
@@ -347,36 +347,36 @@ window.addEventListener('click', function(){
 window.addEventListener("resize", function() {
     windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
     windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-    myCanvas = createCanvas((windowWidth*13/15),windowHeight)
+    myCanvas = createCanvas((windowWidth*4/5),windowHeight)
     background("#000000")
-    myCanvas.position(windowWidth/15,0,"fixed")
+    myCanvas.position(windowWidth/10,0,"fixed")
     textAlign(LEFT)
     textSize(14)
     text('patch 1.699', 5, 15)
-    balls[0].x = (windowWidth*13/15)/2
+    balls[0].x = (windowWidth*4/5)/2
     balls[0].y = windowHeight/2
-    balls[0].distance = (windowWidth*13/15)/120
+    balls[0].distance = (windowWidth*4/5)/120
     player1.y = windowHeight*7/16
     player1.height = windowHeight/3
-    player2.x = (windowWidth*13/15)-10
+    player2.x = (windowWidth*4/5)-10
     player2.y = windowHeight*7/16
     player2.height = windowHeight/3
 });
 window.addEventListener("orientationchange", function() {
     windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
     windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-    myCanvas = createCanvas((windowWidth*13/15),windowHeight)
+    myCanvas = createCanvas((windowWidth*4/5),windowHeight)
     background("#000000")
-    myCanvas.position(windowWidth/15,0,"fixed")
+    myCanvas.position(windowWidth/10,0,"fixed")
     textAlign(LEFT)
     textSize(14)
     text('patch 1.699', 5, 15)
-    balls[0].x = (windowWidth*13/15)/2
+    balls[0].x = (windowWidth*4/5)/2
     balls[0].y = windowHeight/2
-    balls[0].distance = (windowWidth*13/15)/120
+    balls[0].distance = (windowWidth*4/5)/120
     player1.y = windowHeight*7/16
     player1.height = windowHeight/3
-    player2.x = (windowWidth*13/15)-10
+    player2.x = (windowWidth*4/5)-10
     player2.y = windowHeight*7/16
     player2.height = windowHeight/3
 });
@@ -473,7 +473,7 @@ function powerCatch(power, player, ball, referencex, referencey){
                     timereturn: false
                 })
             balls.forEach(ball => {
-                ball.distance = (windowWidth*13/15)/120
+                ball.distance = (windowWidth*4/5)/120
             })
             break
         case 'Invertido':
@@ -596,7 +596,7 @@ function drawParticles(){
     })
 }
 function spawnNewPower(){
-    let xPos = Math.floor(Math.random()*(windowWidth*13/15)*2/3)+(windowWidth*13/15)/6
+    let xPos = Math.floor(Math.random()*(windowWidth*4/5)*2/3)+(windowWidth*4/5)/6
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
     let numberOfPowersSpawned
     let allPowersChosen = []
@@ -714,18 +714,18 @@ function draw(){
         text('patch 1.699', 5, 15)
         textAlign(CENTER)
         textSize(37)
-        text(player1.score+" - "+player2.score, (windowWidth*13/15)/2, windowHeight/7)
+        text(player1.score+" - "+player2.score, (windowWidth*4/5)/2, windowHeight/7)
         allBlackHoles.forEach(blackhole => {
             particleColors[1].setAlpha(255)
             stroke(particleColors[1])
             fill(0)
             if(isParticles){
-                for(i=0; i<50; i++){
-                    let angle = Math.PI*2*i/50+Math.PI*2*blackhole.frame/375
+                for(i=0; i<40; i++){
+                    let angle = Math.PI*2*i/40+Math.PI*2*blackhole.frame/375
                     push()
                     translate(blackhole.x+Math.cos(angle)*windowHeight/6, blackhole.y+Math.sin(angle)*windowHeight/6)
                     rotate(angle)
-                    rect(0, 0, 1, 75)
+                    rect(0, 0, 1, 55)
                     pop()
                 }
             }
@@ -770,7 +770,7 @@ function draw(){
         else{
             if(device){
                 touches.forEach(touch => {
-                    if(touch.x < (windowWidth*13/15)/2){
+                    if(touch.x < (windowWidth*4/5)/2){
                         player1.y = !player1.activatedIce&&!player1.activatedInverted&&(touch.y-(player1.height/2)>=0&&touch.y+(player1.height/2)<=windowHeight)?touch.y-(player1.height/2):player1.y
                         player1.y = !player1.activatedIce&&player1.activatedInverted&&(windowHeight-touch.y+(player1.height/2)<=windowHeight&&windowHeight-touch.y-(player1.height/2)>=0)?windowHeight-touch.y-(player1.height/2):player1.y
                     }
@@ -857,7 +857,7 @@ function calculateball(){
             ball.lastPlayerHit = 2
             playerMoved = player2.moved
             ball.horizontalControl = -1
-            ball.distance += (windowWidth*13/15)/1400
+            ball.distance += (windowWidth*4/5)/1400
             changeAngle(player2, index)
             if((ball.y-10>player2.y+player2.height)||(ball.y+10<player2.y)){
                 player1.score+=ball.scoreValue
@@ -871,7 +871,7 @@ function calculateball(){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player2)
                 allParticles.push({x:ball.x, y:ball.y, direction:-1, type:'fire', color:0, frame:0, particles:[]})
-                ball.distance += (windowWidth*13/15)/70
+                ball.distance += (windowWidth*4/5)/70
                 if(sound){efeito3.play()}
             }
             if(player2.activatedSneak){
@@ -884,7 +884,7 @@ function calculateball(){
             ball.lastPlayerHit = 1
             playerMoved = player1.moved
             ball.horizontalControl = 1
-            ball.distance += (windowWidth*13/15)/1400
+            ball.distance += (windowWidth*4/5)/1400
             changeAngle(player1, index)
             if((ball.y-10>player1.y+player1.height)||(ball.y+10<player1.y)){
                 player2.score+=ball.scoreValue
@@ -898,7 +898,7 @@ function calculateball(){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player1)
                 allParticles.push({x:ball.x, y:ball.y, direction:1, type:'fire', color:0, frame:0, particles:[]})
-                ball.distance += (windowWidth*13/15)/70
+                ball.distance += (windowWidth*4/5)/70
                 if(sound){efeito3.play()}
             }
             if(player1.activatedSneak){
@@ -908,10 +908,10 @@ function calculateball(){
             }
         }
         if(ball.sneak&&ball.horizontalControl===1){
-            if(ball.x>(windowWidth*13/15)*3/7){ball.sneak=false}
+            if(ball.x>(windowWidth*4/5)*3/7){ball.sneak=false}
         }
         if(ball.sneak&&ball.horizontalControl===-1){
-            if(ball.x<(windowWidth*13/15)*4/7){ball.sneak=false}
+            if(ball.x<(windowWidth*4/5)*4/7){ball.sneak=false}
         }
         if(ball.timereturn){
             let length = ball['ballTrack'].length
@@ -945,7 +945,7 @@ function determineColors(){
         ball.ballColorIndex = 0
         if(ball.timetravel||ball.timereturn){ball.ballColorIndex=4}
         if(ball.scoreValue===2){ball.ballColorIndex=2}
-        if(ball.distance>((windowWidth*13/15)/70)+((windowWidth*13/15)/120)){
+        if(ball.distance>((windowWidth*4/5)/70)+((windowWidth*4/5)/120)){
             if(ball.scoreValue===2){ball.ballColorIndex=3}
             else{ball.ballColorIndex=1}
         }
@@ -986,13 +986,13 @@ function winner(){
         return
     }
     balls = [{
-        x: (windowWidth*13/15)/2,
+        x: (windowWidth*4/5)/2,
         y: windowHeight/2,
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: Math.random()>0.5?1:-1,
         verticalControl: 1,
-        distance: (windowWidth*13/15)/120,
+        distance: (windowWidth*4/5)/120,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1,
@@ -1077,13 +1077,13 @@ function reset(){
     canSpawnPower = false
     paused = false
     balls = [{
-        x: (windowWidth*13/15)/2,
+        x: (windowWidth*4/5)/2,
         y: windowHeight/2,
         ballColorIndex: 0,
         ballTrack: [],
         horizontalControl: 1,
         verticalControl: 1,
-        distance: (windowWidth*13/15)/120,
+        distance: (windowWidth*4/5)/120,
         angle: 0,
         lastPlayerHit: 1,
         scoreValue: 1,

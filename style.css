@@ -157,7 +157,7 @@ div{
     bottom: 15px;
     display: flex;
     flex-direction: column-reverse;
-    font-size: 4.5vh;
+    font-size: 5vh;
     justify-content: flex-end;
 }
 
