@@ -504,14 +504,16 @@ function powerCatch(power, player, ball, referencex, referencey){
             ball.timetravel = true
             break
         case 'Buraco Negro':
-            allBlackHoles.push({x:referencex, y:referencey, frame:0})
+            allBlackHoles.push({x:referencex, y:referencey, frame:0, circumpherence:Math.PI*2*windowHeight/6})
             break
         case 'Desordenado':
             break
         default:
             break
     }
-    player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)
+    if(currentAllPowers[power].p!=='Buraco Negro'){
+        player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)
+    }
     let time = new Date()
     player['onlinePowers'].push({
         index: power,
@@ -714,11 +716,17 @@ function draw(){
         textSize(37)
         text(player1.score+" - "+player2.score, (windowWidth*13/15)/2, windowHeight/7)
         allBlackHoles.forEach(blackhole => {
+            particleColors[1].setAlpha(255)
             stroke(particleColors[1])
             fill(0)
             if(isParticles){
-                for(i=0; i<30; i++){
-                    rect(blackhole.x+windowHeight/6, blackhole.y, 1, 40)
+                for(i=0; i<50; i++){
+                    let angle = Math.PI*2*i/50+Math.PI*2*blackhole.frame/375
+                    push()
+                    translate(blackhole.x+Math.cos(angle)*windowHeight/6, blackhole.y+Math.sin(angle)*windowHeight/6)
+                    rotate(angle)
+                    rect(0, 0, 1, 75)
+                    pop()
                 }
             }
             ellipse(blackhole.x, blackhole.y, windowHeight/3)
