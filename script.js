@@ -24,6 +24,7 @@ let player1 = {
     p: 'player1',
     x: 10,
     y: windowHeight*7/16,
+    speed: 13,
     height: windowHeight/3,
     color: 'white',
     score: 0,
@@ -41,6 +42,7 @@ let player2 = {
     p: 'player2',
     x: (windowWidth*4/5)-10,
     y: windowHeight*7/16,
+    speed: 13,
     height: windowHeight/3,
     color: 'white',
     score: 0,
@@ -78,9 +80,9 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'Multibola', t:5000, c:'white', active:true}, {p:'Grande', t:7500, c:'green', active:true}, 
 {p:'Pequeno', t:7500, c:'red', active:true}, {p:'Gol de ouro', t:5000, c:'white', active:true},
 {p:'Flares', t:7500, c:'green', active:true}, {p:'Congelado', t:1750, c:'red', active:true},
-{p:'Temporizador', t:3250, c:'white', active:true}, {p:'bom', t:0, c:'green', active:true}, 
+{p:'Temporizador', t:3250, c:'white', active:true}, {p:'Gancho', t:7500, c:'green', active:true}, 
 {p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:7500, c:'white', active:true},
-{p:'bom2', t:0, c:'green', active:true}, {p:'Desordenado', t:0, c:'red', active:true},
+{p:'Laser', t:3000, c:'green', active:true}, {p:'Desordenado', t:0, c:'red', active:true},
 {p:'Trapaceiro', t:7500, c:'white', active:true},]
 let currentAllPowers = []
 let allBlackHoles = []
@@ -101,6 +103,18 @@ function setup(){
     myCanvas.position(windowWidth/10,0,"fixed")
     textFont(font)
     fill(255)
+    controlbuttons = createDiv()
+    controlbuttons.parent('page')
+    controlbuttons.id('controlbuttons')
+    controlbuttons.addClass('controlbuttons')
+    player1upbutton = createButton()
+    player1upbutton.parent('controlbuttons')
+    player1downbutton = createButton()
+    player1downbutton.parent('controlbuttons')
+    player2upbutton = createButton()
+    player2upbutton.parent('controlbuttons')
+    player2downbutton = createButton()
+    player2downbutton.parent('controlbuttons')
     mainmenu = createDiv()
     mainmenu.parent('page')
     mainmenu.id('mainmenu')
@@ -314,7 +328,7 @@ function setup(){
     particleColors.push(color(255,0,0),color(170,0,255))
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.699', 5, 15)
+    text('patch 1.7', 5, 15)
     noStroke()
 }
 
@@ -352,7 +366,7 @@ window.addEventListener("resize", function() {
     myCanvas.position(windowWidth/10,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.699', 5, 15)
+    text('patch 1.7', 5, 15)
     balls[0].x = (windowWidth*4/5)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*4/5)/120
@@ -370,7 +384,7 @@ window.addEventListener("orientationchange", function() {
     myCanvas.position(windowWidth/10,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.699', 5, 15)
+    text('patch 1.7', 5, 15)
     balls[0].x = (windowWidth*4/5)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*4/5)/120
@@ -669,14 +683,12 @@ function goToCustom(){
 function pausegame(){
     pauseButton.hide()
     pauseMenu.style('display', 'flex')
-    imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
     paused = true
 }
 function resume(){
     pauseButton.show()
     pauseMenu.hide()
-    imgdiv.hide()
     functiondiv.hide()
     paused = false
 }
@@ -705,13 +717,13 @@ function draw(){
         powerpickupsom.volume = volumeparaefeitos
         pointsom.volume = volumeparaefeitos
     }
-    if(gameplaying&&!timeout&&!paused){
+    else if(!timeout&&!paused){
         clear()
         background("#000000")
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.699', 5, 15)
+        text('patch 1.7', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+" - "+player2.score, (windowWidth*4/5)/2, windowHeight/7)
@@ -762,47 +774,25 @@ function draw(){
             let target = balls[closestBall].y+(AISpeed*4*AIrandomizer*player2.height/(windowHeight/3))
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<windowHeight)?player2.y+AISpeed:player2.y
-            player1.y = !player1.activatedIce&&!player1.activatedInverted&&(mouseY-(player1.height/2)>=0&&mouseY+(player1.height/2)<=windowHeight)?mouseY-(player1.height/2):player1.y
-            player1.y = !player1.activatedIce&&player1.activatedInverted&&(windowHeight-mouseY+(player1.height/2)<=windowHeight&&windowHeight-mouseY-(player1.height/2)>=0)?windowHeight-mouseY-(player1.height/2):player1.y
-            player1.moved = true
-            player2.moved = true
         }
-        else{
-            if(device){
-                touches.forEach(touch => {
-                    if(touch.x < (windowWidth*4/5)/2){
-                        player1.y = !player1.activatedIce&&!player1.activatedInverted&&(touch.y-(player1.height/2)>=0&&touch.y+(player1.height/2)<=windowHeight)?touch.y-(player1.height/2):player1.y
-                        player1.y = !player1.activatedIce&&player1.activatedInverted&&(windowHeight-touch.y+(player1.height/2)<=windowHeight&&windowHeight-touch.y-(player1.height/2)>=0)?windowHeight-touch.y-(player1.height/2):player1.y
-                    }
-                    else{
-                        player2.y = !player2.activatedIce&&!player2.activatedInverted&&(touch.y-(player2.height/2)>=0&&touch.y+(player2.height/2)<=windowHeight)?touch.y-(player2.height/2):player2.y
-                        player2.y = !player2.activatedIce&&player2.activatedInverted&&(windowHeight-touch.y+(player2.height/2)<=windowHeight&&windowHeight-touch.y-(player2.height/2)>=0)?windowHeight-touch.y-(player2.height/2):player2.y
-                    }
-                })
+        if(!player1.activatedIce){
+            if((player1.up&&!player1.activatedInverted)||(player1.down&&player1.activatedInverted)){
+                player1.y = player1.y<=0?player1.y:player1.y-13
                 player1.moved = true
+            }
+            if((player1.down&&!player1.activatedInverted)||(player1.up&&player1.activatedInverted)){
+                player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+13
+                player1.moved = true
+            }
+        }
+        if(!player2.activatedIce){
+            if((player2.up&&!player2.activatedInverted)||(player2.down&&player2.activatedInverted)){
+                player2.y = player2.y<=0?player2.y:player2.y-13
                 player2.moved = true
             }
-            else{
-                if(!player1.activatedIce){
-                    if((player1.up&&!player1.activatedInverted)||(player1.down&&player1.activatedInverted)){
-                        player1.y = player1.y<=0?player1.y:player1.y-13
-                        player1.moved = true
-                    }
-                    if((player1.down&&!player1.activatedInverted)||(player1.up&&player1.activatedInverted)){
-                        player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+13
-                        player1.moved = true
-                    }
-                }
-                if(!player2.activatedIce){
-                    if((player2.up&&!player2.activatedInverted)||(player2.down&&player2.activatedInverted)){
-                        player2.y = player2.y<=0?player2.y:player2.y-13
-                        player2.moved = true
-                    }
-                    if((player2.down&&!player2.activatedInverted)||(player2.up&&player2.activatedInverted)){
-                        player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+13
-                        player2.moved = true
-                    }
-                }
+            if((player2.down&&!player2.activatedInverted)||(player2.up&&player2.activatedInverted)){
+                player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+13
+                player2.moved = true
             }
         }
         balls.forEach(ball => {
@@ -1107,7 +1097,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.699', 5, 15)
+    text('patch 1.7', 5, 15)
     customgamemenu.style('display', 'flex')
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
