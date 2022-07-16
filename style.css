@@ -185,3 +185,28 @@ div{
 .slider{
     padding-left: 0px;
 }
+
+.controlbuttons{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    position: absolute;
+    flex-direction: column;
+}
+.controlbuttons div{
+    width: 50vw;
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10vh;
+    border-style: dashed;
+    border-color: #383838;
+    color: #383838;
+    border-width: 2px;
+    background: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}

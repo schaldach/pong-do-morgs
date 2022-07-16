@@ -107,14 +107,19 @@ function setup(){
     controlbuttons.parent('page')
     controlbuttons.id('controlbuttons')
     controlbuttons.addClass('controlbuttons')
-    player1upbutton = createButton()
+    controlbuttons.hide()
+    player1upbutton = createDiv('↑')
     player1upbutton.parent('controlbuttons')
-    player1downbutton = createButton()
-    player1downbutton.parent('controlbuttons')
-    player2upbutton = createButton()
+    player1upbutton.id('p1ub')
+    player2upbutton = createDiv('↑')
     player2upbutton.parent('controlbuttons')
-    player2downbutton = createButton()
+    player2upbutton.id('p2ub')
+    player1downbutton = createDiv('↓')
+    player1downbutton.parent('controlbuttons')
+    player1downbutton.id('p1db')
+    player2downbutton = createDiv('↓')
     player2downbutton.parent('controlbuttons')
+    player2downbutton.id('p2db')
     mainmenu = createDiv()
     mainmenu.parent('page')
     mainmenu.id('mainmenu')
@@ -307,7 +312,7 @@ function setup(){
     p2powers.style('left','37.5vw')
     p2powers.id('p2powers')
     p2powers.parent('page')
-    warning1 = createDiv('PC: Use o Mouse<br/><br/>Mobile: Use o toque<br/><br/>')
+    warning1 = createDiv('PC:<br/> Use W e S para<br/>subir e descer<br/><br/>Mobile:<br/> Use os botoes </br>em destaque para</br> subir e descer<br/><br/>')
     warning1.addClass('warning')
     warning1.id('warning1')
     warning1.parent('page')
@@ -315,7 +320,7 @@ function setup(){
     warningButton1 = createButton('Entendido')
     warningButton1.mousePressed(start)
     warningButton1.parent('warning1')
-    warning2 = createDiv('PC:<br/> Jogador 1 - W e S<br/>Jogador 2 - ↑ e ↓<br/><br/>Mobile:<br/> Cada um controla <br/>seu lado com o toque<br/><br/>')
+    warning2 = createDiv('PC:<br/> Jogador 1 - W e S<br/>Jogador 2 - ↑ e ↓<br/>para subir e descer<br/><br/>Mobile:<br/> Cada um controla <br/>seu lado com os botoes<br/>para subir e descer<br/><br/>')
     warning2.addClass('warning')
     warning2.id('warning2')
     warning2.parent('page')
@@ -330,6 +335,10 @@ function setup(){
     textSize(14)
     text('patch 1.7', 5, 15)
     noStroke()
+}
+
+function mousePressed(){
+
 }
 
 function toggleSound(){
@@ -695,8 +704,8 @@ function resume(){
 window.addEventListener('keydown', (event) => {
     if(event.key === 'w'){player1.up = true}
     else if(event.key === 's'){player1.down = true}
-    if(event.key === 'ArrowUp'){player2.up = true}
-    else if(event.key === 'ArrowDown'){player2.down = true}
+    if(event.key === 'ArrowUp'&&!gameMode){player2.up = true}
+    else if(event.key === 'ArrowDown'&&!gameMode){player2.down = true}
 })
 window.addEventListener('keyup', (event) => {
     if(event.key === 'w'){player1.up = false}
@@ -704,6 +713,9 @@ window.addEventListener('keyup', (event) => {
     if(event.key === 'ArrowUp'){player2.up = false}
     else if(event.key === 'ArrowDown'){player2.down = false}
 })
+function setLineDash(list) {
+    drawingContext.setLineDash(list);
+}
 function draw(){
     if(!gameplaying){
         volumeparaefeitos = sfxSlider.value()
@@ -726,7 +738,12 @@ function draw(){
         text('patch 1.7', 5, 15)
         textAlign(CENTER)
         textSize(37)
-        text(player1.score+" - "+player2.score, (windowWidth*4/5)/2, windowHeight/7)
+        text(player1.score+"        "+player2.score, (windowWidth*4/5)/2, windowHeight/7)
+        setLineDash([12, 12])
+        stroke(255)
+        strokeWeight(2)
+        line((windowWidth*4/5)/2, 0, (windowWidth*4/5)/2, windowHeight)
+        setLineDash([0, 0])
         allBlackHoles.forEach(blackhole => {
             particleColors[1].setAlpha(255)
             stroke(particleColors[1])
@@ -775,25 +792,51 @@ function draw(){
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)>target&&player2.y>0)?player2.y-AISpeed:player2.y
             player2.y = !player2.activatedIce&&(player2.y+(player2.height/2)<target&&player2.y+player2.height<windowHeight)?player2.y+AISpeed:player2.y
         }
+        if(device){
+            touches.forEach(touch => {
+                if(touch.x<(windowWidth*4/5)/2){
+                    if(touch.y>windowHeight/2){
+                        player1.down = true
+                    }
+                    else{
+                        player1.up = true
+                    }
+                }
+                else if(!gameMode){
+                    if(touch.y>windowHeight/2){
+                        player2.down = true
+                    }
+                    else{
+                        player2.up = true
+                    }
+                }
+            })
+        }
         if(!player1.activatedIce){
             if((player1.up&&!player1.activatedInverted)||(player1.down&&player1.activatedInverted)){
-                player1.y = player1.y<=0?player1.y:player1.y-13
+                player1.y = player1.y<=0?player1.y:player1.y-player1.speed
                 player1.moved = true
             }
             if((player1.down&&!player1.activatedInverted)||(player1.up&&player1.activatedInverted)){
-                player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+13
+                player1.y = player1.y+player1.height>=windowHeight?player1.y:player1.y+player1.speed
                 player1.moved = true
             }
         }
         if(!player2.activatedIce){
             if((player2.up&&!player2.activatedInverted)||(player2.down&&player2.activatedInverted)){
-                player2.y = player2.y<=0?player2.y:player2.y-13
+                player2.y = player2.y<=0?player2.y:player2.y-player2.speed
                 player2.moved = true
             }
             if((player2.down&&!player2.activatedInverted)||(player2.up&&player2.activatedInverted)){
-                player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+13
+                player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+player2.speed
                 player2.moved = true
             }
+        }
+        if(device){
+            player1.up = false
+            player1.down = false
+            player2.up = false
+            player2.down = false
         }
         balls.forEach(ball => {
             if(ball['ballTrack'].length>5&&!ball.timetravel&&!ball.timereturn){ball['ballTrack'].shift()}
@@ -1006,12 +1049,18 @@ function winner(){
 function start(){
     gameMode = selectMode.value() === '1 Player'?true:false
     if(gameMode&&firstwarning1){
+        controlbuttons.style('display', 'flex')
+        player2downbutton.hide()
+        player2upbutton.hide()
         warning1.show()
         customgamemenu.hide()
         firstwarning1 = false
         return
     }
     if(!gameMode&&firstwarning2){
+        controlbuttons.style('display', 'grid')
+        player2downbutton.style('display', 'flex')
+        player2upbutton.style('display', 'flex')
         warning2.show()
         customgamemenu.hide()
         firstwarning2 = false
@@ -1048,6 +1097,7 @@ function start(){
     }
     isParticles = particleSelect.value() === 'Ativadas'?true:false
     gameplaying = true
+    controlbuttons.hide()
     customgamemenu.hide()
     warning1.hide()
     warning2.hide()
@@ -1102,5 +1152,6 @@ function reset(){
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
     pauseMenu.hide()
+    controlbuttons.hide()
     pauseButton.hide()
 }
