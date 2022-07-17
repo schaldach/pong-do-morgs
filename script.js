@@ -1043,10 +1043,6 @@ function winner(){
         timereturn: false
     }]
     let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Temporizador'})
-    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1, 0, onpower.expire)})
-    player1['onlinePowers'] = []
-    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2, 0, onpower.expire)})
-    player2['onlinePowers'] = []
     if(timeIndex>=0){
         stopPower(timeIndex, player1, 0)
         stopPower(timeIndex, player2, 0)
