@@ -974,6 +974,18 @@ function calculateball(){
             ball.x += horizontalballDistance*ball.horizontalControl
             ball.y += verticalballDistance*ball.verticalControl
         }
+        allBlackHoles.forEach(blackhole => {
+            if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/6){
+                let control = ball.y>blackhole.y?-1:1
+                let control2 = 1
+                if(ball.verticalControl !== control){control2=-1}
+                if(ball.angle+control2*Math.PI/50<0||ball.angle+control2*Math.PI/50>Math.PI/2){
+                    ball.verticalControl=ball.verticalControl*-1
+                    control2 = control2*-1
+                }
+                ball.angle = ball.angle+control2*Math.PI/50
+            }
+        })
     })
     determineColors()
     player1.moved = false
