@@ -24,7 +24,7 @@ let player1 = {
     p: 'player1',
     x: 10,
     y: windowHeight*7/16,
-    speed: 13,
+    speed: windowHeight/50,
     height: windowHeight/3,
     color: 'white',
     score: 0,
@@ -42,7 +42,7 @@ let player2 = {
     p: 'player2',
     x: (windowWidth*4/5)-10,
     y: windowHeight*7/16,
-    speed: 13,
+    speed: windowHeight/50,
     height: windowHeight/3,
     color: 'white',
     score: 0,
@@ -82,7 +82,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'Flares', t:7500, c:'green', active:true}, {p:'Congelado', t:1750, c:'red', active:true},
 {p:'Temporizador', t:3250, c:'white', active:true}, {p:'Gancho', t:7500, c:'green', active:true}, 
 {p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:7500, c:'white', active:true},
-{p:'Laser', t:3000, c:'green', active:true}, {p:'Desordenado', t:0, c:'red', active:true},
+{p:'Laser', t:3000, c:'green', active:true}, {p:'Desordenado', t:5000, c:'red', active:true},
 {p:'Trapaceiro', t:7500, c:'white', active:true},]
 let currentAllPowers = []
 let allBlackHoles = []
@@ -336,11 +336,6 @@ function setup(){
     text('patch 1.7', 5, 15)
     noStroke()
 }
-
-function mousePressed(){
-
-}
-
 function toggleSound(){
     if(!sound){
         sound = true
@@ -407,12 +402,12 @@ function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 
         page.requestFullscreen()
         isFull = true
-        screen.orientation.lock("landscape-primary")
+        if(device){screen.orientation.lock("landscape-primary")}
     }
     else if(document.exitFullscreen && isFull){
         document.exitFullscreen()
         isFull = false
-        screen.orientation.unlock()
+        if(device){screen.orientation.unlock()}
     }
 }
 function isTouchDevice() {
@@ -530,6 +525,13 @@ function powerCatch(power, player, ball, referencex, referencey){
             allBlackHoles.push({x:referencex, y:referencey, frame:0, circumpherence:Math.PI*2*windowHeight/6})
             break
         case 'Desordenado':
+            player.speed = windowHeight/15
+            break
+        case 'Laser':
+            break
+        case 'Gancho':
+            break
+        case 'Trapaceiro':
             break
         default:
             break
@@ -545,8 +547,9 @@ function powerCatch(power, player, ball, referencex, referencey){
     })
     updatePowerShow()
 }
-function stopPower(power, player, ball){
-    player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)
+function stopPower(power, player, ball, time){
+    if(currentAllPowers[power].p === 'Buraco Negro'){player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power||onpower.expire !== time)}
+    else{player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)}
     updatePowerShow()
     switch(currentAllPowers[power].p){
         case 'Pequeno':
@@ -578,6 +581,9 @@ function stopPower(power, player, ball){
             }
         case 'Buraco Negro':
             allBlackHoles.shift()
+        case 'Desordenado':
+            player.speed = windowHeight/50
+            break
         default:
             break
     }
@@ -868,12 +874,12 @@ function checkActivePowers(){
     let time = new Date()
     player1['onlinePowers'].forEach(onpower => {
         if(time.getTime()>onpower.expire){
-            stopPower(onpower.index, player1, onpower.ball)
+            stopPower(onpower.index, player1, onpower.ball, onpower.expire)
         }
     })
     player2['onlinePowers'].forEach(onpower => {
         if(time.getTime()>onpower.expire){
-            stopPower(onpower.index, player2, onpower.ball)
+            stopPower(onpower.index, player2, onpower.ball, onpower.expire)
         }
     })
 }
@@ -1037,6 +1043,10 @@ function winner(){
         timereturn: false
     }]
     let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Temporizador'})
+    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1, 0, onpower.expire)})
+    player1['onlinePowers'] = []
+    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2, 0, onpower.expire)})
+    player2['onlinePowers'] = []
     if(timeIndex>=0){
         stopPower(timeIndex, player1, 0)
         stopPower(timeIndex, player2, 0)
@@ -1136,11 +1146,11 @@ function reset(){
     }]
     player1.score = 0
     player1.y = windowHeight*7/16
-    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1, 0)})
+    player1['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player1, 0, onpower.expire)})
     player1['onlinePowers'] = []
     player2.score = 0
     player2.y = windowHeight*7/16
-    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2, 0)})
+    player2['onlinePowers'].forEach(onpower => {stopPower(onpower.index, player2, 0, onpower.expire)})
     player2['onlinePowers'] = []
     currentAllPowers = []
     balls[0].timereturn = false
