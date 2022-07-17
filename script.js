@@ -979,11 +979,11 @@ function calculateball(){
                 let control = ball.y>blackhole.y?-1:1
                 let control2 = 1
                 if(ball.verticalControl !== control){control2=-1}
-                if(ball.angle+control2*Math.PI/50<0||ball.angle+control2*Math.PI/50>Math.PI/2){
+                if(ball.angle+control2*Math.PI/60<0||ball.angle+control2*Math.PI/60>Math.PI/2){
                     ball.verticalControl=ball.verticalControl*-1
                     control2 = control2*-1
                 }
-                ball.angle = ball.angle+control2*Math.PI/50
+                ball.angle = ball.angle+control2*Math.PI/60
             }
         })
     })
