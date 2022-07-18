@@ -34,6 +34,7 @@ let player1 = {
     activatedSneak: false,
     activatedInvisible: false,
     activatedThief: false,
+    activatedHook: false,
     moved: false,
     onlinePowers: [],
     up: false,
@@ -53,6 +54,7 @@ let player2 = {
     activatedSneak: false,
     activatedInvisible: false,
     activatedThief: false,
+    activatedHook: false,
     moved: false,
     onlinePowers: [],
     up: false,
@@ -82,7 +84,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'Multibola', t:5000, c:'white', active:true}, {p:'Grande', t:7500, c:'green', active:true}, 
 {p:'Pequeno', t:7500, c:'red', active:true}, {p:'Gol de ouro', t:5000, c:'white', active:true},
 {p:'Flares', t:7500, c:'green', active:true}, {p:'Congelado', t:1750, c:'red', active:true},
-{p:'Temporizador', t:3250, c:'white', active:true}, {p:'Gancho', t:7500, c:'green', active:true}, 
+{p:'Temporizador', t:3000, c:'white', active:true}, {p:'Gancho', t:7500, c:'green', active:true}, 
 {p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:7500, c:'white', active:true},
 {p:'Laser', t:3000, c:'green', active:true}, {p:'Desordenado', t:5000, c:'red', active:true},
 {p:'Trapaceiro', t:7500, c:'white', active:true},]
@@ -534,6 +536,7 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
         case 'Laser':
             break
         case 'Gancho':
+            player.activatedHook = true
             break
         case 'Trapaceiro':
             player.activatedThief = true
@@ -592,6 +595,10 @@ function stopPower(power, player, ball, time){
             break
         case 'Trapaceiro':
             player.activatedThief = false
+        case 'Laser':
+            break
+        case 'Gancho':
+            player.activatedHook = false
         default:
             break
     }
@@ -639,9 +646,9 @@ function spawnNewPower(){
     let allPowersChosen = []
     let randomNumber = Math.random()
     if(randomNumber<0.6){numberOfPowersSpawned=1}
-    else if(randomNumber<0.85){numberOfPowersSpawned=1}
-    else if(randomNumber<0.95){numberOfPowersSpawned=1}
-    else{numberOfPowersSpawned=1}
+    else if(randomNumber<0.85){numberOfPowersSpawned=2}
+    else if(randomNumber<0.95){numberOfPowersSpawned=3}
+    else{numberOfPowersSpawned=4}
     if(numberOfPowersSpawned>numberOfPowers){numberOfPowersSpawned=numberOfPowers}
     for(i=0; i<numberOfPowersSpawned; i++){
         for(y=0; y>=0; y++){
@@ -990,27 +997,27 @@ function calculateball(){
             }
             ball.x += horizontalballDistance*ball.horizontalControl
             ball.y += verticalballDistance*ball.verticalControl
+            allBlackHoles.forEach(blackhole => {
+                if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/6){
+                    particleColors[1].setAlpha(50)
+                    stroke(particleColors[1])
+                    strokeWeight(25)
+                    line(ball.x, ball.y, blackhole.x, blackhole.y)
+                    let control = ball.y>blackhole.y?-1:1
+                    let control2 = 1
+                    if(ball.verticalControl !== control){control2=-1}
+                    if(ball.angle+control2*Math.PI/60<0){
+                        ball.verticalControl=ball.verticalControl*-1
+                        control2 = control2*-1
+                    }
+                    if(ball.angle+control2*Math.PI/60>Math.PI/2){
+                        ball.horizontalControl= ball.horizontalControl*-1
+                    }
+                    ball.angle = ball.angle+control2*Math.PI/60
+                    noStroke()
+                }
+            })
         }
-        allBlackHoles.forEach(blackhole => {
-            if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/6){
-                particleColors[1].setAlpha(50)
-                stroke(particleColors[1])
-                strokeWeight(25)
-                line(ball.x, ball.y, blackhole.x, blackhole.y)
-                let control = ball.y>blackhole.y?-1:1
-                let control2 = 1
-                if(ball.verticalControl !== control){control2=-1}
-                if(ball.angle+control2*Math.PI/60<0){
-                    ball.verticalControl=ball.verticalControl*-1
-                    control2 = control2*-1
-                }
-                if(ball.angle+control2*Math.PI/60>Math.PI/2){
-                    ball.horizontalControl= ball.horizontalControl*-1
-                }
-                ball.angle = ball.angle+control2*Math.PI/60
-                noStroke()
-            }
-        })
     })
     determineColors()
     player1.moved = false
