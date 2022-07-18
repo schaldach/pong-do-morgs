@@ -33,6 +33,7 @@ let player1 = {
     activatedInverted: false,
     activatedSneak: false,
     activatedInvisible: false,
+    activatedThief: false,
     moved: false,
     onlinePowers: [],
     up: false,
@@ -51,6 +52,7 @@ let player2 = {
     activatedInverted: false,
     activatedSneak: false,
     activatedInvisible: false,
+    activatedThief: false,
     moved: false,
     onlinePowers: [],
     up: false,
@@ -445,17 +447,19 @@ function updatePowerShow(){
     p1powers.html('')
     p2powers.html('')
     player1['onlinePowers'].forEach(onpower => {
-        let div = createDiv(currentAllPowers[onpower.index].p)
+        let string = onpower.stolen?currentAllPowers[onpower.index].p+' (Roubado)':currentAllPowers[onpower.index].p
+        let div = createDiv(string)
         div.addClass(currentAllPowers[onpower.index].c)
         div.parent('p1powers')
     })
     player2['onlinePowers'].forEach(onpower => {
-        let div = createDiv(currentAllPowers[onpower.index].p)
+        let string = onpower.stolen?currentAllPowers[onpower.index].p+' (Roubado)':currentAllPowers[onpower.index].p
+        let div = createDiv(string)
         div.addClass(currentAllPowers[onpower.index].c)
         div.parent('p2powers')
     })
 }
-function powerCatch(power, player, ball, referencex, referencey){
+function powerCatch(power, player, ball, referencex, referencey, stolen){
     if(sound){powerpickupsom.play()}
     switch(currentAllPowers[power].p){
         case 'Grande':
@@ -532,6 +536,7 @@ function powerCatch(power, player, ball, referencex, referencey){
         case 'Gancho':
             break
         case 'Trapaceiro':
+            player.activatedThief = true
             break
         default:
             break
@@ -543,7 +548,8 @@ function powerCatch(power, player, ball, referencex, referencey){
     player['onlinePowers'].push({
         index: power,
         expire: time.getTime()+currentAllPowers[power].t,
-        ball: balls.indexOf(ball)
+        ball: balls.indexOf(ball),
+        stolen: stolen
     })
     updatePowerShow()
 }
@@ -584,6 +590,8 @@ function stopPower(power, player, ball, time){
         case 'Desordenado':
             player.speed = windowHeight/50
             break
+        case 'Trapaceiro':
+            player.activatedThief = false
         default:
             break
     }
@@ -627,24 +635,20 @@ function drawParticles(){
 function spawnNewPower(){
     let xPos = Math.floor(Math.random()*(windowWidth*4/5)*2/3)+(windowWidth*4/5)/6
     let yPos = Math.floor(Math.random()*windowHeight*2/3)+windowHeight/6
-    let numberOfPowersSpawned
+    let numberOfPowersSpawned = 1
     let allPowersChosen = []
     let randomNumber = Math.random()
     if(randomNumber<0.6){numberOfPowersSpawned=1}
-    else if(randomNumber<0.85){numberOfPowersSpawned=2}
-    else if(randomNumber<0.95){numberOfPowersSpawned=3}
-    else if(randomNumber<0.99){numberOfPowersSpawned=4}
-    else{numberOfPowersSpawned=10}
+    else if(randomNumber<0.85){numberOfPowersSpawned=1}
+    else if(randomNumber<0.95){numberOfPowersSpawned=1}
+    else{numberOfPowersSpawned=1}
     if(numberOfPowersSpawned>numberOfPowers){numberOfPowersSpawned=numberOfPowers}
-    if(numberOfPowersSpawned===10){allPowersChosen.push(0,1,2,3,4,5,6,7,8,9)}
-    else{
-        for(i=0; i<numberOfPowersSpawned; i++){
-            for(y=0; y>=0; y++){
-                powerChosen = Math.floor(Math.random()*numberOfPowers)
-                if(allPowersChosen.indexOf(powerChosen)===-1){
-                    allPowersChosen.push(powerChosen)
-                    break
-                }
+    for(i=0; i<numberOfPowersSpawned; i++){
+        for(y=0; y>=0; y++){
+            powerChosen = Math.floor(Math.random()*numberOfPowers)
+            if(allPowersChosen.indexOf(powerChosen)===-1){
+                allPowersChosen.push(powerChosen)
+                break
             }
         }
     }
@@ -776,8 +780,21 @@ function draw(){
             balls.forEach(ball => {
                 if(dist(ball.x, ball.y, spawnedPower.x, spawnedPower.y)<10+windowHeight/6){
                     let rightPlayer = ball.lastPlayerHit==1?player1:player2
+                    let stolen = false
+                    if(rightPlayer===player1&&player2.activatedThief){
+                        rightPlayer=player2
+                        const thiefIndex = currentAllPowers.findIndex(power => {return power.p === 'Trapaceiro'})
+                        stopPower(thiefIndex, player2)
+                        stolen = true
+                    }
+                    if(rightPlayer===player2&&player1.activatedThief){
+                        rightPlayer=player1
+                        const thiefIndex = currentAllPowers.findIndex(power => {return power.p === 'Trapaceiro'})
+                        stopPower(thiefIndex, player1)
+                        stolen = true
+                    }
                     spawnedPower['p'].forEach(chosenPower => {
-                        powerCatch(chosenPower, rightPlayer, ball, spawnedPower.x, spawnedPower.y)
+                        powerCatch(chosenPower, rightPlayer, ball, spawnedPower.x, spawnedPower.y, stolen)
                     })
                     powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
                     allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:1, frame:0, particles:[]})
