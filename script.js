@@ -755,16 +755,16 @@ function draw(){
             stroke(particleColors[1])
             fill(0)
             if(isParticles){
-                for(i=0; i<40; i++){
-                    let angle = Math.PI*2*i/40+Math.PI*2*blackhole.frame/375
+                for(i=0; i<30; i++){
+                    let angle = Math.PI*2*i/30+Math.PI*2*blackhole.frame/375
                     push()
-                    translate(blackhole.x+Math.cos(angle)*windowHeight/6, blackhole.y+Math.sin(angle)*windowHeight/6)
+                    translate(blackhole.x+Math.cos(angle)*windowHeight/10, blackhole.y+Math.sin(angle)*windowHeight/10)
                     rotate(angle)
-                    rect(0, 0, 1, 55)
+                    rect(0, 0, 1, 40)
                     pop()
                 }
             }
-            ellipse(blackhole.x, blackhole.y, windowHeight/3)
+            ellipse(blackhole.x, blackhole.y, windowHeight/5)
             blackhole.frame++
         })
         noStroke()
@@ -979,9 +979,12 @@ function calculateball(){
                 let control = ball.y>blackhole.y?-1:1
                 let control2 = 1
                 if(ball.verticalControl !== control){control2=-1}
-                if(ball.angle+control2*Math.PI/60<0||ball.angle+control2*Math.PI/60>Math.PI/2){
+                if(ball.angle+control2*Math.PI/60<0){
                     ball.verticalControl=ball.verticalControl*-1
                     control2 = control2*-1
+                }
+                if(ball.angle+control2*Math.PI/60>Math.PI/2){
+                    ball.horizontalControl= ball.horizontalControl*-1
                 }
                 ball.angle = ball.angle+control2*Math.PI/60
             }
