@@ -917,6 +917,10 @@ function calculateball(){
             if(gameMode){
                 AIrandomizer = Math.random()>0.5?1:-1
             }
+            if(player2.activatedHook){
+                const hookIndex = currentAllPowers.findIndex(power => {return power.p === 'Gancho'})
+                stopPower(hookIndex, player2)
+            }
             ball.lastPlayerHit = 2
             playerMoved = player2.moved
             ball.horizontalControl = -1
@@ -944,6 +948,10 @@ function calculateball(){
             }
         }
         if(ball.x-10<=player1.x){
+            if(player1.activatedHook){
+                const hookIndex = currentAllPowers.findIndex(power => {return power.p === 'Gancho'})
+                stopPower(hookIndex, player1)
+            }
             ball.lastPlayerHit = 1
             playerMoved = player1.moved
             ball.horizontalControl = 1
@@ -976,6 +984,48 @@ function calculateball(){
         if(ball.sneak&&ball.horizontalControl===-1){
             if(ball.x<(windowWidth*4/5)*4/7){ball.sneak=false}
         }
+        if(ball.lastPlayerHit===1&&player2.activatedHook&&ball.x>(windowWidth*4/5)/2){
+            stroke('green')
+            strokeWeight(4)
+            line(ball.x, ball.y, player2.x, player2.y+player2.height/2)
+            noStroke()
+            let control = Math.abs(player2.y+(player2.height/2)-ball.y)/(player2.x-ball.x)
+            if(ball.y>player2.y+player2.height/2){ball.verticalControl=-1}
+            else{ball.verticalControl=1}
+            let rightAngle = Math.atan(control)
+            ball.angle = rightAngle
+        }
+        if(ball.lastPlayerHit===2&&player1.activatedHook&&ball.x<(windowWidth*4/5)/2){
+            stroke('green')
+            strokeWeight(4)
+            line(ball.x, ball.y, player1.x, player1.y+player1.height/2)
+            noStroke()
+            let control = Math.abs(player1.y+(player1.height/2)-ball.y)/(ball.x-player1.x)
+            if(ball.y>player1.y+player1.height/2){ball.verticalControl=-1}
+            else{ball.verticalControl=1}
+            let rightAngle = Math.atan(control)
+            ball.angle = rightAngle
+        }
+        allBlackHoles.forEach(blackhole => {
+            if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/6){
+                particleColors[1].setAlpha(50)
+                stroke(particleColors[1])
+                strokeWeight(25)
+                line(ball.x, ball.y, blackhole.x, blackhole.y)
+                let control = ball.y>blackhole.y?-1:1
+                let control2 = 1
+                if(ball.verticalControl !== control){control2=-1}
+                if(ball.angle+control2*Math.PI/60<0){
+                    ball.verticalControl=ball.verticalControl*-1
+                    control2 = control2*-1
+                }
+                if(ball.angle+control2*Math.PI/60>Math.PI/2){
+                    ball.horizontalControl= ball.horizontalControl*-1
+                }
+                ball.angle = ball.angle+control2*Math.PI/60
+                noStroke()
+            }
+        })
         if(ball.timereturn){
             let length = ball['ballTrack'].length
             ball.x = ball['ballTrack'][length-1].x
@@ -997,26 +1047,6 @@ function calculateball(){
             }
             ball.x += horizontalballDistance*ball.horizontalControl
             ball.y += verticalballDistance*ball.verticalControl
-            allBlackHoles.forEach(blackhole => {
-                if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/6){
-                    particleColors[1].setAlpha(50)
-                    stroke(particleColors[1])
-                    strokeWeight(25)
-                    line(ball.x, ball.y, blackhole.x, blackhole.y)
-                    let control = ball.y>blackhole.y?-1:1
-                    let control2 = 1
-                    if(ball.verticalControl !== control){control2=-1}
-                    if(ball.angle+control2*Math.PI/60<0){
-                        ball.verticalControl=ball.verticalControl*-1
-                        control2 = control2*-1
-                    }
-                    if(ball.angle+control2*Math.PI/60>Math.PI/2){
-                        ball.horizontalControl= ball.horizontalControl*-1
-                    }
-                    ball.angle = ball.angle+control2*Math.PI/60
-                    noStroke()
-                }
-            })
         }
     })
     determineColors()
