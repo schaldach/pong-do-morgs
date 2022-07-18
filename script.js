@@ -976,6 +976,10 @@ function calculateball(){
         }
         allBlackHoles.forEach(blackhole => {
             if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/6){
+                particleColors[1].setAlpha(50)
+                stroke(particleColors[1])
+                strokeWeight(25)
+                line(ball.x, ball.y, blackhole.x, blackhole.y)
                 let control = ball.y>blackhole.y?-1:1
                 let control2 = 1
                 if(ball.verticalControl !== control){control2=-1}
@@ -987,6 +991,7 @@ function calculateball(){
                     ball.horizontalControl= ball.horizontalControl*-1
                 }
                 ball.angle = ball.angle+control2*Math.PI/60
+                noStroke()
             }
         })
     })
