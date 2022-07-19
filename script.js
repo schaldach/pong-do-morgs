@@ -985,26 +985,49 @@ function calculateball(){
             if(ball.x<(windowWidth*4/5)*4/7){ball.sneak=false}
         }
         if(ball.lastPlayerHit===1&&player2.activatedHook&&ball.x>(windowWidth*4/5)/2){
-            stroke('green')
-            strokeWeight(4)
-            line(ball.x, ball.y, player2.x, player2.y+player2.height/2)
-            noStroke()
             let control = Math.abs(player2.y+(player2.height/2)-ball.y)/(player2.x-ball.x)
             if(ball.y>player2.y+player2.height/2){ball.verticalControl=-1}
             else{ball.verticalControl=1}
             let rightAngle = Math.atan(control)
             ball.angle = rightAngle
+            stroke('green')
+            strokeWeight(3)
+            line(ball.x, ball.y, player2.x, player2.y+player2.height/2)
+            if(isParticles){
+                push()
+                fill(0)
+                translate(ball.x,ball.y)
+                rotate(Math.PI/4)
+                for(i=0;i<5;i++){
+                    rect(0,0,1,40)
+                    rotate(Math.PI/2)
+                }
+                pop()
+                noStroke()
+            }
+            
         }
         if(ball.lastPlayerHit===2&&player1.activatedHook&&ball.x<(windowWidth*4/5)/2){
-            stroke('green')
-            strokeWeight(4)
-            line(ball.x, ball.y, player1.x, player1.y+player1.height/2)
-            noStroke()
             let control = Math.abs(player1.y+(player1.height/2)-ball.y)/(ball.x-player1.x)
             if(ball.y>player1.y+player1.height/2){ball.verticalControl=-1}
             else{ball.verticalControl=1}
             let rightAngle = Math.atan(control)
             ball.angle = rightAngle
+            stroke('green')
+            strokeWeight(3)
+            line(ball.x, ball.y, player1.x, player1.y+player1.height/2)
+            if(isParticles){
+                push()
+                fill(0)
+                translate(ball.x,ball.y)
+                rotate(Math.PI/4)
+                for(i=0;i<4;i++){
+                    rect(0,0,1,40)
+                    rotate(Math.PI/2)
+                }
+                pop()
+                noStroke()
+            }
         }
         allBlackHoles.forEach(blackhole => {
             if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/6){
