@@ -1,5 +1,23 @@
 let windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
 let windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+let gameState = {
+    p1:{
+        y:windowHeight/3,
+        up:false,
+        down:false,
+    },
+    p2:{
+        y:windowHeight/3,
+        up:false,
+        down:false,
+    },
+    powersOnline:[{
+        x: windowHeight/2,
+        y: (windowWidth*4/5)/2,
+        n: 1,
+        p: 0,
+    }]
+}
 let balls = [
     {
         x: (windowWidth*4/5)/2,
@@ -69,6 +87,7 @@ let isFull = false
 let canSpawnPower = false
 let anyPowerActive = true
 let paused = false
+let lastStartingHorizontalControl = 1
 let firstwarning2 = true
 let firstwarning1 = true
 let musicajogo = new Audio('./assets/audio/musicadomenu.mp3')
@@ -409,9 +428,9 @@ function activateFullscreen(){
         if(device){screen.orientation.lock("landscape-primary")}
     }
     else if(document.exitFullscreen && isFull){
+        if(device){screen.orientation.unlock()}
         document.exitFullscreen()
         isFull = false
-        if(device){screen.orientation.unlock()}
     }
 }
 function isTouchDevice() {
@@ -660,7 +679,7 @@ function spawnNewPower(){
         }
     }
     let time = new Date()
-    powersSpawned.push({n:numberOfPowersSpawned, x: xPos, y: yPos, p:allPowersChosen, expiretrack: time.getTime(), powerflicker:[4,8,12,16,20,24,26,28,29,30,31,32]})
+    powersSpawned.push({n:numberOfPowersSpawned, x: xPos, y: yPos, p:allPowersChosen, expiretrack: time.getTime(), powerflicker:[4,8,12,16,20,24,26,28,29,30,31,32,33,34,35,36]})
     canSpawnPower = false
 }
 function drawPowerCircle(spawnedPower){
@@ -1126,7 +1145,7 @@ function winner(){
         y: windowHeight/2,
         ballColorIndex: 0,
         ballTrack: [],
-        horizontalControl: Math.random()>0.5?1:-1,
+        horizontalControl: lastStartingHorizontalControl*-1,
         verticalControl: 1,
         distance: (windowWidth*4/5)/120,
         angle: 0,
@@ -1139,6 +1158,7 @@ function winner(){
         timetravel: false,
         timereturn: false
     }]
+    lastStartingHorizontalControl = lastStartingHorizontalControl*-1
     let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Temporizador'})
     if(timeIndex>=0){
         stopPower(timeIndex, player1, 0)
