@@ -1,23 +1,5 @@
 let windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
 let windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-let gameState = {
-    p1:{
-        y:windowHeight/3,
-        up:false,
-        down:false,
-    },
-    p2:{
-        y:windowHeight/3,
-        up:false,
-        down:false,
-    },
-    powersOnline:[{
-        x: windowHeight/2,
-        y: (windowWidth*4/5)/2,
-        n: 1,
-        p: 0,
-    }]
-}
 let balls = [
     {
         x: (windowWidth*4/5)/2,
@@ -37,7 +19,7 @@ let balls = [
         timetravel: false,
         timereturn: false,
         laser: false,
-        laserTarget: player1
+        laserTarget: null
     }
 ]
 let player1 = {
@@ -425,12 +407,12 @@ window.addEventListener("orientationchange", function() {
 });
 function activateFullscreen(){
     if (!isFull) {
-        if(page.requestFullscreen){page.requestFullscreen()}        
+        if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen()}
         isFull = true
-        screen.orientation.lock("landscape-primary")
+        if(device){screen.orientation.lock("landscape-primary")}
     }
     else{
-        screen.orientation.unlock()
+        if(device){screen.orientation.unlock()}
         isFull = false
         if(document.exitFullscreen){document.exitFullscreen()}
     }
