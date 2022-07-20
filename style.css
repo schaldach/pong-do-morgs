@@ -157,7 +157,7 @@ div{
     bottom: 15px;
     display: flex;
     flex-direction: column-reverse;
-    font-size: 5vh;
+    font-size: 6vh;
     justify-content: flex-end;
 }
 
@@ -209,8 +209,4 @@ div{
     border-width: 2px;
     background: none;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-
-.rotated{
-    transform: rotate(90deg);
 }

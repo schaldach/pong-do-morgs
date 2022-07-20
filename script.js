@@ -525,7 +525,7 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
             allBlackHoles.push({x:referencex, y:referencey, frame:0, circumpherence:Math.PI*2*windowHeight/6})
             break
         case 'Desordenado':
-            player.speed = windowHeight/15
+            player.speed = windowHeight/12
             break
         case 'Gancho':
             player.activatedHook = true
@@ -583,13 +583,16 @@ function stopPower(power, player, ball, time){
                 balls[ball].timetravel = false
                 balls[ball].timereturn = true
             }
+            break
         case 'Buraco Negro':
             allBlackHoles.shift()
+            break
         case 'Desordenado':
             player.speed = windowHeight/50
             break
         case 'Trapaceiro':
             player.activatedThief = false
+            break
         case 'Laser':
             balls[ball].laser = false
             targetPlayer = player === player1?player2.x-10:player1.x+10
@@ -599,6 +602,7 @@ function stopPower(power, player, ball, time){
             break
         case 'Gancho':
             player.activatedHook = false
+            break
         default:
             break
     }
@@ -650,9 +654,9 @@ function spawnNewPower(){
     let numberOfPowersSpawned = 1
     let allPowersChosen = []
     let randomNumber = Math.random()
-    if(randomNumber<0.6){numberOfPowersSpawned=1}
-    else if(randomNumber<0.85){numberOfPowersSpawned=2}
-    else if(randomNumber<0.95){numberOfPowersSpawned=3}
+    if(randomNumber<0.75){numberOfPowersSpawned=1}
+    else if(randomNumber<0.90){numberOfPowersSpawned=2}
+    else if(randomNumber<0.98){numberOfPowersSpawned=3}
     else{numberOfPowersSpawned=4}
     if(numberOfPowersSpawned>numberOfPowers){numberOfPowersSpawned=numberOfPowers}
     for(i=0; i<numberOfPowersSpawned; i++){
@@ -1062,14 +1066,14 @@ function calculateball(){
                 let control = ball.y>blackhole.y?-1:1
                 let control2 = 1
                 if(ball.verticalControl !== control){control2=-1}
-                if(ball.angle+control2*Math.PI/60<0){
+                if(ball.angle+control2*Math.PI/50<0){
                     ball.verticalControl=ball.verticalControl*-1
                     control2 = control2*-1
                 }
-                if(ball.angle+control2*Math.PI/60>Math.PI/2){
+                if(ball.angle+control2*Math.PI/50>Math.PI/2){
                     ball.horizontalControl= ball.horizontalControl*-1
                 }
-                ball.angle = ball.angle+control2*Math.PI/60
+                ball.angle = ball.angle+control2*Math.PI/50
                 noStroke()
             }
         })
