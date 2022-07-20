@@ -407,9 +407,10 @@ window.addEventListener("orientationchange", function() {
 });
 function activateFullscreen(){
     if (!isFull) {
-        if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen()}
+        if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().then(() => {
+            if(device){screen.orientation.lock("landscape-primary")}
+        })}
         isFull = true
-        if(device){screen.orientation.lock("landscape-primary")}
     }
     else{
         if(device){screen.orientation.unlock()}
