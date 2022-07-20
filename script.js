@@ -591,8 +591,9 @@ function stopPower(power, player, ball, time){
         case 'Laser':
             balls[ball].laser = false
             targetPlayer = player === player1?player2.x-10:player1.x+10
+            if(isParticles){allParticles.push({x: targetPlayer, y: balls[ball].y, width: balls[ball].x-targetPlayer, type: 'laser', color:0, frame:0})}
             balls[ball].x = targetPlayer
-            if(isParticles){allParticles.push({x: targetPlayer, y: ball.y, width: balls[ball].x-targetPlayer, type: 'laser', color:0, frame:0})}
+            console.log('push')
             break
         case 'Gancho':
             player.activatedHook = false
@@ -604,7 +605,7 @@ function drawParticles(){
     allParticles.forEach(particlearea => {
         if(particlearea.frame>30){allParticles = allParticles.filter(part => part!==particlearea)}
         let rightcolor = particleColors[particlearea.color]
-        rightcolor.setAlpha(70)
+        rightcolor.setAlpha(100)
         fill(rightcolor)
         if(particlearea.type === 'despawn'){
             if(!particlearea['particles'].length){
@@ -634,9 +635,10 @@ function drawParticles(){
             })
         }
         else if(particlearea.type === 'laser'){
-            fill('red')
-            rect(particlearea.x,particlearea.y,particlearea.width,-30/particlearea.frame)
-            rect(particlearea.x,particlearea.y,particlearea.width,30/particlearea.frame)
+            console.log('laser')
+            rect(particlearea.x,particlearea.y,particlearea.width,-60/particlearea.frame)
+            rect(particlearea.x,particlearea.y,particlearea.width,60/particlearea.frame)
+            console.log(particlearea.x,particlearea.y,particlearea.width,60/particlearea.frame)
         }
         particlearea.frame++
     })
