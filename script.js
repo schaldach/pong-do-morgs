@@ -19,14 +19,13 @@ let balls = [
         timetravel: false,
         timereturn: false,
         laser: false,
-        laserTarget: null
     }
 ]
 let player1 = {
     p: 'player1',
     x: 10,
     y: windowHeight*7/16,
-    speed: windowHeight/50,
+    speed: windowHeight/60,
     height: windowHeight/3,
     color: 'white',
     score: 0,
@@ -46,7 +45,7 @@ let player2 = {
     p: 'player2',
     x: (windowWidth*4/5)-10,
     y: windowHeight*7/16,
-    speed: windowHeight/50,
+    speed: windowHeight/60,
     height: windowHeight/3,
     color: 'white',
     score: 0,
@@ -89,7 +88,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'Flares', t:7500, c:'green', active:true}, {p:'Congelado', t:1750, c:'red', active:true},
 {p:'Temporizador', t:3000, c:'white', active:true}, {p:'Gancho', t:7500, c:'green', active:true}, 
 {p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:7500, c:'white', active:true},
-{p:'Laser', t:3000, c:'green', active:true}, {p:'Desordenado', t:5000, c:'red', active:true},
+{p:'Laser', t:750, c:'green', active:true}, {p:'Desordenado', t:5000, c:'red', active:true},
 {p:'Trapaceiro', t:7500, c:'white', active:true},]
 let currentAllPowers = []
 let allBlackHoles = []
@@ -134,7 +133,7 @@ function setup(){
     title = createDiv('Pong do Morgs')
     title.addClass('titulo')
     title.parent('mainmenu')
-    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao em cima na direita<br/>(Funciona em PC e Mobile)')
+    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao no canto superior direito<br/>(No Mobile, tambem vire a tela)')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
     gamemodes = createDiv()
@@ -199,7 +198,7 @@ function setup(){
     title2 = createDiv('Pong do Morgs')
     title2.addClass('titulo')
     title2.parent('customgamemenu')
-    subtitle2 = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao de tela cheia<br/> e vire a tela do dispositivo <br/>(Funciona em PC e Mobile)')
+    subtitle2 = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao no canto superior direito<br/>(No Mobile, tambem vire a tela)')
     subtitle2.addClass('subtitle')
     subtitle2.parent('customgamemenu')
     buttonMenu = createDiv('')
@@ -225,7 +224,10 @@ function setup(){
     scoreDisplay.parent('buttonmenu')
     scoreLimitSelect = createInput(5, 'number')
     scoreLimitSelect.parent('lim')
+    scoreLimitSelect.id('scorelimitselect')
     scoreLimitSelect.input(setInput)
+    sls = document.getElementById('scorelimitselect')
+    sls.onblur = function(){onResize()}
     advancedConfigs = createButton('Outras Configs')
     advancedConfigs.parent('buttonmenu')
     advancedConfigs.mousePressed(goToCustomConfigs)
@@ -369,7 +371,7 @@ musicajogo.addEventListener('ended', function() {
 window.addEventListener('click', function(){
     if(sound){menusom.play()}
 })
-window.addEventListener("resize", function() {
+function onResize(){
     windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
     windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
     myCanvas = createCanvas((windowWidth*4/5),windowHeight)
@@ -386,24 +388,12 @@ window.addEventListener("resize", function() {
     player2.x = (windowWidth*4/5)-10
     player2.y = windowHeight*7/16
     player2.height = windowHeight/3
+}
+window.addEventListener("resize", function() {
+    onResize()
 });
 window.addEventListener("orientationchange", function() {
-    windowHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight
-    windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-    myCanvas = createCanvas((windowWidth*4/5),windowHeight)
-    background("#000000")
-    myCanvas.position(windowWidth/10,0,"fixed")
-    textAlign(LEFT)
-    textSize(14)
-    text('patch 1.7', 5, 15)
-    balls[0].x = (windowWidth*4/5)/2
-    balls[0].y = windowHeight/2
-    balls[0].distance = (windowWidth*4/5)/120
-    player1.y = windowHeight*7/16
-    player1.height = windowHeight/3
-    player2.x = (windowWidth*4/5)-10
-    player2.y = windowHeight*7/16
-    player2.height = windowHeight/3
+    onResize()
 });
 function activateFullscreen(){
     if (!isFull && document.documentElement.requestFullscreen) {
@@ -497,7 +487,6 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
                     timetravel: false,
                     timereturn: false,
                     laser: false,
-                    laserTarget: player1
                 })
             balls.forEach(ball => {
                 ball.distance = (windowWidth*4/5)/120
@@ -536,8 +525,6 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
         case 'Desordenado':
             player.speed = windowHeight/15
             break
-        case 'Laser':
-            break
         case 'Gancho':
             player.activatedHook = true
             break
@@ -546,7 +533,7 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
             break
         case 'Laser':
             ball.laser = true
-            ball.laserTarget = player === player1?player2:player1
+            break
         default:
             break
     }
@@ -603,6 +590,9 @@ function stopPower(power, player, ball, time){
             player.activatedThief = false
         case 'Laser':
             balls[ball].laser = false
+            targetPlayer = player === player1?player2.x-10:player1.x+10
+            balls[ball].x = targetPlayer
+            if(isParticles){allParticles.push({x: targetPlayer, y: ball.y, width: balls[ball].x-targetPlayer, type: 'laser', color:0, frame:0})}
             break
         case 'Gancho':
             player.activatedHook = false
@@ -630,7 +620,7 @@ function drawParticles(){
                 ellipse(particlearea.x+part.x+particlearea.frame*2*part.horizontal*Math.abs(part.x)*10/windowHeight, particlearea.y+part.y+particlearea.frame*2*part.vertical*Math.abs(part.y)*10/windowHeight, 5)
             })
         }
-        else{
+        else if(particlearea.type === 'fire'){
             if(!particlearea['particles'].length){
                 for(i=0; i<25; i++){
                     let xPosition = Math.floor(Math.random()*20)
@@ -642,6 +632,11 @@ function drawParticles(){
             particlearea['particles'].forEach(part => {
                 ellipse(particlearea.x+part.x+particlearea.frame*12*particlearea.direction*Math.abs(part.x)/20, particlearea.y+part.y+particlearea.frame*4*part.vertical*Math.abs(part.y)/20, 10)
             })
+        }
+        else if(particlearea.type === 'laser'){
+            fill('red')
+            rect(particlearea.x,particlearea.y,particlearea.width,-30/particlearea.frame)
+            rect(particlearea.x,particlearea.y,particlearea.width,30/particlearea.frame)
         }
         particlearea.frame++
     })
@@ -991,7 +986,7 @@ function calculateball(){
         if(ball.sneak&&ball.horizontalControl===-1){
             if(ball.x<(windowWidth*4/5)*4/7){ball.sneak=false}
         }
-        if(ball.lastPlayerHit===1&&player2.activatedHook&&ball.x>(windowWidth*4/5)/2){
+        if(ball.horizontalControl===1&&player2.activatedHook&&ball.x>(windowWidth*4/5)/2){
             let control = Math.abs(player2.y+(player2.height/2)-ball.y)/(player2.x-ball.x)
             if(ball.y>player2.y+player2.height/2){ball.verticalControl=-1}
             else{ball.verticalControl=1}
@@ -1014,7 +1009,7 @@ function calculateball(){
             }
             
         }
-        if(ball.lastPlayerHit===2&&player1.activatedHook&&ball.x<(windowWidth*4/5)/2){
+        if(ball.horizontalControl===-1&&player1.activatedHook&&ball.x<(windowWidth*4/5)/2){
             let control = Math.abs(player1.y+(player1.height/2)-ball.y)/(ball.x-player1.x)
             if(ball.y>player1.y+player1.height/2){ball.verticalControl=-1}
             else{ball.verticalControl=1}
@@ -1066,6 +1061,14 @@ function calculateball(){
                 ball.verticalControl = ball.verticaltime*-1
                 ball.angle = ball.timeangle
                 ball.timereturn = false
+            }
+        }
+        else if(ball.laser){
+            thirdx = ball.horizontalControl === 1?ball.x+50:ball.x-50
+            if(isParticles){
+                fill(125)
+                triangle(ball.x, ball.y+60, ball.x, ball.y+10, thirdx, ball.y+10)
+                triangle(ball.x, ball.y-60, ball.x, ball.y-10, thirdx, ball.y-10)
             }
         }
         else{
@@ -1146,7 +1149,6 @@ function winner(){
         timetravel: false,
         timereturn: false,
         laser: false,
-        laserTarget: player1
     }]
     lastStartingHorizontalControl = lastStartingHorizontalControl*-1
     let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Temporizador'})
@@ -1247,7 +1249,6 @@ function reset(){
         timetravel: false,
         timereturn: false,
         laser: false,
-        laserTarget: player1
     }]
     player1.score = 0
     player1.y = windowHeight*7/16
