@@ -591,7 +591,7 @@ function stopPower(power, player, ball, time){
         case 'Laser':
             balls[ball].laser = false
             targetPlayer = player === player1?player2.x-10:player1.x+10
-            if(isParticles){allParticles.push({x: targetPlayer, y: balls[ball].y, width: balls[ball].x-targetPlayer, type: 'laser', color:0, frame:0})}
+            if(isParticles){allParticles.push({x: targetPlayer, y: balls[ball].y, width: balls[ball].x-targetPlayer, type: 'laser', color:0, frame:0, frameLimit: 15})}
             balls[ball].x = targetPlayer
             console.log('push')
             break
@@ -603,7 +603,7 @@ function stopPower(power, player, ball, time){
 }
 function drawParticles(){
     allParticles.forEach(particlearea => {
-        if(particlearea.frame>30){allParticles = allParticles.filter(part => part!==particlearea)}
+        if(particlearea.frame>particlearea.frameLimit){allParticles = allParticles.filter(part => part!==particlearea)}
         let rightcolor = particleColors[particlearea.color]
         rightcolor.setAlpha(100)
         fill(rightcolor)
@@ -636,9 +636,8 @@ function drawParticles(){
         }
         else if(particlearea.type === 'laser'){
             console.log('laser')
-            rect(particlearea.x,particlearea.y,particlearea.width,-60/particlearea.frame)
-            rect(particlearea.x,particlearea.y,particlearea.width,60/particlearea.frame)
-            console.log(particlearea.x,particlearea.y,particlearea.width,60/particlearea.frame)
+            rect(particlearea.x,particlearea.y,particlearea.width,-30/particlearea.frame)
+            rect(particlearea.x,particlearea.y,particlearea.width,30/particlearea.frame)
         }
         particlearea.frame++
     })
@@ -671,7 +670,7 @@ function drawPowerCircle(spawnedPower){
     let time = new Date()
     if(time.getTime()>spawnedPower.expiretrack+2.5*powerSpeed){
         powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
-        allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:1, frame:0, particles:[]})
+        allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:1, frame:0, frameLimit:30, particles:[]})
         return
     }
     if(time.getTime()-spawnedPower.expiretrack>powerSpeed*2.5-(powerSpeed*2.5/spawnedPower['powerflicker'][0])){
@@ -808,7 +807,7 @@ function draw(){
                         powerCatch(chosenPower, rightPlayer, ball, spawnedPower.x, spawnedPower.y, stolen)
                     })
                     powersSpawned = powersSpawned.filter(spower => spower!==spawnedPower)
-                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:1, frame:0, particles:[]})
+                    allParticles.push({x:spawnedPower.x, y:spawnedPower.y, type:'despawn', color:1, frame:0, frameLimit:30, particles:[]})
                 }
             })
         })
@@ -941,7 +940,7 @@ function calculateball(){
             if(player2.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player2)
-                allParticles.push({x:ball.x, y:ball.y, direction:-1, type:'fire', color:0, frame:0, particles:[]})
+                allParticles.push({x:ball.x, y:ball.y, direction:-1, type:'fire', color:0, frame:0, frameLimit:20, particles:[]})
                 ball.distance += (windowWidth*4/5)/70
                 if(sound){efeito3.play()}
             }
@@ -972,7 +971,7 @@ function calculateball(){
             if(player1.activatedFire){
                 const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
                 stopPower(fireIndex, player1)
-                allParticles.push({x:ball.x, y:ball.y, direction:1, type:'fire', color:0, frame:0, particles:[]})
+                allParticles.push({x:ball.x, y:ball.y, direction:1, type:'fire', color:0, frame:0, frameLimit:20, particles:[]})
                 ball.distance += (windowWidth*4/5)/70
                 if(sound){efeito3.play()}
             }
