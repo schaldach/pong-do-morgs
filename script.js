@@ -199,7 +199,7 @@ function setup(){
     title2 = createDiv('Pong do Morgs')
     title2.addClass('titulo')
     title2.parent('customgamemenu')
-    subtitle2 = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao em cima na direita<br/>(Funciona em PC e Mobile)')
+    subtitle2 = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao de tela cheia<br/> e vire a tela do dispositivo <br/>(Funciona em PC e Mobile)')
     subtitle2.addClass('subtitle')
     subtitle2.parent('customgamemenu')
     buttonMenu = createDiv('')
@@ -407,15 +407,12 @@ window.addEventListener("orientationchange", function() {
 });
 function activateFullscreen(){
     if (!isFull && document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().then(() => {
-            if(device){screen.orientation.lock("landscape-primary")}
-        })
+        document.documentElement.requestFullscreen()
         isFull = true
     }
     else if ( isFull && document.exitFullscreen){
-        if(device){screen.orientation.unlock()}
-        isFull = false
         document.exitFullscreen()
+        isFull = false
     }
 }
 function isTouchDevice() {
