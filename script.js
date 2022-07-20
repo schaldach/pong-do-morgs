@@ -406,16 +406,16 @@ window.addEventListener("orientationchange", function() {
     player2.height = windowHeight/3
 });
 function activateFullscreen(){
-    if (!isFull) {
-        if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().then(() => {
+    if (!isFull && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().then(() => {
             if(device){screen.orientation.lock("landscape-primary")}
-        })}
+        })
         isFull = true
     }
-    else{
+    else if ( isFull && document.exitFullscreen){
         if(device){screen.orientation.unlock()}
         isFull = false
-        if(document.exitFullscreen){document.exitFullscreen()}
+        document.exitFullscreen()
     }
 }
 function isTouchDevice() {
