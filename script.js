@@ -343,7 +343,7 @@ function setup(){
     particleColors.push(color(255,0,0),color(170,0,255))
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.7', 5, 15)
+    text('patch 1.75', 5, 15)
     noStroke()
 }
 function toggleSound(){
@@ -380,7 +380,7 @@ function onResize(){
     myCanvas.position(windowWidth/10,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.7', 5, 15)
+    text('patch 1.75', 5, 15)
     balls[0].x = (windowWidth*4/5)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*4/5)/120
@@ -761,7 +761,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.7', 5, 15)
+        text('patch 1.75', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+"        "+player2.score, (windowWidth*4/5)/2, windowHeight/7)
@@ -1289,7 +1289,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.7', 5, 15)
+    text('patch 1.75', 5, 15)
     customgamemenu.style('display', 'flex')
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
