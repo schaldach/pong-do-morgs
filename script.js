@@ -425,7 +425,7 @@ window.addEventListener("orientationchange", function() {
 });
 function activateFullscreen(){
     if (!isFull) {
-        if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen()}        
+        if(documentElement.requestFullscreen){documentElement.requestFullscreen()}        
         isFull = true
         screen.orientation.lock("landscape-primary")
     }
