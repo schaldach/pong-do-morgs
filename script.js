@@ -35,7 +35,9 @@ let balls = [
         horizontaltime: 1,
         verticaltime: 1,
         timetravel: false,
-        timereturn: false
+        timereturn: false,
+        laser: false,
+        laserTarget: player1
     }
 ]
 let player1 = {
@@ -422,17 +424,15 @@ window.addEventListener("orientationchange", function() {
     player2.height = windowHeight/3
 });
 function activateFullscreen(){
-    if (page.requestFullscreen && !isFull) { 
-        page.requestFullscreen().then(() => {
-            isFull = true
-            if(device){screen.orientation.lock("landscape-primary")}
-        }, () => isFull = false)
+    if (!isFull) {
+        if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen()}        
+        isFull = true
+        screen.orientation.lock("landscape-primary")
     }
-    else if(document.exitFullscreen && isFull){
+    else{
         screen.orientation.unlock()
-        document.exitFullscreen()
         isFull = false
-        
+        if(document.exitFullscreen){document.exitFullscreen()}
     }
 }
 function isTouchDevice() {
@@ -515,7 +515,9 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
                     horizontaltime: 1,
                     verticaltime: 1,
                     timetravel: false,
-                    timereturn: false
+                    timereturn: false,
+                    laser: false,
+                    laserTarget: player1
                 })
             balls.forEach(ball => {
                 ball.distance = (windowWidth*4/5)/120
@@ -562,6 +564,9 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
         case 'Trapaceiro':
             player.activatedThief = true
             break
+        case 'Laser':
+            ball.laser = true
+            ball.laserTarget = player === player1?player2:player1
         default:
             break
     }
@@ -617,6 +622,7 @@ function stopPower(power, player, ball, time){
         case 'Trapaceiro':
             player.activatedThief = false
         case 'Laser':
+            balls[ball].laser = false
             break
         case 'Gancho':
             player.activatedHook = false
@@ -1158,7 +1164,9 @@ function winner(){
         horizontaltime: 1,
         verticaltime: 1,
         timetravel: false,
-        timereturn: false
+        timereturn: false,
+        laser: false,
+        laserTarget: player1
     }]
     lastStartingHorizontalControl = lastStartingHorizontalControl*-1
     let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Temporizador'})
@@ -1257,7 +1265,9 @@ function reset(){
         horizontaltime: 1,
         verticaltime: 1,
         timetravel: false,
-        timereturn: false
+        timereturn: false,
+        laser: false,
+        laserTarget: player1
     }]
     player1.score = 0
     player1.y = windowHeight*7/16
