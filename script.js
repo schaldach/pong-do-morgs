@@ -423,14 +423,16 @@ window.addEventListener("orientationchange", function() {
 });
 function activateFullscreen(){
     if (page.requestFullscreen && !isFull) { 
-        page.requestFullscreen()
-        isFull = true
-        if(device){screen.orientation.lock("landscape-primary")}
+        page.requestFullscreen().then(() => {
+            isFull = true
+            if(device){screen.orientation.lock("landscape-primary")}
+        }, () => isFull = false)
     }
     else if(document.exitFullscreen && isFull){
-        if(device){screen.orientation.unlock()}
+        screen.orientation.unlock()
         document.exitFullscreen()
         isFull = false
+        
     }
 }
 function isTouchDevice() {
