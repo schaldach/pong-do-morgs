@@ -19,6 +19,7 @@ let balls = [
         timetravel: false,
         timereturn: false,
         laser: false,
+        sneakBalls: []
     }
 ]
 let player1 = {
@@ -487,6 +488,7 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
                     timetravel: false,
                     timereturn: false,
                     laser: false,
+                    sneakBalls: []
                 })
             balls.forEach(ball => {
                 ball.distance = (windowWidth*4/5)/120
@@ -872,7 +874,7 @@ function draw(){
             player2.down = false
         }
         balls.forEach(ball => {
-            if(ball['ballTrack'].length>5&&!ball.timetravel&&!ball.timereturn){ball['ballTrack'].shift()}
+            if(ball['ballTrack'].length>5&&!ball.timetravel&&!ball.timereturn&&!ball.sneak){ball['ballTrack'].shift()}
             if(!ball.timereturn){ball['ballTrack'].push({x: ball.x, y:ball.y})}
             ball['ballTrack'].forEach(past => {
                 ballColors[ball.ballColorIndex].setAlpha(50)
@@ -883,9 +885,22 @@ function draw(){
             fill(ballColors[ball.ballColorIndex])
             ellipse(ball.x, ball.y, 20)
             if(ball.sneak){
-                let horizontalballDistance = Math.cos(ball.angle)*ball.distance*6.5*ball.horizontalControl
-                fill('green')
-                rect(ball.x-horizontalballDistance,0,horizontalballDistance+15*ball.horizontalControl,windowHeight)
+                ball['sneakBalls'].forEach(sneakball => {
+                    if(sneakball.y-10<0){sneakball.verticalControl=1}
+                    if(sneakball.y+10>windowHeight){sneakball.verticalControl=-1}
+                    sneakball.x = ball.x
+                    let verticalballDistance = Math.sin(sneakball.angle)*ball.distance
+                    sneakball.y += verticalballDistance*sneakball.verticalControl
+                    ellipse(sneakball.x, sneakball.y, 20)
+                    ballColors[ball.ballColorIndex].setAlpha(50)
+                    fill(ballColors[ball.ballColorIndex])
+                    sneakball['sneakTrack'].forEach(pastsneak => {
+                        ellipse(pastsneak.x, pastsneak.y, 20)
+                    })
+                    ballColors[ball.ballColorIndex].setAlpha(255)
+                    fill(ballColors[ball.ballColorIndex])
+                    sneakball['sneakTrack'].push({x: sneakball.x, y: sneakball.y})
+                })
             }
         })
         fill(player1.color)
@@ -947,6 +962,9 @@ function calculateball(){
             if(player2.activatedSneak){
                 const sneakIndex = currentAllPowers.findIndex(power => {return power.p === 'Flares'})
                 stopPower(sneakIndex, player2)
+                for(i=0;i<8;i++){
+                    ball['sneakBalls'].push({x:ball.x, y:ball.y, angle:Math.random()*Math.PI/3, horizontalControl:ball.horizontalControl, verticalControl:Math.random()>0.5?1:-1, sneakTrack:[]})
+                }
                 ball.sneak = true
             }
         }
@@ -978,14 +996,17 @@ function calculateball(){
             if(player1.activatedSneak){
                 const sneakIndex = currentAllPowers.findIndex(power => {return power.p === 'Flares'})
                 stopPower(sneakIndex, player1)
+                for(i=0;i<8;i++){
+                    ball['sneakBalls'].push({x:ball.x, y:ball.y, angle:Math.random()*Math.PI/3, horizontalControl:ball.horizontalControl, verticalControl:Math.random()>0.5?1:-1, sneakTrack:[]})
+                }
                 ball.sneak = true
             }
         }
-        if(ball.sneak&&ball.horizontalControl===1){
-            if(ball.x>(windowWidth*4/5)*3/7){ball.sneak=false}
+        if(ball.sneak&&ball.horizontalControl===1&&ball.x>(windowWidth*4/5)*4/7){
+            ball.sneak=false; ball['sneakBalls'] = []; ball['ballTrack'] = []
         }
-        if(ball.sneak&&ball.horizontalControl===-1){
-            if(ball.x<(windowWidth*4/5)*4/7){ball.sneak=false}
+        if(ball.sneak&&ball.horizontalControl===-1&&ball.x<(windowWidth*4/5)*3/7){
+            ball.sneak=false; ball['sneakBalls'] = []; ball['ballTrack'] = []
         }
         if(ball.horizontalControl===1&&player2.activatedHook&&ball.x>(windowWidth*4/5)/2){
             let control = Math.abs(player2.y+(player2.height/2)-ball.y)/(player2.x-ball.x)
@@ -1091,16 +1112,14 @@ function determineColors(){
     balls.forEach(ball => {
         ball.ballColorIndex = 0
         if(ball.timetravel||ball.timereturn){ball.ballColorIndex=4}
+        if(ball.distance>((windowWidth*4/5)/70)+((windowWidth*4/5)/120)){ball.ballColorIndex=1}
         if(ball.scoreValue===2){ball.ballColorIndex=2}
-        if(ball.distance>((windowWidth*4/5)/70)+((windowWidth*4/5)/120)){
-            if(ball.scoreValue===2){ball.ballColorIndex=3}
-            else{ball.ballColorIndex=1}
-        }
+        if(ball.sneak){ball.ballColorIndex=3}
     })
 }
 function determinePlayerColors(player){
     player.color = 'white'
-    if(player.activatedSneak){player.color = 'green'}
+    if(player.activatedSneak){player.color = ballColors[3]}
     if(player.activatedIce){player.color = 'blue'}
     if(player.activatedFire){player.color = 'red'}
     if(player.activatedInvisible){player.color = 'black'}
@@ -1150,6 +1169,7 @@ function winner(){
         timetravel: false,
         timereturn: false,
         laser: false,
+        sneakBalls: []
     }]
     lastStartingHorizontalControl = lastStartingHorizontalControl*-1
     let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Temporizador'})
@@ -1250,6 +1270,7 @@ function reset(){
         timetravel: false,
         timereturn: false,
         laser: false,
+        sneakBalls: []
     }]
     player1.score = 0
     player1.y = windowHeight*7/16
