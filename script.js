@@ -19,6 +19,7 @@ let balls = [
         timetravel: false,
         timereturn: false,
         laser: false,
+        shielded: false,
         sneakBalls: []
     }
 ]
@@ -90,10 +91,11 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'Temporizador', t:3000, c:'white', active:true}, {p:'Gancho', t:7500, c:'green', active:true}, 
 {p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:10000, c:'white', active:true},
 {p:'Laser', t:750, c:'green', active:true}, {p:'Desordenado', t:5000, c:'red', active:true},
-{p:'Trapaceiro', t:7500, c:'white', active:true}, {p:'Escudo',t:5000, c:'green', active:true},
+{p:'Trapaceiro', t:7500, c:'white', active:true}, {p:'Escudo',t:6000, c:'green', active:true},
 {p:'Ventania', t:5000, c:'red', active:true},{p:'Portal', t:7500, c:'white', active:true}]
 let currentAllPowers = []
 let allBlackHoles = []
+let allShields = []
 let powersSpawned = []
 let allParticles = []
 let particleColors = []
@@ -489,6 +491,7 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
                     timetravel: false,
                     timereturn: false,
                     laser: false,
+                    shielded: false,
                     sneakBalls: []
                 })
             balls.forEach(ball => {
@@ -536,6 +539,10 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
             break
         case 'Laser':
             ball.laser = true
+            break
+        case 'Escudo':
+            stopPower(power, player)
+            allShields.push({x:player.x, y:Math.random()*windowHeight/2+windowHeight/4, p:player===player1?1:2})
             break
         default:
             break
@@ -603,6 +610,10 @@ function stopPower(power, player, ball, time){
             break
         case 'Gancho':
             player.activatedHook = false
+            break
+        case 'Escudo':
+            playernumber = player===player1?1:2
+            allShields = allShields.filter(shield => shield.p!==playernumber)
             break
         default:
             break
@@ -789,6 +800,12 @@ function draw(){
             blackhole.frame++
         })
         noStroke()
+        allShields.forEach(shield => {
+            ballColors[4].setAlpha(100)
+            fill(ballColors[4])
+            ellipse(shield.x, shield.y, windowHeight*2/3)
+            ballColors[4].setAlpha(255)
+        })
         if(canSpawnPower){
             spawnNewPower()
         }
@@ -934,8 +951,15 @@ function checkActivePowers(){
 function calculateball(){
     balls.forEach(ball => {
         let index = balls.indexOf(ball)
-        let horizontalballDistance = Math.cos(ball.angle)*ball.distance
-        let verticalballDistance = Math.sin(ball.angle)*ball.distance
+        let horizontalballDistance, verticalballDistance
+        if(ball.shielded){
+            horizontalballDistance = Math.cos(ball.angle)*(windowWidth*4/5)/240
+            verticalballDistance = Math.sin(ball.angle)*(windowWidth*4/5)/240
+        }
+        else{
+            horizontalballDistance = Math.cos(ball.angle)*ball.distance
+            verticalballDistance = Math.sin(ball.angle)*ball.distance
+        }
         if(ball.x+10>=player2.x){
             if(gameMode){
                 AIrandomizer = Math.random()>0.5?1:-1
@@ -1059,7 +1083,7 @@ function calculateball(){
             }
         }
         allBlackHoles.forEach(blackhole => {
-            if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/6){
+            if(dist(ball.x, ball.y, blackhole.x, blackhole.y)<windowHeight/5){
                 particleColors[1].setAlpha(50)
                 stroke(particleColors[1])
                 strokeWeight(25)
@@ -1067,15 +1091,21 @@ function calculateball(){
                 let control = ball.y>blackhole.y?-1:1
                 let control2 = 1
                 if(ball.verticalControl !== control){control2=-1}
-                if(ball.angle+control2*Math.PI/50<0){
+                if(ball.angle+control2*Math.PI/70<0){
                     ball.verticalControl=ball.verticalControl*-1
                     control2 = control2*-1
                 }
-                if(ball.angle+control2*Math.PI/50>Math.PI/2){
+                if(ball.angle+control2*Math.PI/70>Math.PI/2){
                     ball.horizontalControl= ball.horizontalControl*-1
                 }
-                ball.angle = ball.angle+control2*Math.PI/50
+                ball.angle = ball.angle+control2*Math.PI/70
                 noStroke()
+            }
+        })
+        ball.shielded = false
+        allShields.forEach(shield => {
+            if(dist(ball.x, ball.y, shield.x, shield.y)<windowHeight/3){
+                ball.shielded = true
             }
         })
         if(ball.timereturn){
@@ -1174,6 +1204,7 @@ function winner(){
         timetravel: false,
         timereturn: false,
         laser: false,
+        shielded: false,
         sneakBalls: []
     }]
     lastStartingHorizontalControl = lastStartingHorizontalControl*-1
@@ -1275,6 +1306,7 @@ function reset(){
         timetravel: false,
         timereturn: false,
         laser: false,
+        shielded: false,
         sneakBalls: []
     }]
     player1.score = 0
