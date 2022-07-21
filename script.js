@@ -88,7 +88,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'Pequeno', t:7500, c:'red', active:true}, {p:'Gol de ouro', t:5000, c:'white', active:true},
 {p:'Flares', t:7500, c:'green', active:true}, {p:'Congelado', t:1750, c:'red', active:true},
 {p:'Temporizador', t:3000, c:'white', active:true}, {p:'Gancho', t:7500, c:'green', active:true}, 
-{p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:7500, c:'white', active:true},
+{p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:10000, c:'white', active:true},
 {p:'Laser', t:750, c:'green', active:true}, {p:'Desordenado', t:5000, c:'red', active:true},
 {p:'Trapaceiro', t:7500, c:'white', active:true}, {p:'Escudo',t:5000, c:'green', active:true},
 {p:'Ventania', t:5000, c:'red', active:true},{p:'Portal', t:7500, c:'white', active:true}]
