@@ -38,6 +38,7 @@ let player1 = {
     activatedInvisible: false,
     activatedThief: false,
     activatedHook: false,
+    borderless: false,
     moved: false,
     onlinePowers: [],
     up: false,
@@ -58,6 +59,7 @@ let player2 = {
     activatedInvisible: false,
     activatedThief: false,
     activatedHook: false,
+    borderless: false,
     moved: false,
     onlinePowers: [],
     up: false,
@@ -92,7 +94,7 @@ let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5
 {p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:10000, c:'white', active:true},
 {p:'Laser', t:750, c:'green', active:true}, {p:'Desordenado', t:5000, c:'red', active:true},
 {p:'Trapaceiro', t:7500, c:'white', active:true}, {p:'Escudo',t:6000, c:'green', active:true},
-{p:'Ventania', t:5000, c:'red', active:true},{p:'Portal', t:7500, c:'white', active:true}]
+{p:'Ventania', t:5000, c:'red', active:true},{p:'Borda Infinita', t:7500, c:'white', active:true}]
 let currentAllPowers = []
 let allBlackHoles = []
 let allShields = []
@@ -544,6 +546,9 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
             stopPower(power, player)
             allShields.push({x:player.x, y:Math.random()*windowHeight/2+windowHeight/4, p:player===player1?1:2})
             break
+        case 'Borda Infinita':
+            player.borderless = true
+            break
         default:
             break
     }
@@ -615,6 +620,8 @@ function stopPower(power, player, ball, time){
             playernumber = player===player1?1:2
             allShields = allShields.filter(shield => shield.p!==playernumber)
             break
+        case 'Borda Infinita':
+            player.borderless = false
         default:
             break
     }
@@ -782,6 +789,12 @@ function draw(){
         strokeWeight(2)
         line((windowWidth*4/5)/2, 0, (windowWidth*4/5)/2, windowHeight)
         setLineDash([0, 0])
+        if(player1.borderless||player2.borderless){
+            strokeWeight(4)
+            stroke('blue')
+            line(0,0,(windowWidth*4/5),0)
+            line(0,windowHeight,(windowWidth*4/5),windowHeight)
+        }
         allBlackHoles.forEach(blackhole => {
             particleColors[1].setAlpha(255)
             stroke(particleColors[1])
@@ -906,7 +919,7 @@ function draw(){
             })
             fill(ballColors[ball.ballColorIndex])
             ellipse(ball.x, ball.y, 20)
-            if(ball.sneak){
+            if(ball.sneak&&!ball.laser){
                 ball['sneakBalls'].forEach(sneakball => {
                     if(sneakball.y-10<0){sneakball.verticalControl=1}
                     if(sneakball.y+10>windowHeight){sneakball.verticalControl=-1}
@@ -1130,10 +1143,12 @@ function calculateball(){
         }
         else{
             if(ball.y+10>windowHeight){
-                ball.verticalControl = -1
+                if(player1.borderless||player2.borderless){ball.y=10}
+                else{ball.verticalControl = -1}
             }
             if(ball.y-10<0){
-                ball.verticalControl = 1
+                if(player1.borderless||player2.borderless){ball.y=windowHeight-10}
+                else{ball.verticalControl = 1}
             }
             ball.x += horizontalballDistance*ball.horizontalControl
             ball.y += verticalballDistance*ball.verticalControl
