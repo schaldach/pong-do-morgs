@@ -39,6 +39,7 @@ let player1 = {
     activatedThief: false,
     activatedHook: false,
     borderless: false,
+    wind: {active:false,direction:''},
     moved: false,
     onlinePowers: [],
     up: false,
@@ -60,6 +61,7 @@ let player2 = {
     activatedThief: false,
     activatedHook: false,
     borderless: false,
+    wind: {active:false,direction:''},
     moved: false,
     onlinePowers: [],
     up: false,
@@ -146,15 +148,9 @@ function setup(){
     gamemodes.id('gamemodes')
     gamemodes.addClass('gamemodes')
     gamemodes.parent('mainmenu')
-    campaignbutton = createButton('Campanha')
-    campaignbutton.parent('gamemodes')
-    campaignbutton.mousePressed(goToUnfinished)
     customgamebutton = createButton('Jogo Customizado')
     customgamebutton.mousePressed(goToCustom)
     customgamebutton.parent('gamemodes')
-    onlinebutton = createButton('Multiplayer')
-    onlinebutton.mousePressed(goToUnfinished)
-    onlinebutton.parent('gamemodes')
     mainconfigsbutton = createButton('Configs')
     mainconfigsbutton.parent('mainmenu')
     mainconfigsbutton.mousePressed(goToMainConfigs)
@@ -345,10 +341,10 @@ function setup(){
     warningButton2.parent('warning2')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
-    particleColors.push(color(255,0,0),color(170,0,255))
+    particleColors.push(color(255,0,0),color(170,0,255),color(255,255,255))
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.75', 5, 15)
+    text('patch 1.8 (ultimo?)', 5, 15)
     noStroke()
 }
 function toggleSound(){
@@ -385,7 +381,7 @@ function onResize(){
     myCanvas.position(windowWidth/10,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.75', 5, 15)
+    text('patch 1.8 (ultimo?)', 5, 15)
     balls[0].x = (windowWidth*4/5)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*4/5)/120
@@ -549,6 +545,14 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
         case 'Borda Infinita':
             player.borderless = true
             break
+        case 'Ventania':
+            rightParticleX = player===player1?10:(windowWidth*4/5)-60
+            allParticles = allParticles.filter(part => part.type !== 'wind'||part.x !== rightParticleX)
+            player.wind.active = true
+            player.wind.direction = Math.random()>0.5?'up':'down'
+            rightX = player === player1?0:-50
+            allParticles.push({x:player.x+rightX, y:0, type:'wind', frame:0, frameLimit:1000, particles:[], color:2, direction:player.wind.direction === 'down'?1:-1})
+            break
         default:
             break
     }
@@ -622,6 +626,12 @@ function stopPower(power, player, ball, time){
             break
         case 'Borda Infinita':
             player.borderless = false
+            break
+        case 'Ventania':
+            rightParticleX = player===player1?10:(windowWidth*4/5)-60
+            allParticles = allParticles.filter(part => part.type !== 'wind'||part.x !== rightParticleX)
+            player.wind.active = false
+            break
         default:
             break
     }
@@ -663,6 +673,27 @@ function drawParticles(){
             console.log('laser')
             rect(particlearea.x,particlearea.y,particlearea.width,-30/particlearea.frame)
             rect(particlearea.x,particlearea.y,particlearea.width,30/particlearea.frame)
+        }
+        else if(particlearea.type === 'wind'){
+            if(!particlearea['particles'].length){
+                for(i=0; i<20; i++){
+                    let xPosition = Math.floor(Math.random()*50)+particlearea.x
+                    let yPosition = Math.floor(Math.random()*windowHeight)
+                    particlearea['particles'].push({x:xPosition,y:yPosition})
+                }
+            }
+            particlearea['particles'].forEach(part => {
+                rect(part.x, part.y,2,30)
+                part.y += 5*particlearea.direction
+                if(part.y<0&&particlearea.direction===-1){
+                    particlearea['particles'].push({x:part.x,y:windowHeight})
+                    particlearea['particles'] = particlearea['particles'].filter(innerpart => innerpart.x!==part.x||innerpart.y!==part.y)
+                }
+                if(part.y+30>windowHeight&&particlearea.direction===1){
+                    particlearea['particles'].push({x:part.x,y:0})
+                    particlearea['particles'] = particlearea['particles'].filter(innerpart => innerpart.x!==part.x||innerpart.y!==part.y)
+                }
+            })
         }
         particlearea.frame++
     })
@@ -709,10 +740,6 @@ function drawPowerCircle(spawnedPower){
     textSize(40)
     textAlign(CENTER)
     text(spawnedPower.n,spawnedPower.x, spawnedPower.y+10)
-}
-function goToUnfinished(){
-    mainmenu.style('display', 'none')
-    unfinished.style('display', 'flex')
 }
 function goToMainConfigs(){
     mainmenu.style('display','none')
@@ -780,7 +807,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.75', 5, 15)
+        text('patch 1.8 (ultimo?)', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+"        "+player2.score, (windowWidth*4/5)/2, windowHeight/7)
@@ -901,6 +928,12 @@ function draw(){
                 player2.y = player2.y+player2.height>=windowHeight?player2.y:player2.y+player2.speed
                 player2.moved = true
             }
+        }
+        if(player1.wind.active&&((player1.y>=0&&player1.wind.direction==='up')||(player1.y+player1.height<=windowHeight&&player1.wind.direction==='down'))){
+            player1.y = player1.wind.direction === 'down'?player1.y+player1.speed/2:player1.y-player1.speed/2
+        }
+        if(player2.wind.active&&((player2.y>=0&&player2.wind.direction==='up')||(player2.y+player2.height<=windowHeight&&player2.wind.direction==='down'))){
+            player2.y = player2.wind.direction === 'down'?player2.y+player2.speed/2:player2.y-player2.speed/2
         }
         if(device){
             player1.up = false
@@ -1337,7 +1370,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.75', 5, 15)
+    text('patch 1.8 (ultimo?)', 5, 15)
     customgamemenu.style('display', 'flex')
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
