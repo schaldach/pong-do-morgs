@@ -192,7 +192,7 @@ function setup(){
     credits.id('creditstop')
     credits.addClass('admenu')
     credits.hide()
-    creditstext = createDiv('Criado e desenvolvido por:<br/>Gabriel Schaldach Morgado<br/><br/>Efeitos sonoros:<br/>Little Robot Sound Factory<br/><br/>Agradecimentos especiais:<br/>Alisson Stephens<br/>Bexx</br></br>')
+    creditstext = createDiv('Criado e desenvolvido por:<br/>Gabriel Schaldach Morgado<br/>(Github - schaldach)<br/><br/>Efeitos sonoros:<br/>Little Robot Sound Factory<br/><br/>Agradecimentos especiais:<br/>Alisson Stephens<br/>Bernardo Rebelo</br>Rafael Costa</br>Pedro Furtado<br/><br/>')
     creditstext.parent('creditstop')
     mainmenuButton3 = createButton('Menu Principal')
     mainmenuButton3.mousePressed(goToMain)
