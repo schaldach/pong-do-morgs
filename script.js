@@ -154,6 +154,9 @@ function setup(){
     mainconfigsbutton = createButton('Configs')
     mainconfigsbutton.parent('mainmenu')
     mainconfigsbutton.mousePressed(goToMainConfigs)
+    creditsbutton = createButton('Creditos')
+    creditsbutton.mousePressed(goGoCredits)
+    creditsbutton.parent('mainmenu')
     mainmenuconfigs = createDiv()
     mainmenuconfigs.addClass('admenu')
     mainmenuconfigs.id('mainconfigs')
@@ -184,14 +187,16 @@ function setup(){
     mainmenuButton2 = createButton('Voltar')
     mainmenuButton2.mousePressed(goToMain)
     mainmenuButton2.parent('mainconfigs')
-    unfinished = createDiv('Em breve...')
-    unfinished.id('unfinish')
-    unfinished.parent('page')
-    unfinished.addClass('mainmenu')
-    unfinished.hide()
-    unfinishedbutton = createButton('Voltar')
-    unfinishedbutton.parent('unfinish')
-    unfinishedbutton.mousePressed(goToMain)
+    credits = createDiv('Creditos:')
+    credits.parent('page')
+    credits.id('creditstop')
+    credits.addClass('admenu')
+    credits.hide()
+    creditstext = createDiv('Criado e desenvolvido por:<br/>Gabriel Schaldach Morgado<br/><br/>Efeitos sonoros:<br/>Little Robot Sound Factory<br/><br/>Agradecimentos especiais:<br/>Alisson Stephens<br/>Bexx</br></br>')
+    creditstext.parent('creditstop')
+    mainmenuButton3 = createButton('Menu Principal')
+    mainmenuButton3.mousePressed(goToMain)
+    mainmenuButton3.parent('creditstop')
     customgamemenu = createDiv()
     customgamemenu.parent('page')
     customgamemenu.id('customgamemenu')
@@ -344,7 +349,7 @@ function setup(){
     particleColors.push(color(255,0,0),color(170,0,255),color(255,255,255))
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.8 (ultimo?)', 5, 15)
+    text('patch 1.81 - ultimo', 5, 15)
     noStroke()
 }
 function toggleSound(){
@@ -381,7 +386,7 @@ function onResize(){
     myCanvas.position(windowWidth/10,0,"fixed")
     textAlign(LEFT)
     textSize(14)
-    text('patch 1.8 (ultimo?)', 5, 15)
+    text('patch 1.81 - ultimo', 5, 15)
     balls[0].x = (windowWidth*4/5)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*4/5)/120
@@ -751,15 +756,19 @@ function goToCustomConfigs(){
 }
 function goToMain(){
     mainmenu.style('display','flex')
-    unfinished.style('display', 'none')
     customgamemenu.style('display','none')
     mainmenuconfigs.style('display','none')
+    credits.style('display', 'none')
 }
 function goToCustom(){
     mainmenu.style('display','none')
     customgameconfigs.style('display', 'none')
     customgamemenu.style('display','flex')
     subtitle2.html('Jogo customizado')
+}
+function goGoCredits(){
+    mainmenu.style('display', 'none')
+    credits.style('display', 'flex')
 }
 function pausegame(){
     pauseButton.hide()
@@ -807,7 +816,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.8 (ultimo?)', 5, 15)
+        text('patch 1.81 - ultimo', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+"        "+player2.score, (windowWidth*4/5)/2, windowHeight/7)
@@ -1370,7 +1379,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.8 (ultimo?)', 5, 15)
+    text('patch 1.81 - ultimo', 5, 15)
     customgamemenu.style('display', 'flex')
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
