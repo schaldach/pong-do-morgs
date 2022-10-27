@@ -1087,10 +1087,10 @@ function calculateball(){
             }
         }
         if(ball.sneak&&ball.horizontalControl===1&&ball.x>(windowWidth*4/5)*4/7){
-            ball.sneak=false; ball['sneakBalls'] = []; ball['ballTrack'] = []
+            ball.sneak=false; ball['sneakBalls'] = []; ball['ballTrack'] = [{x:ball.x, y:ball.y}]
         }
         if(ball.sneak&&ball.horizontalControl===-1&&ball.x<(windowWidth*4/5)*3/7){
-            ball.sneak=false; ball['sneakBalls'] = []; ball['ballTrack'] = []
+            ball.sneak=false; ball['sneakBalls'] = []; ball['ballTrack'] = [{x:ball.x, y:ball.y}]
         }
         if(ball.horizontalControl===1&&player2.activatedHook&&ball.x>(windowWidth*4/5)/2){
             let control = Math.abs(player2.y+(player2.height/2)-ball.y)/(player2.x-ball.x)
