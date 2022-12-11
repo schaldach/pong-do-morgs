@@ -103,6 +103,8 @@ let allShields = []
 let powersSpawned = []
 let allParticles = []
 let particleColors = []
+let pauseStart = 0
+let pauseEnd = 0
 let AIrandomizer = 1
 let numberOfPowers = 10
 let powerInterval
@@ -771,12 +773,22 @@ function goGoCredits(){
     credits.style('display', 'flex')
 }
 function pausegame(){
+    let time = new Date()
+    pauseStart = time.getTime()
     pauseButton.hide()
     pauseMenu.style('display', 'flex')
     functiondiv.style('display', 'flex')
     paused = true
 }
 function resume(){
+    let time = new Date()
+    pauseEnd = time.getTime()
+    player1['onlinePowers'].forEach(onpower => {
+        onpower.expire += pauseEnd-pauseStart
+    })
+    player2['onlinePowers'].forEach(onpower => {
+        onpower.expire += pauseEnd-pauseStart
+    })
     pauseButton.show()
     pauseMenu.hide()
     functiondiv.hide()
