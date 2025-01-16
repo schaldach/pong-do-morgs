@@ -93,7 +93,7 @@ let allPowers = [{p:'Fire', t:7500, c:'green', active:true}, {p:'Inverted', t:50
 {p:'Small', t:7500, c:'red', active:true}, {p:'Golden goal', t:5000, c:'white', active:true},
 {p:'Flares', t:7500, c:'green', active:true}, {p:'Frozen', t:1750, c:'red', active:true},
 {p:'Timer', t:3000, c:'white', active:true}, {p:'Hook', t:7500, c:'green', active:true}, 
-{p:'Invisivel', t:3500, c:'red', active:true}, {p:'Black hole', t:10000, c:'white', active:true},
+{p:'Invisible', t:3500, c:'red', active:true}, {p:'Black hole', t:10000, c:'white', active:true},
 {p:'Laser', t:750, c:'green', active:true}, {p:'Discoordinated', t:5000, c:'red', active:true},
 {p:'Thief', t:7500, c:'white', active:true}, {p:'Shield',t:6000, c:'green', active:true},
 {p:'Wind', t:5000, c:'red', active:true},{p:'Infinite Edge', t:7500, c:'white', active:true}]
@@ -514,7 +514,7 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
         case 'Golden goal':
             ball.scoreValue = 2
             break
-        case 'Invisivel':
+        case 'Invisible':
             player.activatedInvisible = true
             determinePlayerColors(player)
             break
@@ -595,7 +595,7 @@ function stopPower(power, player, ball, time){
         case 'Inverted':
             player.activatedInverted = false
             break
-        case 'Invisivel':
+        case 'Invisible':
             player.activatedInvisible = false
             determinePlayerColors(player)
         case 'Flares':
