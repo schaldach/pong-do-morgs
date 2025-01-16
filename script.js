@@ -1336,7 +1336,7 @@ function start(){
     if(anyPowerActive){
         powerInterval = setInterval(spawnPower, powerSpeed)
     }
-    isParticles = particleSelect.value() === 'Ativadas'?true:false
+    isParticles = particleSelect.value() === 'Activated'?true:false
     gameplaying = true
     controlbuttons.hide()
     customgamemenu.hide()
