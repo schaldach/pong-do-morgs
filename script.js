@@ -88,15 +88,15 @@ let vitoriasom = new Audio('./assets/audio/win.mp3')
 let powerpickupsom = new Audio('./assets/audio/pickup.mp3')
 let pointsom = new Audio('./assets/audio/point.mp3')
 let scoreLimit = 5
-let allPowers = [{p:'Fogo', t:7500, c:'green', active:true}, {p:'Invertido', t:5000, c:'red', active:true}, 
-{p:'Multibola', t:5000, c:'white', active:true}, {p:'Grande', t:7500, c:'green', active:true}, 
-{p:'Pequeno', t:7500, c:'red', active:true}, {p:'Gol de ouro', t:5000, c:'white', active:true},
-{p:'Flares', t:7500, c:'green', active:true}, {p:'Congelado', t:1750, c:'red', active:true},
-{p:'Temporizador', t:3000, c:'white', active:true}, {p:'Gancho', t:7500, c:'green', active:true}, 
-{p:'Invisivel', t:3500, c:'red', active:true}, {p:'Buraco Negro', t:10000, c:'white', active:true},
-{p:'Laser', t:750, c:'green', active:true}, {p:'Desordenado', t:5000, c:'red', active:true},
-{p:'Trapaceiro', t:7500, c:'white', active:true}, {p:'Escudo',t:6000, c:'green', active:true},
-{p:'Ventania', t:5000, c:'red', active:true},{p:'Borda Infinita', t:7500, c:'white', active:true}]
+let allPowers = [{p:'Fire', t:7500, c:'green', active:true}, {p:'Inverted', t:5000, c:'red', active:true}, 
+{p:'Multiball', t:5000, c:'white', active:true}, {p:'Big', t:7500, c:'green', active:true}, 
+{p:'Small', t:7500, c:'red', active:true}, {p:'Golden goal', t:5000, c:'white', active:true},
+{p:'Flares', t:7500, c:'green', active:true}, {p:'Frozen', t:1750, c:'red', active:true},
+{p:'Timer', t:3000, c:'white', active:true}, {p:'Hook', t:7500, c:'green', active:true}, 
+{p:'Invisivel', t:3500, c:'red', active:true}, {p:'Black hole', t:10000, c:'white', active:true},
+{p:'Laser', t:750, c:'green', active:true}, {p:'Discoordinated', t:5000, c:'red', active:true},
+{p:'Thief', t:7500, c:'white', active:true}, {p:'Shield',t:6000, c:'green', active:true},
+{p:'Wind', t:5000, c:'red', active:true},{p:'Infinite Edge', t:7500, c:'white', active:true}]
 let currentAllPowers = []
 let allBlackHoles = []
 let allShields = []
@@ -140,63 +140,63 @@ function setup(){
     mainmenu.parent('page')
     mainmenu.id('mainmenu')
     mainmenu.addClass('mainmenu main')
-    title = createDiv('Pong do Morgs')
+    title = createDiv("Morgs' Pong")
     title.addClass('titulo')
     title.parent('mainmenu')
-    subtitle = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao no canto superior direito<br/>(No Mobile, tambem vire a tela)')
+    subtitle = createDiv('Play on full and horizontal screen!<br/>press the button in the top-right corner<br/>(On Mobile, also flip the device)')
     subtitle.addClass('subtitle')
     subtitle.parent('mainmenu')
     gamemodes = createDiv()
     gamemodes.id('gamemodes')
     gamemodes.addClass('gamemodes')
     gamemodes.parent('mainmenu')
-    customgamebutton = createButton('Jogo Customizado')
+    customgamebutton = createButton('Custom Game')
     customgamebutton.mousePressed(goToCustom)
     customgamebutton.parent('gamemodes')
     mainconfigsbutton = createButton('Configs')
     mainconfigsbutton.parent('mainmenu')
     mainconfigsbutton.mousePressed(goToMainConfigs)
-    creditsbutton = createButton('Creditos')
+    creditsbutton = createButton('Credits')
     creditsbutton.mousePressed(goGoCredits)
     creditsbutton.parent('mainmenu')
     mainmenuconfigs = createDiv()
     mainmenuconfigs.addClass('admenu')
     mainmenuconfigs.id('mainconfigs')
     mainmenuconfigs.hide()
-    particleDiv = createDiv('Particulas')
+    particleDiv = createDiv('Particles')
     particleDiv.parent('mainconfigs')
     particleDiv.id('partc')
     particleDiv.addClass('sped')
     particleSelect = createSelect()
-    particleSelect.option('Ativadas')
-    particleSelect.option('Desativadas')
+    particleSelect.option('Activated')
+    particleSelect.option('Disabled')
     particleSelect.parent('partc')
-    particleSelect.selected('Ativadas')
-    musicVolumeControl = createDiv('Volume da musica')
+    particleSelect.selected('Activated')
+    musicVolumeControl = createDiv('Music volume')
     musicVolumeControl.parent('mainconfigs')
     musicVolumeControl.id('mvc')
     musicSlider = createSlider(0, 1, 0.2, 0.05)
     musicSlider.size(80)
     musicSlider.parent('mvc')
     musicSlider.addClass('slider')
-    sfxVolumeControl = createDiv('Volume dos efeitos')
+    sfxVolumeControl = createDiv('Sound effects')
     sfxVolumeControl.parent('mainconfigs')
     sfxVolumeControl.id('svc')
     sfxSlider = createSlider(0, 1, 0.4, 0.05)
     sfxSlider.style('width', '80px')
     sfxSlider.parent('svc')
     sfxSlider.addClass('slider')
-    mainmenuButton2 = createButton('Voltar')
+    mainmenuButton2 = createButton('Back')
     mainmenuButton2.mousePressed(goToMain)
     mainmenuButton2.parent('mainconfigs')
-    credits = createDiv('Creditos:')
+    credits = createDiv('Credits:')
     credits.parent('page')
     credits.id('creditstop')
     credits.addClass('admenu')
     credits.hide()
-    creditstext = createDiv('Criado e desenvolvido por:<br/>Gabriel Schaldach Morgado<br/><br/>Efeitos sonoros:<br/>Little Robot Sound Factory<br/><br/>Agradecimentos especiais:<br/>Alisson Stephens<br/>Bernardo Rebelo</br>Rafael Costa</br>Pedro Furtado<br/><br/>')
+    creditstext = createDiv('Created and developed by:<br/>Gabriel Schaldach Morgado<br/><br/>Sound effects:<br/>Little Robot Sound Factory<br/><br/>Special Thanks:<br/>Alisson Stephens<br/>Bernardo Rebelo</br>Rafael Costa</br>Pedro Furtado<br/><br/>')
     creditstext.parent('creditstop')
-    mainmenuButton3 = createButton('Menu Principal')
+    mainmenuButton3 = createButton('Main menu')
     mainmenuButton3.mousePressed(goToMain)
     mainmenuButton3.parent('creditstop')
     customgamemenu = createDiv()
@@ -204,10 +204,10 @@ function setup(){
     customgamemenu.id('customgamemenu')
     customgamemenu.addClass('mainmenu')
     customgamemenu.hide()
-    title2 = createDiv('Pong do Morgs')
+    title2 = createDiv("Morgs' Pong")
     title2.addClass('titulo')
     title2.parent('customgamemenu')
-    subtitle2 = createDiv('Jogue em tela cheia e horizontal!<br/>aperte o botao no canto superior direito<br/>(No Mobile, tambem vire a tela)')
+    subtitle2 = createDiv('Play on full and horizontal screen!<br/>press the button in the top-right corner<br/>(On Mobile, also flip the device)')
     subtitle2.addClass('subtitle')
     subtitle2.parent('customgamemenu')
     buttonMenu = createDiv('')
@@ -222,13 +222,13 @@ function setup(){
     selectMode.option('2 Players')
     selectMode.parent('buttonmenu')
     selectDifficulty = createSelect()
-    selectDifficulty.option('Facil')
-    selectDifficulty.option('Medio')
-    selectDifficulty.option('Dificil')
-    selectDifficulty.option('PESADELO')
-    selectDifficulty.selected('Medio')
+    selectDifficulty.option('Easy')
+    selectDifficulty.option('Medium')
+    selectDifficulty.option('Hard')
+    selectDifficulty.option('NIGHTMARE')
+    selectDifficulty.selected('Medium')
     selectDifficulty.parent('buttonmenu')
-    scoreDisplay = createDiv('Pontos para vencer')
+    scoreDisplay = createDiv('Points to win')
     scoreDisplay.id('lim')
     scoreDisplay.parent('buttonmenu')
     scoreLimitSelect = createInput(5, 'number')
@@ -237,10 +237,10 @@ function setup(){
     scoreLimitSelect.input(setInput)
     sls = document.getElementById('scorelimitselect')
     sls.onblur = function(){onResize()}
-    advancedConfigs = createButton('Outras Configs')
+    advancedConfigs = createButton('Other Configs')
     advancedConfigs.parent('buttonmenu')
     advancedConfigs.mousePressed(goToCustomConfigs)
-    mainmenuButton = createButton('Menu principal')
+    mainmenuButton = createButton('Main menu')
     mainmenuButton.mousePressed(goToMain)
     mainmenuButton.parent('buttonmenu')
     imgdiv = createDiv()
@@ -269,7 +269,7 @@ function setup(){
     soundActivediv.addClass('imgfunction')
     soundActivediv.mousePressed(toggleSound)
     soundActivediv.parent('fundiv')
-    customgameconfigs = createDiv('Poderes disponiveis')
+    customgameconfigs = createDiv('Avaiable powerups')
     customgameconfigs.parent('page')
     customgameconfigs.id('admenu')
     customgameconfigs.addClass('admenu')
@@ -277,13 +277,13 @@ function setup(){
     configsmenu.parent('admenu')
     configsmenu.id('configsmenu')
     configsmenu.addClass('configs')
-    text1 = createDiv('Positivos')
+    text1 = createDiv('Positives')
     text1.parent('configsmenu')
     text1.addClass('green')
-    text2 = createDiv('Negativos')
+    text2 = createDiv('Negatives')
     text2.parent('configsmenu')
     text2.addClass('red')
-    text3 = createDiv('Neutros')
+    text3 = createDiv('Neutral')
     text3.parent('configsmenu')
     customgameconfigs.hide()
     allPowers.forEach(power => {
@@ -291,17 +291,17 @@ function setup(){
         button.mousePressed(() => changePowerActive(power.p, button))
         button.parent('configsmenu')
     })
-    spawnSpeed = createDiv('Velocidade dos poderes')
+    spawnSpeed = createDiv('Powerups speed')
     spawnSpeed.parent('admenu')
     spawnSpeed.id('sped')
     spawnSpeed.addClass('sped')
     powerSpeedSelect = createSelect()
-    powerSpeedSelect.option('Devagar')
+    powerSpeedSelect.option('Slow')
     powerSpeedSelect.option('Normal')
-    powerSpeedSelect.option('Loucura')
+    powerSpeedSelect.option('Craziness')
     powerSpeedSelect.parent('sped')
     powerSpeedSelect.selected('Normal')
-    custommenu = createButton('Voltar')
+    custommenu = createButton('Back')
     custommenu.mousePressed(goToCustom)
     custommenu.parent('admenu')
     pauseButton = createButton('Pause')
@@ -314,10 +314,10 @@ function setup(){
     pauseMenu.parent('page')
     pauseMenu.hide()
     pauseMenu.addClass('pausemenu')
-    resumeButton = createButton('Voltar')
+    resumeButton = createButton('Back')
     resumeButton.mousePressed(resume)
     resumeButton.parent('pausemenu')
-    resetButton = createButton('Resetar')
+    resetButton = createButton('Reset')
     resetButton.parent('pausemenu')
     resetButton.mousePressed(reset)
     p1powers = createDiv()
@@ -330,28 +330,28 @@ function setup(){
     p2powers.style('left','37.5vw')
     p2powers.id('p2powers')
     p2powers.parent('page')
-    warning1 = createDiv('PC:<br/> Use W e S para<br/>subir e descer<br/><br/>Mobile:<br/> Use os botoes </br>em destaque para</br> subir e descer<br/><br/>')
+    warning1 = createDiv('PC:<br/> Use W and S to<br/>go up and down<br/><br/>Mobile:<br/> Use the buttons </br>highlighted to</br> go up and down<br/><br/>')
     warning1.addClass('warning')
     warning1.id('warning1')
     warning1.parent('page')
     warning1.hide()
-    warningButton1 = createButton('Entendido')
+    warningButton1 = createButton('Understood')
     warningButton1.mousePressed(start)
     warningButton1.parent('warning1')
-    warning2 = createDiv('PC:<br/> Jogador 1 - W e S<br/>Jogador 2 - ↑ e ↓<br/>para subir e descer<br/><br/>Mobile:<br/> Cada um controla <br/>seu lado com os botoes<br/>para subir e descer<br/><br/>')
+    warning2 = createDiv('PC:<br/> Player 1 - W and S<br/>Player 2 - ↑ and ↓<br/>to go up and down<br/><br/>Mobile:<br/> Each one controls <br/>their side with the buttons<br/>to go up and down<br/><br/>')
     warning2.addClass('warning')
     warning2.id('warning2')
     warning2.parent('page')
     warning2.hide()
-    warningButton2 = createButton('Entendido')
+    warningButton2 = createButton('Understood')
     warningButton2.mousePressed(start)
     warningButton2.parent('warning2')
     page = document.getElementById('page')
     ballColors.push(color(255,255,255), color(255,0,0), color(255,255,0), color(255,0,230), color(30,225,232))
     particleColors.push(color(255,0,0),color(170,0,255),color(255,255,255))
     textAlign(LEFT)
-    textSize(14)
-    text('patch 1.81 - ultimo', 5, 15)
+    textSize(12)
+    text('alpha patch 1.81', 5, 15)
     noStroke()
 }
 function toggleSound(){
@@ -387,8 +387,8 @@ function onResize(){
     background("#000000")
     myCanvas.position(windowWidth/10,0,"fixed")
     textAlign(LEFT)
-    textSize(14)
-    text('patch 1.81 - ultimo', 5, 15)
+    textSize(12)
+    text('alpha patch 1.81', 5, 15)
     balls[0].x = (windowWidth*4/5)/2
     balls[0].y = windowHeight/2
     balls[0].distance = (windowWidth*4/5)/120
@@ -449,13 +449,13 @@ function updatePowerShow(){
     p1powers.html('')
     p2powers.html('')
     player1['onlinePowers'].forEach(onpower => {
-        let string = onpower.stolen?currentAllPowers[onpower.index].p+' (Roubado)':currentAllPowers[onpower.index].p
+        let string = onpower.stolen?currentAllPowers[onpower.index].p+' (Stolen)':currentAllPowers[onpower.index].p
         let div = createDiv(string)
         div.addClass(currentAllPowers[onpower.index].c)
         div.parent('p1powers')
     })
     player2['onlinePowers'].forEach(onpower => {
-        let string = onpower.stolen?currentAllPowers[onpower.index].p+' (Roubado)':currentAllPowers[onpower.index].p
+        let string = onpower.stolen?currentAllPowers[onpower.index].p+' (Stolen)':currentAllPowers[onpower.index].p
         let div = createDiv(string)
         div.addClass(currentAllPowers[onpower.index].c)
         div.parent('p2powers')
@@ -464,20 +464,20 @@ function updatePowerShow(){
 function powerCatch(power, player, ball, referencex, referencey, stolen){
     if(sound){powerpickupsom.play()}
     switch(currentAllPowers[power].p){
-        case 'Grande':
-            let smallIndex = currentAllPowers.findIndex(power => {return power.p === 'Pequeno'})
+        case 'Big':
+            let smallIndex = currentAllPowers.findIndex(power => {return power.p === 'Small'})
             player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== smallIndex)
             player.height = windowHeight/2
             break
-        case 'Fogo':
+        case 'Fire':
             player.activatedFire = true
             determinePlayerColors(player)
             break
-        case 'Congelado':
+        case 'Frozen':
             player.activatedIce = true
             determinePlayerColors(player)
             break
-        case 'Multibola':
+        case 'Multiball':
             balls.push({
                     x: ball.x,
                     y: ball.y,        
@@ -503,15 +503,15 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
                 ball.distance = (windowWidth*4/5)/120
             })
             break
-        case 'Invertido':
+        case 'Inverted':
             player.activatedInverted = true
             break
-        case 'Pequeno':
-            let bigIndex = currentAllPowers.findIndex(power => {return power.p === 'Grande'})
+        case 'Small':
+            let bigIndex = currentAllPowers.findIndex(power => {return power.p === 'Big'})
             player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== bigIndex)
             player.height = windowHeight/6
             break
-        case 'Gol de ouro':
+        case 'Golden goal':
             ball.scoreValue = 2
             break
         case 'Invisivel':
@@ -522,7 +522,7 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
             player.activatedSneak = true
             determinePlayerColors(player)
             break
-        case 'Temporizador':
+        case 'Timer':
             if(ball.timetravel||ball.timereturn){return}
             ball.timeangle = ball.angle
             ball.horizontaltime = ball.horizontalControl
@@ -530,29 +530,29 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
             ball.ballTrack = []
             ball.timetravel = true
             break
-        case 'Buraco Negro':
+        case 'Black hole':
             allBlackHoles.push({x:referencex, y:referencey, frame:0, circumpherence:Math.PI*2*windowHeight/6})
             break
-        case 'Desordenado':
+        case 'Discoordinated':
             player.speed = windowHeight/12
             break
-        case 'Gancho':
+        case 'Hook':
             player.activatedHook = true
             break
-        case 'Trapaceiro':
+        case 'Thief':
             player.activatedThief = true
             break
         case 'Laser':
             ball.laser = true
             break
-        case 'Escudo':
+        case 'Shield':
             stopPower(power, player)
             allShields.push({x:player.x, y:Math.random()*windowHeight/2+windowHeight/4, p:player===player1?1:2})
             break
-        case 'Borda Infinita':
+        case 'Infinite Edge':
             player.borderless = true
             break
-        case 'Ventania':
+        case 'Wind':
             rightParticleX = player===player1?10:(windowWidth*4/5)-60
             allParticles = allParticles.filter(part => part.type !== 'wind'||part.x !== rightParticleX)
             player.wind.active = true
@@ -563,7 +563,7 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
         default:
             break
     }
-    if(currentAllPowers[power].p!=='Buraco Negro'){
+    if(currentAllPowers[power].p!=='Black hole'){
         player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)
     }
     let time = new Date()
@@ -576,23 +576,23 @@ function powerCatch(power, player, ball, referencex, referencey, stolen){
     updatePowerShow()
 }
 function stopPower(power, player, ball, time){
-    if(currentAllPowers[power].p === 'Buraco Negro'){player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power||onpower.expire !== time)}
+    if(currentAllPowers[power].p === 'Black hole'){player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power||onpower.expire !== time)}
     else{player['onlinePowers'] = player['onlinePowers'].filter(onpower => onpower.index !== power)}
     updatePowerShow()
     switch(currentAllPowers[power].p){
-        case 'Pequeno':
-        case 'Grande':
+        case 'Small':
+        case 'Big':
             player.height = windowHeight/3
             break
-        case 'Fogo':
+        case 'Fire':
             player.activatedFire = false
             determinePlayerColors(player)
             break
-        case 'Congelado':
+        case 'Frozen':
             player.activatedIce = false
             determinePlayerColors(player)
             break
-        case 'Invertido':
+        case 'Inverted':
             player.activatedInverted = false
             break
         case 'Invisivel':
@@ -602,19 +602,19 @@ function stopPower(power, player, ball, time){
             player.activatedSneak = false
             determinePlayerColors(player)
             break
-        case 'Temporizador':
+        case 'Timer':
             if(!balls[ball].timereturn){
                 balls[ball].timetravel = false
                 balls[ball].timereturn = true
             }
             break
-        case 'Buraco Negro':
+        case 'Black hole':
             allBlackHoles.shift()
             break
-        case 'Desordenado':
+        case 'Discoordinated':
             player.speed = windowHeight/50
             break
-        case 'Trapaceiro':
+        case 'Thief':
             player.activatedThief = false
             break
         case 'Laser':
@@ -624,17 +624,17 @@ function stopPower(power, player, ball, time){
             balls[ball].x = targetPlayer
             console.log('push')
             break
-        case 'Gancho':
+        case 'Hook':
             player.activatedHook = false
             break
-        case 'Escudo':
+        case 'Shield':
             playernumber = player===player1?1:2
             allShields = allShields.filter(shield => shield.p!==playernumber)
             break
-        case 'Borda Infinita':
+        case 'Infinite Edge':
             player.borderless = false
             break
-        case 'Ventania':
+        case 'Wind':
             rightParticleX = player===player1?10:(windowWidth*4/5)-60
             allParticles = allParticles.filter(part => part.type !== 'wind'||part.x !== rightParticleX)
             player.wind.active = false
@@ -828,7 +828,7 @@ function draw(){
         fill(255)
         textAlign(LEFT)
         textSize(14)
-        text('patch 1.81 - ultimo', 5, 15)
+        text('alpha patch 1.81', 5, 15)
         textAlign(CENTER)
         textSize(37)
         text(player1.score+"        "+player2.score, (windowWidth*4/5)/2, windowHeight/7)
@@ -878,13 +878,13 @@ function draw(){
                     let stolen = false
                     if(rightPlayer===player1&&player2.activatedThief){
                         rightPlayer=player2
-                        const thiefIndex = currentAllPowers.findIndex(power => {return power.p === 'Trapaceiro'})
+                        const thiefIndex = currentAllPowers.findIndex(power => {return power.p === 'Thief'})
                         stopPower(thiefIndex, player2)
                         stolen = true
                     }
                     if(rightPlayer===player2&&player1.activatedThief){
                         rightPlayer=player1
-                        const thiefIndex = currentAllPowers.findIndex(power => {return power.p === 'Trapaceiro'})
+                        const thiefIndex = currentAllPowers.findIndex(power => {return power.p === 'Thief'})
                         stopPower(thiefIndex, player1)
                         stolen = true
                     }
@@ -1032,7 +1032,7 @@ function calculateball(){
                 AIrandomizer = Math.random()>0.5?1:-1
             }
             if(player2.activatedHook){
-                const hookIndex = currentAllPowers.findIndex(power => {return power.p === 'Gancho'})
+                const hookIndex = currentAllPowers.findIndex(power => {return power.p === 'Hook'})
                 stopPower(hookIndex, player2)
             }
             ball.lastPlayerHit = 2
@@ -1049,7 +1049,7 @@ function calculateball(){
             }
             if(sound){efeito2.play()}
             if(player2.activatedFire){
-                const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
+                const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fire'})
                 stopPower(fireIndex, player2)
                 allParticles.push({x:ball.x, y:ball.y, direction:-1, type:'fire', color:0, frame:0, frameLimit:20, particles:[]})
                 ball.distance += (windowWidth*4/5)/70
@@ -1066,7 +1066,7 @@ function calculateball(){
         }
         if(ball.x-10<=player1.x){
             if(player1.activatedHook){
-                const hookIndex = currentAllPowers.findIndex(power => {return power.p === 'Gancho'})
+                const hookIndex = currentAllPowers.findIndex(power => {return power.p === 'Hook'})
                 stopPower(hookIndex, player1)
             }
             ball.lastPlayerHit = 1
@@ -1083,7 +1083,7 @@ function calculateball(){
             }
             if(sound){efeito1.play()}
             if(player1.activatedFire){
-                const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fogo'})
+                const fireIndex = currentAllPowers.findIndex(power => {return power.p === 'Fire'})
                 stopPower(fireIndex, player1)
                 allParticles.push({x:ball.x, y:ball.y, direction:1, type:'fire', color:0, frame:0, frameLimit:20, particles:[]})
                 ball.distance += (windowWidth*4/5)/70
@@ -1238,7 +1238,7 @@ function changeAngle(player, index){
 function winner(){
     timeout = false
     if(player1.score>=scoreLimit&&scoreLimit>0){
-        subtitle2.html(`Jogador 1 venceu!<br/>${player1.score} - ${player2.score}`)
+        subtitle2.html(`Player 1 wins!<br/>${player1.score} - ${player2.score}`)
         if(sound){
             musicajogo.pause()
             vitoriasom.play()
@@ -1247,7 +1247,7 @@ function winner(){
         return
     }
     else if(player2.score>=scoreLimit&&scoreLimit>0){
-        subtitle2.html(`Jogador 2 venceu!<br/>${player1.score} - ${player2.score}`)
+        subtitle2.html(`Player 2 wins!<br/>${player1.score} - ${player2.score}`)
         if(sound){
             musicajogo.pause()
             vitoriasom.play()
@@ -1277,7 +1277,7 @@ function winner(){
         sneakBalls: []
     }]
     lastStartingHorizontalControl = lastStartingHorizontalControl*-1
-    let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Temporizador'})
+    let timeIndex = currentAllPowers.findIndex(power => {return power.p === 'Timer'})
     if(timeIndex>=0){
         stopPower(timeIndex, player1, 0)
         stopPower(timeIndex, player2, 0)
@@ -1308,27 +1308,27 @@ function start(){
         return
     }
     switch(selectDifficulty.value()){
-        case 'Facil':
+        case 'Easy':
             AISpeed = windowHeight/160
             break
-        case 'Medio':
+        case 'Medium':
             AISpeed = windowHeight/125
             break
-        case 'Dificil':
+        case 'Hard':
             AISpeed = windowHeight/80
             break
-        case 'PESADELO':
+        case 'NIGHTMARE':
             AISpeed = windowHeight/40
             break
     }
     switch(powerSpeedSelect.value()){
-        case 'Devagar':
+        case 'Slow':
             powerSpeed = 8000
             break
         case 'Normal':
             powerSpeed = 5000
             break
-        case 'Loucura':
+        case 'Craziness':
             powerSpeed = 2000
             break
     }
@@ -1391,7 +1391,7 @@ function reset(){
     fill(255)
     textSize(14)
     textAlign(LEFT)
-    text('patch 1.81 - ultimo', 5, 15)
+    text('alpha patch 1.81', 5, 15)
     customgamemenu.style('display', 'flex')
     imgdiv.style('display', 'flex')
     functiondiv.style('display', 'flex')
