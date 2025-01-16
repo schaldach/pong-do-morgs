@@ -766,7 +766,7 @@ function goToCustom(){
     mainmenu.style('display','none')
     customgameconfigs.style('display', 'none')
     customgamemenu.style('display','flex')
-    subtitle2.html('Jogo customizado')
+    subtitle2.html('Custom Game')
 }
 function goGoCredits(){
     mainmenu.style('display', 'none')
